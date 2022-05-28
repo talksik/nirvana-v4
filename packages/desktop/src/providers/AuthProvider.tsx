@@ -5,6 +5,7 @@ import Realm from 'realm';
 import { FcGoogle } from 'react-icons/fc';
 import { blueGrey } from '@mui/material/colors';
 import Channels from '../electron/constants';
+import { firebase } from '../firebase/connect';
 
 interface IAuthContext {
   user?: Realm.User;
