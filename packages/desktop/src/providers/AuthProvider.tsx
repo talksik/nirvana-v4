@@ -19,6 +19,8 @@ import {
 import { useSnackbar } from 'notistack';
 import { createUser } from '../firebase/firestore';
 
+import CircularProgress from '@mui/material/CircularProgress';
+
 interface IAuthContext {
   user?: FirebaseUser;
   logout?: () => void;
@@ -31,6 +33,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // since auth.currentuser isn't updating
   const [currentUser, setCurrentUser] = useState<FirebaseUser>(null);
+
+  // are we still waiting on initial auth to trigger?
+  const [authIniting, setAuthIniting] = useState<boolean>(true);
 
   useEffect(() => {
     const authListener = onAuthStateChanged(firebaseAuth, async (user) => {
@@ -47,10 +52,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         enqueueSnackbar('Logged out');
         setCurrentUser(null);
       }
+
+      setAuthIniting(false);
     });
 
     return () => authListener();
-  }, [setCurrentUser, enqueueSnackbar]);
+  }, [setCurrentUser, enqueueSnackbar, setAuthIniting]);
 
   useEffect(() => {
     const tokenListener = window.electronAPI.once(
@@ -95,6 +102,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = useCallback(() => firebaseAuth.signOut(), []);
 
+  if (authIniting) return <CircularProgress />;
   return (
     <AuthContext.Provider value={{ user: currentUser, logout }}>
       {currentUser ? <>{children}</> : <Login />}
