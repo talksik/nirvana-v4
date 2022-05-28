@@ -1,10 +1,23 @@
 import React, { useCallback, useRef } from 'react';
 
 import { Container } from '@mui/system';
-import { Avatar, Box, Grid, Input, Stack, Typography } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Divider,
+  Grid,
+  Input,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  ListSubheader,
+  Stack,
+  Typography,
+} from '@mui/material';
 import NirvanaLogo from './NirvanaLogo';
 import { blueGrey } from '@mui/material/colors';
-import { FiSearch } from 'react-icons/fi';
+import { FiActivity, FiSearch } from 'react-icons/fi';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { useSnackbar } from 'notistack';
 import { useKey } from 'react-use';
@@ -44,7 +57,6 @@ export default function Terminal() {
             </Typography>
 
             <Avatar
-              sizes={''}
               alt={'Arjun Patel'}
               src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
             />
@@ -70,6 +82,68 @@ export default function Terminal() {
 
             <KeyboardShortcutLabel label="tab" />
           </Stack>
+
+          <List
+            sx={{
+              pt: 2,
+            }}
+            subheader={
+              <ListSubheader>
+                <FiActivity />
+                <Typography variant="subtitle2"> Priority</Typography>
+              </ListSubheader>
+            }
+          >
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
+              </ListItemAvatar>
+
+              <ListItemText
+                primary="Viet"
+                secondary={
+                  <React.Fragment>
+                    <Typography
+                      sx={{ display: 'inline' }}
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      Ali Connors
+                    </Typography>
+                    {" — I'll be in your neighborhood doing errands this…"}
+                  </React.Fragment>
+                }
+              />
+            </ListItem>
+
+            <Divider variant="inset" component="li" />
+
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/3.jpg" />
+              </ListItemAvatar>
+
+              <ListItemText
+                primary="Agnes"
+                secondary={
+                  <React.Fragment>
+                    <Typography
+                      sx={{ display: 'inline' }}
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      to Scott, Alex, Jennifer
+                    </Typography>
+                    {" — Wish I could come, but I'm out of town this…"}
+                  </React.Fragment>
+                }
+              />
+            </ListItem>
+          </List>
+
+          <Divider />
         </Stack>
       </Grid>
       <Grid item xs={8} sx={{ backgroundColor: 'white', padding: 1 }}>

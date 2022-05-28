@@ -39,5 +39,19 @@ export const NirvanaTheme = createTheme({
         fullWidth: true,
       },
     },
+
+    MuiListSubheader: {
+      styleOverrides: {
+        root: {
+          '&.MuiListSubheader-root': {
+            lineHeight: 1,
+            display: 'flex',
+            gap: '0.7em',
+            alignItems: 'center',
+            backgroundColor: 'transparent',
+          },
+        },
+      },
+    },
   },
 });
