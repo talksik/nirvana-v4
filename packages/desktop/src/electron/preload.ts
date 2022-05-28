@@ -24,13 +24,14 @@ const electronAPI = {
   },
 
   on(channel: Channels, func: any) {
-    const validChannels = ['ipc-example'];
+    // const validChannels = ['ipc-example'];
     // if (validChannels.includes(channel)) {
     //   // Deliberately strip event as it includes `sender`
     //   ipcRenderer.on(channel, (event, ...args) => func(...args));
     // }
 
     ipcRenderer.on(channel, (event, ...args) => func(...args));
+    return () => ipcRenderer.removeAllListeners(channel);
   },
   once(channel: Channels, func: any) {
     // const validChannels = ["ipc-example"];
@@ -40,6 +41,11 @@ const electronAPI = {
     // }
 
     ipcRenderer.once(channel, (event, ...args) => func(...args));
+
+    return () => ipcRenderer.removeAllListeners(channel);
+  },
+  removeListener(channel: Channels) {
+    ipcRenderer.removeAllListeners(channel);
   },
 };
 

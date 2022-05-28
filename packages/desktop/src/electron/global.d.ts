@@ -1,5 +1,5 @@
-import { Dimensions, DimensionChangeRequest } from "./constants";
-import { electronAPI } from "./preload";
+import { Dimensions, DimensionChangeRequest } from './constants';
+import { electronAPI } from './preload';
 
 export {};
 declare global {
@@ -15,8 +15,8 @@ declare global {
       window: {
         resizeWindow(dimensionChangeRequest: DimensionChangeRequest): void;
       };
-      on(channel: Channels, func: any): void;
-      once(channel: Channels, func: any): void;
+      on(channel: Channels, func: any): () => void;
+      once(channel: Channels, func: any): () => void;
     };
   }
 }

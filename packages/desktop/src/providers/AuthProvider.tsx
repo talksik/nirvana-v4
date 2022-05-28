@@ -6,7 +6,12 @@ import { FcGoogle } from 'react-icons/fc';
 import { blueGrey } from '@mui/material/colors';
 import Channels from '../electron/constants';
 import { firebaseAuth } from '../firebase/connect';
-import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import {
+  GoogleAuthProvider,
+  signInWithCredential,
+  setPersistence,
+  browserLocalPersistence,
+} from 'firebase/auth';
 import { useSnackbar } from 'notistack';
 
 const provider = new GoogleAuthProvider();
@@ -23,37 +28,57 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
-    window.electronAPI.once(Channels.GOOGLE_AUTH_TOKENS, async (tokens: Credentials) => {
-      console.log('got tokens', tokens);
+    const tokenListener = window.electronAPI.once(
+      Channels.GOOGLE_AUTH_TOKENS,
+      async (tokens: Credentials) => {
+        console.log('got tokens', tokens);
 
-      const credential = GoogleAuthProvider.credential(tokens.id_token);
+        const credential = GoogleAuthProvider.credential(tokens.id_token);
 
-      // Sign in with credential from the Google user.
-      signInWithCredential(firebaseAuth, credential)
-        .then((result) => {
-          // This gives you a Google Access Token. You can use it to access Google APIs.
-          const credential = GoogleAuthProvider.credentialFromResult(result);
-          const token = credential.accessToken;
+        setPersistence(firebaseAuth, browserLocalPersistence)
+          .then(() => {
+            // Sign in with credential from the Google user.
+            return signInWithCredential(firebaseAuth, credential)
+              .then((result) => {
+                // This gives you a Google Access Token. You can use it to access Google APIs.
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
 
-          // The signed-in user info.
-          const user = result.user;
-          console.log(user);
+                // The signed-in user info.
+                const user = result.user;
+                console.log(user);
 
-          enqueueSnackbar('Signed in! All set!', { variant: 'success' });
-        })
-        .catch((error) => {
-          // Handle Errors here.
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          // The email of the user's account used.
-          const email = error.email;
-          // The credential that was used.
-          const credential = GoogleAuthProvider.credentialFromError(error);
-          // ...
+                enqueueSnackbar('Signed in! All set!', { variant: 'success' });
+              })
+              .catch((error) => {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.email;
+                // The credential that was used.
+                const credential = GoogleAuthProvider.credentialFromError(error);
+                // ...
 
-          enqueueSnackbar('Something went wrong', { variant: 'error' });
-        });
-    });
+                enqueueSnackbar('Something went wrong', { variant: 'error' });
+              });
+          })
+          .catch((error: any) => {
+            // Handle Errors here.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            // The email of the user's account used.
+            const email = error.email;
+            // The credential that was used.
+            const credential = GoogleAuthProvider.credentialFromError(error);
+            // ...
+
+            enqueueSnackbar('Something went wrong', { variant: 'error' });
+          });
+      },
+    );
+
+    return () => tokenListener();
   }, []);
 
   return <Login />;
