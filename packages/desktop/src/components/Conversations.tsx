@@ -42,7 +42,10 @@ const Conversations = () => {
       if (searchVal) {
         enqueueSnackbar('searching...', { variant: 'info' });
 
-        setSearchUsersResults(await searchUsers(searchVal));
+        const results = await searchUsers(searchVal);
+        setSearchUsersResults(results);
+
+        console.warn(results);
       }
     },
     500,
@@ -180,8 +183,7 @@ function ListPeople({ people }: { people: User[] }) {
       }}
       subheader={
         <ListSubheader>
-          <FiActivity />
-          <Typography variant="subtitle2"> Priority</Typography>
+          <Typography variant="subtitle2"> Search Results</Typography>
         </ListSubheader>
       }
     >

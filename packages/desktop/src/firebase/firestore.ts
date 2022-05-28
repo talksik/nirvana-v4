@@ -12,6 +12,10 @@ import {
   query,
   where,
   getDocs,
+  orderBy,
+  limit,
+  startAt,
+  endAt,
 } from 'firebase/firestore';
 
 import { User as FirebaseUser } from 'firebase/auth';
@@ -79,14 +83,18 @@ export const searchUsers = async (searchQuery: string): Promise<User[] | undefin
   try {
     const emaildocSearchQuery = query(
       db.users,
-      where('email', '>=', searchQuery.toUpperCase()),
-      where('email', '<=', searchQuery.toUpperCase() + '\uf8ff'),
+      orderBy('email'),
+      startAt(searchQuery),
+      endAt(searchQuery + '\uf8ff'),
+      limit(5),
     );
 
     const nameSearchQuery = query(
       db.users,
-      where('displayName', '>=', searchQuery.toUpperCase()),
-      where('displayName', '<=', searchQuery.toUpperCase() + '\uf8ff'),
+      orderBy('displayName'),
+      startAt(searchQuery),
+      endAt(searchQuery + '\uf8ff'),
+      limit(5),
     );
 
     const emailquerySnap = await getDocs(emaildocSearchQuery);
