@@ -4,6 +4,7 @@ import { DEFAULT_APP_PRESET } from './electron/constants';
 // plugin that tells the Electron app where to look for the Webpack-bundled app code (depending on
 // whether you're running in development or production).
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
+declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -12,10 +13,12 @@ if (require('electron-squirrel-startup')) {
 }
 
 const createWindow = (): void => {
- 
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     ...DEFAULT_APP_PRESET,
+    webPreferences: {
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+    },
     // titleBarStyle: "hiddenInset",
     frame: false,
     roundedCorners: true,
@@ -25,7 +28,7 @@ const createWindow = (): void => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools({"mode": "detach"});
+  mainWindow.webContents.openDevTools({ mode: 'detach' });
 };
 
 // This method will be called when Electron has finished

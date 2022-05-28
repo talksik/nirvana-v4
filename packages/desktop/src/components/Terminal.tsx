@@ -65,7 +65,7 @@ export default function Terminal() {
             justifyContent={'flex-start'}
             alignItems={'center'}
             sx={{
-              '-webkit-app-region': 'drag',
+              WebkitAppRegion: 'drag',
               cursor: 'pointer',
             }}
           >
@@ -202,7 +202,7 @@ export default function Terminal() {
             px: 2,
             borderBottom: '1px solid',
             borderBottomColor: blueGrey[100],
-            '-webkit-app-region': 'drag',
+            WebkitAppRegion: 'drag',
             cursor: 'pointer',
           }}
           alignItems={'center'}
