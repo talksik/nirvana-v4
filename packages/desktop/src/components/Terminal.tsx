@@ -156,6 +156,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   // not 100% consistent to the second, but still works...don't need atomicity
   const handleQuickDial = useCallback(
     async (otherUserId: string) => {
+      setSearchVal('');
+
       try {
         // check all current conversations which should be live listened to
 
@@ -172,18 +174,15 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         });
 
         if (findExistingConversation) {
+          enqueueSnackbar('quick dialed someone!', { variant: 'success' });
           setSelectedConversationId(findExistingConversation.id);
           return;
         }
 
         // create conversation in this case
         const newConversationId = await createOneOnOneConversation(otherUserId, user.uid);
-
         enqueueSnackbar('started conversation!', { variant: 'success' });
-
         setSelectedConversationId(newConversationId);
-
-        setSearchVal('');
       } catch (error) {
         enqueueSnackbar('Something went wrong, please try again', { variant: 'error' });
       }
@@ -318,7 +317,13 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               </Tooltip>
             </Stack>
 
-            {searchVal ? <ListPeople people={searchUsersResults} /> : <ListConversations />}
+            {searchVal ? (
+              <ListPeople people={searchUsersResults} />
+            ) : (
+              <ListConversations
+                lookingForSomeone={selectedConversationId && !selectedConversation}
+              />
+            )}
           </Stack>
         </Grid>
 
@@ -373,7 +378,7 @@ function ListPeople({ people }: { people: User[] }) {
   );
 }
 
-function ListConversations() {
+function ListConversations({ lookingForSomeone = false }: { lookingForSomeone: boolean }) {
   const { conversationMap } = useTerminal();
 
   if (Object.keys(conversationMap).length === 0) {
@@ -397,6 +402,7 @@ function ListConversations() {
           </ListSubheader>
         }
       >
+        {lookingForSomeone && <CircularProgress />}
         {Object.values(conversationMap).map((currentConversation) => (
           <ConversationRow
             key={`${currentConversation.id}-priorityConvoList`}
