@@ -23,6 +23,7 @@ import { useSnackbar } from 'notistack';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { searchUsers } from '../firebase/firestore';
 import { User } from '@nirvana/core/src/models/user.model';
+import useTerminal from './Terminal';
 
 const Conversations = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -49,9 +50,9 @@ const Conversations = () => {
         setSearchUsersResults(results);
 
         console.warn(results);
-
-        setSearching(false);
       }
+
+      setSearching(false);
     },
     500,
     [searchVal, enqueueSnackbar, setSearchUsersResults],
@@ -95,7 +96,7 @@ const Conversations = () => {
         <KeyboardShortcutLabel label="Shift" />
       </Stack>
 
-      {searchVal ? <ListPeople people={searchUsersResults} /> : <></>}
+      {searchVal ? <ListPeople people={searchUsersResults} /> : <ListConversations />}
     </>
   );
 };
@@ -135,7 +136,13 @@ function ListPeople({ people }: { people: User[] }) {
   );
 }
 
-function StaticListConversations() {
+function ListConversations() {
+  const { conversations } = useTerminal();
+
+  if (conversations.length === 0) {
+    return <Typography variant="caption">Find someone by email or name to get started!</Typography>;
+  }
+
   return (
     <>
       <List
@@ -228,4 +235,5 @@ function StaticListConversations() {
     </>
   );
 }
+
 export default Conversations;

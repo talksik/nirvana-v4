@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 
 import { Container } from '@mui/system';
 import { Avatar, Box, Fab, Grid, IconButton, Paper, Stack, Typography } from '@mui/material';
@@ -8,12 +8,16 @@ import { useSnackbar } from 'notistack';
 
 import Conversations from './Conversations';
 import Navbar from './Navbar';
+import Conversation from '@nirvana/core/src/models/conversation.model';
 
 interface ITerminalContext {
+  conversations: Conversation[];
   selectedConversation?: string;
 }
 
-const TerminalContext = React.createContext<ITerminalContext>({});
+const TerminalContext = React.createContext<ITerminalContext>({
+  conversations: [],
+});
 
 // TODOS
 // fetch all conversations that I am part of
@@ -34,8 +38,10 @@ const TerminalContext = React.createContext<ITerminalContext>({});
 export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const { enqueueSnackbar } = useSnackbar();
 
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+
   return (
-    <TerminalContext.Provider value={{ selectedConversation: undefined }}>
+    <TerminalContext.Provider value={{ selectedConversation: undefined, conversations }}>
       <Grid container spacing={0}>
         <Grid
           item
