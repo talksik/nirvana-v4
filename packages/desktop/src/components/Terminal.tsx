@@ -22,7 +22,16 @@ import {
 } from '@mui/material';
 import NirvanaLogo from './NirvanaLogo';
 import { blueGrey } from '@mui/material/colors';
-import { FiActivity, FiInbox, FiMoreVertical, FiPlay, FiSearch, FiSun } from 'react-icons/fi';
+import {
+  FiActivity,
+  FiInbox,
+  FiMonitor,
+  FiMoreVertical,
+  FiPlay,
+  FiSearch,
+  FiSun,
+  FiWind,
+} from 'react-icons/fi';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { useSnackbar } from 'notistack';
 import { useKey } from 'react-use';
@@ -71,10 +80,23 @@ export default function Terminal() {
           >
             <NirvanaLogo />
 
-            <Typography variant="overline" sx={{ m: 'auto', fontWeight: 'semi-bold' }}>
-              Conversations
-            </Typography>
-
+            <Stack
+              spacing={1}
+              direction={'row'}
+              alignItems={'center'}
+              sx={{
+                ml: 'auto',
+                mr: 1,
+                color: 'GrayText',
+              }}
+            >
+              <IconButton color="inherit" size="small">
+                <FiMonitor />
+              </IconButton>
+              <IconButton color="inherit" size="small">
+                <FiWind />
+              </IconButton>
+            </Stack>
             <Avatar
               alt={'Arjun Patel'}
               src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
