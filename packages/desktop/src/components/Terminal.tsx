@@ -11,16 +11,36 @@ import Navbar from './Navbar';
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
 import { createOneOnOneConversation } from '../firebase/firestore';
+import { Link, AudioClip, Image } from '@nirvana/core/src/models/content.model';
+import { useImmer } from 'use-immer';
+import { User } from '@nirvana/core/src/models/user.model';
+
+type ConversationMap = {
+  [conversationId: string]: Conversation;
+};
+
+type UserMap = {
+  [userId: string]: User;
+};
+
+type ConversationContentMap = {
+  [conversationId: string]: { audio: AudioClip[]; links: Link[]; images: Image[] };
+};
 
 interface ITerminalContext {
-  conversations: Conversation[];
+  conversationMap: ConversationMap;
+  userMap: UserMap;
+  contentMap: ConversationContentMap;
+
   selectedConversation?: Conversation;
 
   handleQuickDial?: (otherUserId: string) => void;
 }
 
 const TerminalContext = React.createContext<ITerminalContext>({
-  conversations: [],
+  conversationMap: {},
+  userMap: {},
+  contentMap: {},
 });
 
 // TODOS
@@ -39,22 +59,36 @@ const TerminalContext = React.createContext<ITerminalContext>({
 
 // if no conversations, show stale state + create one with nirvana
 
+// sort based on the different data sources: conversations, audio clips, etc.
+
 export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useAuth();
 
   const [selectedConversationId, setSelectedConversationId] = useState<string>(undefined);
 
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [conversationMap, updateConversationMap] = useImmer<ConversationMap>({});
+  const [userMap, updateUserMap] = useImmer<UserMap>({});
+  const [contentMap, updatecontentMap] = useImmer<ConversationContentMap>({});
 
   // cache of selected conversation
-
   const selectedConversation: Conversation | undefined = useMemo(() => {
-    // get conversation if not here
     // select if we do have it
 
-    return undefined;
-  }, [selectedConversationId]);
+    const conversation = conversationMap[selectedConversationId];
+
+    if (!conversation) {
+      enqueueSnackbar('no conversation found', { variant: 'error' });
+      console.error('Should have found it... maybe retry once more');
+    }
+
+    return conversation;
+
+    // get conversation if not here
+    // const fetchedConversation = await getConversationById
+
+    // return undefined;
+  }, [selectedConversationId, conversationMap, enqueueSnackbar]);
 
   // handle create or open existing conversation
   // not 100% consistent to the second, but still works...don't need atomicity
@@ -64,7 +98,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         // check all current conversations which should be live listened to
 
         // if there is already a convo with exactly me and him, then select it
-        const findExistingConversation = conversations.find((convo) => {
+        const findExistingConversation = Object.values(conversationMap).find((convo) => {
           if (
             convo.membersInRoom?.length === 2 &&
             convo.membersInRoom.includes(user.uid) &&
@@ -86,11 +120,13 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         enqueueSnackbar('Something went wrong, please try again', { variant: 'error' });
       }
     },
-    [conversations, enqueueSnackbar, user],
+    [conversationMap, enqueueSnackbar, user],
   );
 
   return (
-    <TerminalContext.Provider value={{ selectedConversation, conversations, handleQuickDial }}>
+    <TerminalContext.Provider
+      value={{ selectedConversation, conversationMap, contentMap, userMap, handleQuickDial }}
+    >
       <Grid container spacing={0}>
         <Grid
           item
