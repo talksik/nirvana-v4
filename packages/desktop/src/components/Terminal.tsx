@@ -307,162 +307,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
           </Stack>
         </Grid>
 
-        {/* selected conversation details */}
-        {selectedConversation && (
-          <Grid
-            item
-            xs={8}
-            sx={{ backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}
-          >
-            <Stack
-              direction={'row'}
-              sx={{
-                py: 2,
-                px: 2,
-                borderBottom: '1px solid',
-                borderBottomColor: blueGrey[100],
-                WebkitAppRegion: 'drag',
-                cursor: 'pointer',
-              }}
-              alignItems={'center'}
-              justifyContent={'flex-start'}
-            >
-              <Stack spacing={2} direction={'row'} alignItems={'center'}>
-                <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
-
-                <Typography color={'GrayText'} variant="overline">
-                  {'Viet Phan'}
-                </Typography>
-              </Stack>
-
-              <Box sx={{ ml: 'auto' }}>
-                <IconButton size="small">
-                  <FiMoreVertical />
-                </IconButton>
-              </Box>
-            </Stack>
-
-            <Container maxWidth={false} sx={{ position: 'relative', flex: 1 }}>
-              <Container maxWidth="xs">
-                <Stack
-                  justifyContent={'flex-start'}
-                  alignItems={'center'}
-                  sx={{
-                    pt: 2,
-                  }}
-                >
-                  <Typography variant="caption">yesterday</Typography>
-
-                  <Paper elevation={1} sx={{ p: 1, width: '100%' }}>
-                    <Stack direction={'row'} alignItems="center">
-                      <Stack spacing={2} direction={'row'} alignItems={'center'}>
-                        <Avatar
-                          alt={'Arjun Patel'}
-                          src="https://mui.com/static/images/avatar/2.jpg"
-                        />
-
-                        <Typography color={'GrayText'} variant="overline">
-                          {'Viet Phan'}
-                        </Typography>
-                      </Stack>
-
-                      <Box
-                        sx={{
-                          ml: 'auto',
-                          color: 'GrayText',
-                        }}
-                      >
-                        <FiPlay />
-                      </Box>
-                    </Stack>
-                  </Paper>
-                </Stack>
-
-                <Stack
-                  justifyContent={'flex-start'}
-                  alignItems={'center'}
-                  sx={{
-                    pt: 2,
-                  }}
-                >
-                  <Typography variant="caption">today</Typography>
-
-                  <Paper elevation={8} sx={{ p: 1, width: '100%' }}>
-                    <Stack direction={'row'} alignItems="center">
-                      <Stack spacing={2} direction={'row'} alignItems={'center'}>
-                        <Avatar
-                          alt={'Arjun Patel'}
-                          src="https://mui.com/static/images/avatar/2.jpg"
-                        />
-
-                        <Typography color={'GrayText'} variant="overline">
-                          {'Viet Phan'}
-                        </Typography>
-                      </Stack>
-
-                      <Box
-                        sx={{
-                          ml: 'auto',
-                          color: 'GrayText',
-                        }}
-                      >
-                        <FiPlay />
-                      </Box>
-                    </Stack>
-                  </Paper>
-                </Stack>
-
-                <Stack
-                  justifyContent={'flex-start'}
-                  alignItems={'center'}
-                  sx={{
-                    pt: 2,
-                  }}
-                >
-                  <Typography variant="caption">right now</Typography>
-
-                  <Paper elevation={24} sx={{ p: 1, width: '100%' }}>
-                    <Stack direction={'row'} alignItems="center">
-                      <Stack spacing={2} direction={'row'} alignItems={'center'}>
-                        <Avatar
-                          alt={'Arjun Patel'}
-                          src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
-                        />
-
-                        <Typography color={'GrayText'} variant="overline">
-                          {'Arjun Patel'}
-                        </Typography>
-                      </Stack>
-
-                      <Box
-                        sx={{
-                          ml: 'auto',
-                          color: 'GrayText',
-                        }}
-                      >
-                        <FiPlay />
-                      </Box>
-                    </Stack>
-                  </Paper>
-                </Stack>
-              </Container>
-
-              <Box
-                sx={{
-                  position: 'absolute',
-                  zIndex: 10,
-                  bottom: 0,
-                  right: 0,
-                  padding: 3,
-                }}
-              >
-                <Fab color="primary" aria-label="add" size="medium">
-                  <FiSun />
-                </Fab>
-              </Box>
-            </Container>
-          </Grid>
-        )}
+        <MainPanel />
       </Grid>
 
       {children}
@@ -608,5 +453,189 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
         {/* <Typography variant={'caption'}>20 sec</Typography> */}
       </ListItemButton>
     </ListItem>
+  );
+}
+
+function MainPanel() {
+  const { user } = useAuth();
+  const { selectedConversation } = useTerminal();
+
+  // if selected conversation, show details
+  // do all fetching necessary to paint things here
+  // join the call so to speak
+
+  // show who is
+
+  return (
+    <Grid item xs={8} sx={{ backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
+      {selectedConversation ? (
+        <>
+          <Stack
+            direction={'row'}
+            sx={{
+              py: 2,
+              px: 2,
+              borderBottom: '1px solid',
+              borderBottomColor: blueGrey[100],
+              WebkitAppRegion: 'drag',
+              cursor: 'pointer',
+            }}
+            alignItems={'center'}
+            justifyContent={'flex-start'}
+          >
+            <Stack spacing={2} direction={'row'} alignItems={'center'}>
+              <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
+
+              <Typography color={'GrayText'} variant="overline">
+                {'Viet Phan'}
+              </Typography>
+            </Stack>
+
+            <Box sx={{ ml: 'auto' }}>
+              <IconButton size="small">
+                <FiMoreVertical />
+              </IconButton>
+            </Box>
+          </Stack>
+
+          <Container maxWidth={false} sx={{ position: 'relative', flex: 1 }}>
+            <Container maxWidth="xs">
+              <Stack
+                justifyContent={'flex-start'}
+                alignItems={'center'}
+                sx={{
+                  pt: 2,
+                }}
+              >
+                <Typography variant="caption">yesterday</Typography>
+
+                <Paper elevation={1} sx={{ p: 1, width: '100%' }}>
+                  <Stack direction={'row'} alignItems="center">
+                    <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                      <Avatar
+                        alt={'Arjun Patel'}
+                        src="https://mui.com/static/images/avatar/2.jpg"
+                      />
+
+                      <Typography color={'GrayText'} variant="overline">
+                        {'Viet Phan'}
+                      </Typography>
+                    </Stack>
+
+                    <Box
+                      sx={{
+                        ml: 'auto',
+                        color: 'GrayText',
+                      }}
+                    >
+                      <FiPlay />
+                    </Box>
+                  </Stack>
+                </Paper>
+              </Stack>
+
+              <Stack
+                justifyContent={'flex-start'}
+                alignItems={'center'}
+                sx={{
+                  pt: 2,
+                }}
+              >
+                <Typography variant="caption">today</Typography>
+
+                <Paper elevation={8} sx={{ p: 1, width: '100%' }}>
+                  <Stack direction={'row'} alignItems="center">
+                    <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                      <Avatar
+                        alt={'Arjun Patel'}
+                        src="https://mui.com/static/images/avatar/2.jpg"
+                      />
+
+                      <Typography color={'GrayText'} variant="overline">
+                        {'Viet Phan'}
+                      </Typography>
+                    </Stack>
+
+                    <Box
+                      sx={{
+                        ml: 'auto',
+                        color: 'GrayText',
+                      }}
+                    >
+                      <FiPlay />
+                    </Box>
+                  </Stack>
+                </Paper>
+              </Stack>
+
+              <Stack
+                justifyContent={'flex-start'}
+                alignItems={'center'}
+                sx={{
+                  pt: 2,
+                }}
+              >
+                <Typography variant="caption">right now</Typography>
+
+                <Paper elevation={24} sx={{ p: 1, width: '100%' }}>
+                  <Stack direction={'row'} alignItems="center">
+                    <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                      <Avatar
+                        alt={'Arjun Patel'}
+                        src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
+                      />
+
+                      <Typography color={'GrayText'} variant="overline">
+                        {'Arjun Patel'}
+                      </Typography>
+                    </Stack>
+
+                    <Box
+                      sx={{
+                        ml: 'auto',
+                        color: 'GrayText',
+                      }}
+                    >
+                      <FiPlay />
+                    </Box>
+                  </Stack>
+                </Paper>
+              </Stack>
+            </Container>
+
+            <Box
+              sx={{
+                position: 'absolute',
+                zIndex: 10,
+                bottom: 0,
+                right: 0,
+                padding: 3,
+              }}
+            >
+              <Fab color="primary" aria-label="add" size="medium">
+                <FiSun />
+              </Fab>
+            </Box>
+          </Container>
+        </>
+      ) : (
+        <Container
+          maxWidth={false}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 5,
+            background: blueGrey[50],
+          }}
+        >
+          <Typography variant="h6">{`Hi ${
+            user.displayName?.split(' ')[0] ?? 'there'
+          }!`}</Typography>
+          <Typography variant="subtitle2">Take a deep breath in.</Typography>
+        </Container>
+      )}
+    </Grid>
   );
 }
