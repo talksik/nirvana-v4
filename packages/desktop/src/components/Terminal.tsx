@@ -42,15 +42,6 @@ import NirvanaAvatar from './NirvanaAvatar';
 export default function Terminal() {
   const { enqueueSnackbar } = useSnackbar();
 
-  const searchRef = useRef<HTMLInputElement>(null);
-
-  const onSearch = useCallback(() => {
-    enqueueSnackbar('search focused');
-    if (searchRef?.current) searchRef.current.focus();
-  }, []);
-
-  useKey('Tab', onSearch);
-
   return (
     <Grid container spacing={0}>
       <Grid
@@ -67,164 +58,15 @@ export default function Terminal() {
           direction={'column'}
           spacing={1}
           sx={{
-            padding: 2,
+            p: 2,
             height: 'inherit',
           }}
         >
-          <Stack
-            direction="row"
-            justifyContent={'flex-start'}
-            alignItems={'center'}
-            sx={{
-              WebkitAppRegion: 'drag',
-              cursor: 'pointer',
-              pb: 1,
-            }}
-          >
-            <NirvanaLogo />
+          <Navbar />
 
-            <Stack
-              spacing={1}
-              direction={'row'}
-              alignItems={'center'}
-              sx={{
-                ml: 'auto',
-                mr: 1,
-                color: 'GrayText',
-              }}
-            >
-              <Tooltip title="Sound configuration">
-                <IconButton color="inherit" size="small">
-                  <FiHeadphones />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Desktop modes">
-                <IconButton color="inherit" size="small">
-                  <FiMonitor />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Flow state">
-                <IconButton color="inherit" size="small">
-                  <FiWind />
-                </IconButton>
-              </Tooltip>
-            </Stack>
-            <Avatar
-              alt={'Arjun Patel'}
-              src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
-            />
-          </Stack>
+          <SecondNavbar />
 
-          <Stack
-            direction={'row'}
-            sx={{
-              position: 'relative',
-              display: 'flex',
-              flexDirection: 'row',
-              bgcolor: blueGrey[100],
-              borderRadius: 1,
-              px: 1,
-              py: 0.5,
-            }}
-            alignItems={'center'}
-            spacing={1}
-          >
-            <FiSearch style={{ color: blueGrey[500] }} />
-
-            <Input placeholder={'Find or start a conversation'} inputRef={searchRef} />
-
-            <KeyboardShortcutLabel label="tab" />
-          </Stack>
-
-          <List
-            sx={{
-              pt: 2,
-            }}
-            subheader={
-              <ListSubheader>
-                <FiActivity />
-                <Typography variant="subtitle2"> Priority</Typography>
-              </ListSubheader>
-            }
-          >
-            <ListItem>
-              <ListItemButton selected={true}>
-                <ListItemAvatar>
-                  <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
-                </ListItemAvatar>
-
-                <ListItemText primary="Viet" />
-
-                <Typography variant={'caption'}>20 sec</Typography>
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem>
-              <ListItemButton>
-                <ListItemAvatar>
-                  <NirvanaAvatar
-                    avatars={[
-                      { alt: 'Arjun Patel', src: 'https://mui.com/static/images/avatar/3.jpg' },
-                    ]}
-                  />
-                </ListItemAvatar>
-
-                <ListItemText primary="Agnes" />
-
-                <Typography variant={'caption'}>34 min ago</Typography>
-              </ListItemButton>
-            </ListItem>
-          </List>
-
-          <Divider />
-
-          <List
-            sx={{
-              pt: 2,
-            }}
-            subheader={
-              <ListSubheader>
-                <FiInbox />
-                <Typography variant="subtitle2"> Inbox</Typography>
-              </ListSubheader>
-            }
-          >
-            <ListItem>
-              <ListItemButton sx={{ opacity: 0.5 }}>
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      filter: `grayscale(1)`,
-                    }}
-                    alt={'Arjun Patel'}
-                    src="https://mui.com/static/images/avatar/5.jpg"
-                  />
-                </ListItemAvatar>
-
-                <ListItemText secondary="Jeremy Leon" sx={{ color: blueGrey[300] }} />
-
-                <Badge color="primary" badgeContent=" " variant="dot"></Badge>
-              </ListItemButton>
-            </ListItem>
-
-            <ListItem>
-              <ListItemButton sx={{ opacity: 0.5 }}>
-                <ListItemAvatar>
-                  <Avatar
-                    sx={{
-                      filter: `grayscale(1)`,
-                    }}
-                    alt={'Arjun Patel'}
-                    src="https://mui.com/static/images/avatar/4.jpg"
-                  />
-                </ListItemAvatar>
-
-                <ListItemText secondary="James Lin" sx={{ color: blueGrey[300] }} />
-
-                <Typography variant={'caption'}>2 hours ago</Typography>
-              </ListItemButton>
-            </ListItem>
-          </List>
+          <Conversations />
         </Stack>
       </Grid>
 
@@ -374,3 +216,183 @@ export default function Terminal() {
     </Grid>
   );
 }
+
+const Navbar = () => {
+  return (
+    <Stack
+      direction="row"
+      justifyContent={'flex-start'}
+      alignItems={'center'}
+      sx={{
+        WebkitAppRegion: 'drag',
+        cursor: 'pointer',
+        pb: 1,
+      }}
+    >
+      <NirvanaLogo />
+
+      <Stack
+        spacing={1}
+        direction={'row'}
+        alignItems={'center'}
+        sx={{
+          ml: 'auto',
+          mr: 1,
+          color: 'GrayText',
+        }}
+      >
+        <Tooltip title="Sound configuration">
+          <IconButton color="inherit" size="small">
+            <FiHeadphones />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Desktop modes">
+          <IconButton color="inherit" size="small">
+            <FiMonitor />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Flow state">
+          <IconButton color="inherit" size="small">
+            <FiWind />
+          </IconButton>
+        </Tooltip>
+      </Stack>
+      <Avatar
+        alt={'Arjun Patel'}
+        src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
+      />
+    </Stack>
+  );
+};
+
+const SecondNavbar = () => {
+  const { enqueueSnackbar } = useSnackbar();
+
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  const onSearch = useCallback(() => {
+    enqueueSnackbar('search focused');
+    if (searchRef?.current) searchRef.current.focus();
+  }, []);
+
+  useKey('Tab', onSearch);
+
+  return (
+    <Stack
+      direction={'row'}
+      sx={{
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'row',
+        bgcolor: blueGrey[100],
+        borderRadius: 1,
+        px: 1,
+        py: 0.5,
+      }}
+      alignItems={'center'}
+      spacing={1}
+    >
+      <FiSearch style={{ color: blueGrey[500] }} />
+
+      <Input placeholder={'Find or start a conversation'} inputRef={searchRef} />
+
+      <KeyboardShortcutLabel label="tab" />
+    </Stack>
+  );
+};
+
+const Conversations = () => {
+  return (
+    <>
+      <List
+        sx={{
+          pt: 2,
+        }}
+        subheader={
+          <ListSubheader>
+            <FiActivity />
+            <Typography variant="subtitle2"> Priority</Typography>
+          </ListSubheader>
+        }
+      >
+        <ListItem>
+          <ListItemButton selected={true}>
+            <ListItemAvatar>
+              <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
+            </ListItemAvatar>
+
+            <ListItemText primary="Viet" />
+
+            <Typography variant={'caption'}>20 sec</Typography>
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem>
+          <ListItemButton>
+            <ListItemAvatar>
+              <NirvanaAvatar
+                avatars={[
+                  { alt: 'Arjun Patel', src: 'https://mui.com/static/images/avatar/3.jpg' },
+                ]}
+              />
+            </ListItemAvatar>
+
+            <ListItemText primary="Agnes" />
+
+            <Typography variant={'caption'}>34 min ago</Typography>
+          </ListItemButton>
+        </ListItem>
+      </List>
+
+      <Divider />
+
+      <List
+        sx={{
+          pt: 2,
+        }}
+        subheader={
+          <ListSubheader>
+            <FiInbox />
+            <Typography variant="subtitle2"> Inbox</Typography>
+          </ListSubheader>
+        }
+      >
+        <ListItem>
+          <ListItemButton sx={{ opacity: 0.5 }}>
+            <ListItemAvatar>
+              <Avatar
+                sx={{
+                  filter: `grayscale(1)`,
+                }}
+                alt={'Arjun Patel'}
+                src="https://mui.com/static/images/avatar/5.jpg"
+              />
+            </ListItemAvatar>
+
+            <ListItemText secondary="Jeremy Leon" sx={{ color: blueGrey[300] }} />
+
+            <Badge color="primary" badgeContent=" " variant="dot"></Badge>
+          </ListItemButton>
+        </ListItem>
+
+        <ListItem>
+          <ListItemButton sx={{ opacity: 0.5 }}>
+            <ListItemAvatar>
+              <Avatar
+                sx={{
+                  filter: `grayscale(1)`,
+                }}
+                alt={'Arjun Patel'}
+                src="https://mui.com/static/images/avatar/4.jpg"
+              />
+            </ListItemAvatar>
+
+            <ListItemText secondary="James Lin" sx={{ color: blueGrey[300] }} />
+
+            <Typography variant={'caption'}>2 hours ago</Typography>
+          </ListItemButton>
+        </ListItem>
+      </List>
+    </>
+  );
+};
