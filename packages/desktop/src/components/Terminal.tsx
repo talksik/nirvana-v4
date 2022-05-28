@@ -265,6 +265,7 @@ const Navbar = () => {
   );
 };
 
+const searchShortcut = 'Shift';
 const SecondNavbar = () => {
   const { enqueueSnackbar } = useSnackbar();
 
@@ -275,7 +276,7 @@ const SecondNavbar = () => {
     if (searchRef?.current) searchRef.current.focus();
   }, []);
 
-  useKey('Tab', onSearch);
+  useKey('Shift', onSearch);
 
   return (
     <Stack
@@ -296,7 +297,7 @@ const SecondNavbar = () => {
 
       <Input placeholder={'Find or start a conversation'} inputRef={searchRef} />
 
-      <KeyboardShortcutLabel label="tab" />
+      <KeyboardShortcutLabel label="Shift" />
     </Stack>
   );
 };
