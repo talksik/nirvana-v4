@@ -3,6 +3,7 @@ import React, { useCallback, useRef } from 'react';
 import { Container } from '@mui/system';
 import {
   Avatar,
+  Badge,
   Box,
   Divider,
   Grid,
@@ -144,6 +145,48 @@ export default function Terminal() {
           </List>
 
           <Divider />
+
+          <List
+            sx={{
+              pt: 2,
+            }}
+            subheader={
+              <ListSubheader>
+                <FiActivity />
+                <Typography variant="subtitle2"> Inbox</Typography>
+              </ListSubheader>
+            }
+          >
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar
+                  sx={{ height: 25, width: 25 }}
+                  alt={'Arjun Patel'}
+                  src="https://mui.com/static/images/avatar/5.jpg"
+                />
+              </ListItemAvatar>
+
+              <ListItemText primary="James Lin" />
+
+              <Badge color="primary" badgeContent=" " variant="dot"></Badge>
+            </ListItem>
+
+            <Divider variant="inset" component="li" />
+
+            <ListItem>
+              <ListItemAvatar>
+                <Avatar
+                  sx={{ height: 25, width: 25 }}
+                  alt={'Arjun Patel'}
+                  src="https://mui.com/static/images/avatar/4.jpg"
+                />
+              </ListItemAvatar>
+
+              <ListItemText primary="Janet" />
+
+              <Typography variant={'caption'}>2 hours ago</Typography>
+            </ListItem>
+          </List>
         </Stack>
       </Grid>
       <Grid item xs={8} sx={{ backgroundColor: 'white', padding: 1 }}>

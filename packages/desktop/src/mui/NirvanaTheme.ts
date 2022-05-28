@@ -1,10 +1,14 @@
 import { createTheme } from '@mui/material';
+import { blueGrey } from '@mui/material/colors';
 
 export const NirvanaTheme = createTheme({
   typography: {
     fontFamily: ['IBM Plex Sans', 'sans-serif'].join(','),
     overline: {
       letterSpacing: 2,
+    },
+    caption: {
+      color: blueGrey[200],
     },
   },
   palette: {
