@@ -13,6 +13,7 @@ import {
   Stack,
   Typography,
   Input,
+  CircularProgress,
 } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
 import { FiActivity, FiInbox, FiSearch } from 'react-icons/fi';
@@ -34,6 +35,7 @@ const Conversations = () => {
   }, [enqueueSnackbar, searchRef]);
 
   const [searchUsersResults, setSearchUsersResults] = useState<User[]>([]);
+  const [searching, setSearching] = useState<boolean>(false);
 
   useKey('Shift', onSearchFocus);
 
@@ -46,10 +48,20 @@ const Conversations = () => {
         setSearchUsersResults(results);
 
         console.warn(results);
+
+        setSearching(false);
       }
     },
     500,
     [searchVal, enqueueSnackbar, setSearchUsersResults],
+  );
+
+  const handleChangeSearchInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearching(true);
+      setSearchVal(e.target.value);
+    },
+    [setSearching, setSearchVal],
   );
 
   return (
@@ -71,11 +83,13 @@ const Conversations = () => {
         <FiSearch style={{ color: blueGrey[500] }} />
 
         <Input
-          onChange={(e) => setSearchVal(e.target.value)}
+          onChange={handleChangeSearchInput}
           value={searchVal}
           placeholder={'Find or start a conversation'}
           inputRef={searchRef}
         />
+
+        {searching && <CircularProgress size={20} />}
 
         <KeyboardShortcutLabel label="Shift" />
       </Stack>
@@ -121,9 +135,7 @@ const Conversations = () => {
           </ListItemButton>
         </ListItem>
       </List>
-
       <Divider />
-
       <List
         sx={{
           pt: 2,
