@@ -1,7 +1,6 @@
 import { Button, Container } from '@mui/material';
 import React, { useContext, useEffect, useCallback } from 'react';
 import Realm from 'realm';
-import realmApp from '../realm/connect';
 
 import { FcGoogle } from 'react-icons/fc';
 import { blueGrey } from '@mui/material/colors';
@@ -17,7 +16,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     window.electronAPI.once(Channels.GOOGLE_AUTH_TOKENS, async (tokens: any) => {
       console.log('got tokens', tokens);
-      //   const credentials = Realm.Credentials.google(tokens);
+
       //   realmApp.logIn(credentials).then((user) => alert(`Logged in with id: ${user.id}`));
     });
   }, []);

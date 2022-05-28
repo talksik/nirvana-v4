@@ -8,6 +8,9 @@ import { SnackbarProvider } from 'notistack';
 import { NirvanaTheme } from './mui/NirvanaTheme';
 import { ElectronProvider } from './providers/ElectronProvider';
 import { AuthProvider } from './providers/AuthProvider';
+import realmApp from './realm/connect';
+
+realmApp;
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(

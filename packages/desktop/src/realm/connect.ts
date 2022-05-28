@@ -2,10 +2,16 @@ import Realm from 'realm';
 
 const id = 'nirvana-ouauo';
 
-const config = {
-  id,
-};
+const realmApp = new Realm.App({ id });
 
-const realmApp = new Realm.App(config);
+async function run() {
+  const config = {
+    id,
+  };
+}
+
+run().catch((err) => {
+  console.error('Failed to open realm:', err);
+});
 
 export default realmApp;

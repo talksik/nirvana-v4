@@ -27,7 +27,6 @@ const createWindow = (): void => {
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true,
-      contextIsolation: false,
     },
     // titleBarStyle: "hiddenInset",
     frame: false,
