@@ -9,6 +9,8 @@ import { NirvanaTheme } from './mui/NirvanaTheme';
 import { ElectronProvider } from './providers/ElectronProvider';
 import { AuthProvider } from './providers/AuthProvider';
 
+import './firebase/connect';
+
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <React.StrictMode>

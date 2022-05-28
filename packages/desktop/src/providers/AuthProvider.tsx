@@ -17,9 +17,11 @@ import {
   getAuth,
 } from 'firebase/auth';
 import { useSnackbar } from 'notistack';
+import { createUser } from '../firebase/firestore';
 
 interface IAuthContext {
   user?: FirebaseUser;
+  logout?: () => void;
 }
 
 const AuthContext = React.createContext<IAuthContext>({});
@@ -31,19 +33,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<FirebaseUser>(null);
 
   useEffect(() => {
-    const authListener = onAuthStateChanged(firebaseAuth, (user) => {
+    const authListener = onAuthStateChanged(firebaseAuth, async (user) => {
       console.log('auth changed!!!!', user);
 
       if (user) {
+        // TODO: add user to user's table with new sign in infp
+        await createUser(user);
+
         setCurrentUser(user);
       } else {
         // User is signed out
         // ...
+        enqueueSnackbar('Logged out');
+        setCurrentUser(null);
       }
     });
 
     return () => authListener();
-  }, [setCurrentUser]);
+  }, [setCurrentUser, enqueueSnackbar]);
 
   useEffect(() => {
     const tokenListener = window.electronAPI.once(
@@ -86,8 +93,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => tokenListener();
   }, [enqueueSnackbar]);
 
+  const logout = useCallback(() => firebaseAuth.signOut(), []);
+
   return (
-    <AuthContext.Provider value={{ user: currentUser }}>
+    <AuthContext.Provider value={{ user: currentUser, logout }}>
       {currentUser ? <>{children}</> : <Login />}
     </AuthContext.Provider>
   );
