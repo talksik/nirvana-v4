@@ -128,11 +128,8 @@ export const getUserById = async (userId: string): Promise<User | undefined> => 
 };
 
 // get the conversations for particular user
-export const useGetConversationsQueryLIVE = () => {
-  const { user } = useAuth();
-
-  return query(db.conversations, where('membersList', 'array-contains', user.uid));
-};
+export const getConversationsQueryLIVE = (userId: string) =>
+  query(db.conversations, where('membersList', 'array-contains', userId));
 
 /**
  *

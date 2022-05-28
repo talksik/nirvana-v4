@@ -22,27 +22,40 @@ import {
   ListItemText,
   ListSubheader,
   Typography,
+  AvatarGroup,
 } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
-import { FiMoreVertical, FiPlay, FiSun } from 'react-icons/fi';
+import {
+  FiMoreVertical,
+  FiPlay,
+  FiSun,
+  FiActivity,
+  FiInbox,
+  FiSearch,
+  FiUsers,
+  FiCoffee,
+  FiCircle,
+} from 'react-icons/fi';
 import { useSnackbar } from 'notistack';
 
 import Navbar from './Navbar';
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
-import { createOneOnOneConversation, useGetConversationsQueryLIVE } from '../firebase/firestore';
+import {
+  createOneOnOneConversation,
+  getConversationsQueryLIVE,
+  getUserById,
+  searchUsers,
+} from '../firebase/firestore';
 import { Link, AudioClip, Image } from '@nirvana/core/src/models/content.model';
 import { useImmer } from 'use-immer';
 import { User } from '@nirvana/core/src/models/user.model';
 import { onSnapshot } from 'firebase/firestore';
 
-import { FiActivity, FiInbox, FiSearch, FiUsers, FiCoffee } from 'react-icons/fi';
 import NirvanaAvatar from './NirvanaAvatar';
 import { useDebounce, useKey } from 'react-use';
 
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
-import { searchUsers } from '../firebase/firestore';
-
 type ConversationMap = {
   [conversationId: string]: Conversation;
 };
@@ -57,18 +70,16 @@ type ConversationContentMap = {
 
 interface ITerminalContext {
   conversationMap: ConversationMap;
-  userMap: UserMap;
-  contentMap: ConversationContentMap;
 
   selectedConversation?: Conversation;
 
   handleQuickDial?: (otherUserId: string) => void;
+
+  getUser?: (userId: string) => Promise<User | undefined>;
 }
 
 const TerminalContext = React.createContext<ITerminalContext>({
   conversationMap: {},
-  userMap: {},
-  contentMap: {},
 });
 
 // TODOS
@@ -89,6 +100,7 @@ const TerminalContext = React.createContext<ITerminalContext>({
 
 // sort based on the different data sources: conversations, audio clips, etc.
 
+// todo: extract each use effect to custom hook and will be clean
 export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useAuth();
@@ -99,18 +111,22 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const [userMap, updateUserMap] = useImmer<UserMap>({});
   const [contentMap, updatecontentMap] = useImmer<ConversationContentMap>({});
 
-  const queryLiveConversations = useGetConversationsQueryLIVE();
-
+  // fetch conversations
   useEffect(() => {
-    const unsub = onSnapshot(queryLiveConversations, (querySnapshot) => {
-      const convos = querySnapshot.docs.map((doc) => doc.data());
+    const unsub = onSnapshot(getConversationsQueryLIVE(user.uid), (querySnapshot) => {
+      const conversations = querySnapshot.docs.map((doc) => doc.data());
+
+      updateConversationMap((draft) => {
+        conversations.forEach((convo) => {
+          draft[convo.id] = convo;
+        });
+      });
 
       enqueueSnackbar('got conversations...logging', { variant: 'success' });
-      console.log(convos);
     });
 
     return () => unsub();
-  }, [queryLiveConversations]);
+  }, [user, enqueueSnackbar, updateConversationMap]);
 
   // cache of selected conversation
   const selectedConversation: Conversation | undefined = useMemo(() => {
@@ -170,6 +186,21 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     [conversationMap, enqueueSnackbar, user],
   );
 
+  const getUser = useCallback(
+    async (userId: string) => {
+      if (userMap[userId]) return userMap[userId];
+
+      const fetchedUser = await getUserById(userId);
+
+      updateUserMap((draft) => {
+        draft[userId] = fetchedUser;
+      });
+
+      return fetchedUser;
+    },
+    [userMap, updateUserMap],
+  );
+
   const searchRef = useRef<HTMLInputElement>(null);
   const [searchVal, setSearchVal] = useState<string>('');
 
@@ -210,7 +241,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
   return (
     <TerminalContext.Provider
-      value={{ selectedConversation, conversationMap, contentMap, userMap, handleQuickDial }}
+      value={{ selectedConversation, conversationMap, getUser, handleQuickDial }}
     >
       <Grid container spacing={0}>
         <Grid
@@ -233,207 +264,203 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
           >
             <Navbar />
 
-            <>
+            <Stack direction={'row'} alignItems="center" justifyContent={'flex-start'} spacing={1}>
               <Stack
                 direction={'row'}
-                alignItems="center"
-                justifyContent={'flex-start'}
+                sx={{
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'row',
+                  bgcolor: blueGrey[100],
+                  borderRadius: 1,
+                  px: 1,
+                  py: 0.5,
+                  flex: 1,
+                }}
+                alignItems={'center'}
                 spacing={1}
               >
-                <Stack
-                  direction={'row'}
-                  sx={{
-                    position: 'relative',
-                    display: 'flex',
-                    flexDirection: 'row',
-                    bgcolor: blueGrey[100],
-                    borderRadius: 1,
-                    px: 1,
-                    py: 0.5,
-                    flex: 1,
-                  }}
-                  alignItems={'center'}
-                  spacing={1}
-                >
-                  <FiSearch style={{ color: blueGrey[500] }} />
+                <FiSearch style={{ color: blueGrey[500] }} />
 
-                  <Input
-                    onChange={handleChangeSearchInput}
-                    value={searchVal}
-                    placeholder={'Find or start a conversation'}
-                    inputRef={searchRef}
-                  />
+                <Input
+                  onChange={handleChangeSearchInput}
+                  value={searchVal}
+                  placeholder={'Find or start a conversation'}
+                  inputRef={searchRef}
+                />
 
-                  {searching && <CircularProgress size={20} />}
+                {searching && <CircularProgress size={20} />}
 
-                  <KeyboardShortcutLabel label="Shift" />
-                </Stack>
-
-                <Tooltip title={'Group conversation'}>
-                  <IconButton color="secondary" size={'small'}>
-                    <FiUsers />
-                  </IconButton>
-                </Tooltip>
+                <KeyboardShortcutLabel label="Shift" />
               </Stack>
 
-              {searchVal ? <ListPeople people={searchUsersResults} /> : <ListConversations />}
-            </>
-          </Stack>
-        </Grid>
-
-        <Grid
-          item
-          xs={8}
-          sx={{ backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}
-        >
-          <Stack
-            direction={'row'}
-            sx={{
-              py: 2,
-              px: 2,
-              borderBottom: '1px solid',
-              borderBottomColor: blueGrey[100],
-              WebkitAppRegion: 'drag',
-              cursor: 'pointer',
-            }}
-            alignItems={'center'}
-            justifyContent={'flex-start'}
-          >
-            <Stack spacing={2} direction={'row'} alignItems={'center'}>
-              <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
-
-              <Typography color={'GrayText'} variant="overline">
-                {'Viet Phan'}
-              </Typography>
+              <Tooltip title={'Group conversation'}>
+                <IconButton color="secondary" size={'small'}>
+                  <FiUsers />
+                </IconButton>
+              </Tooltip>
             </Stack>
 
-            <Box sx={{ ml: 'auto' }}>
-              <IconButton size="small">
-                <FiMoreVertical />
-              </IconButton>
-            </Box>
+            {searchVal ? <ListPeople people={searchUsersResults} /> : <ListConversations />}
           </Stack>
-
-          <Container maxWidth={false} sx={{ position: 'relative', flex: 1 }}>
-            <Container maxWidth="xs">
-              <Stack
-                justifyContent={'flex-start'}
-                alignItems={'center'}
-                sx={{
-                  pt: 2,
-                }}
-              >
-                <Typography variant="caption">yesterday</Typography>
-
-                <Paper elevation={1} sx={{ p: 1, width: '100%' }}>
-                  <Stack direction={'row'} alignItems="center">
-                    <Stack spacing={2} direction={'row'} alignItems={'center'}>
-                      <Avatar
-                        alt={'Arjun Patel'}
-                        src="https://mui.com/static/images/avatar/2.jpg"
-                      />
-
-                      <Typography color={'GrayText'} variant="overline">
-                        {'Viet Phan'}
-                      </Typography>
-                    </Stack>
-
-                    <Box
-                      sx={{
-                        ml: 'auto',
-                        color: 'GrayText',
-                      }}
-                    >
-                      <FiPlay />
-                    </Box>
-                  </Stack>
-                </Paper>
-              </Stack>
-
-              <Stack
-                justifyContent={'flex-start'}
-                alignItems={'center'}
-                sx={{
-                  pt: 2,
-                }}
-              >
-                <Typography variant="caption">today</Typography>
-
-                <Paper elevation={8} sx={{ p: 1, width: '100%' }}>
-                  <Stack direction={'row'} alignItems="center">
-                    <Stack spacing={2} direction={'row'} alignItems={'center'}>
-                      <Avatar
-                        alt={'Arjun Patel'}
-                        src="https://mui.com/static/images/avatar/2.jpg"
-                      />
-
-                      <Typography color={'GrayText'} variant="overline">
-                        {'Viet Phan'}
-                      </Typography>
-                    </Stack>
-
-                    <Box
-                      sx={{
-                        ml: 'auto',
-                        color: 'GrayText',
-                      }}
-                    >
-                      <FiPlay />
-                    </Box>
-                  </Stack>
-                </Paper>
-              </Stack>
-
-              <Stack
-                justifyContent={'flex-start'}
-                alignItems={'center'}
-                sx={{
-                  pt: 2,
-                }}
-              >
-                <Typography variant="caption">right now</Typography>
-
-                <Paper elevation={24} sx={{ p: 1, width: '100%' }}>
-                  <Stack direction={'row'} alignItems="center">
-                    <Stack spacing={2} direction={'row'} alignItems={'center'}>
-                      <Avatar
-                        alt={'Arjun Patel'}
-                        src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
-                      />
-
-                      <Typography color={'GrayText'} variant="overline">
-                        {'Arjun Patel'}
-                      </Typography>
-                    </Stack>
-
-                    <Box
-                      sx={{
-                        ml: 'auto',
-                        color: 'GrayText',
-                      }}
-                    >
-                      <FiPlay />
-                    </Box>
-                  </Stack>
-                </Paper>
-              </Stack>
-            </Container>
-
-            <Box
-              sx={{
-                position: 'absolute',
-                zIndex: 10,
-                bottom: 0,
-                right: 0,
-                padding: 3,
-              }}
-            >
-              <Fab color="primary" aria-label="add" size="medium">
-                <FiSun />
-              </Fab>
-            </Box>
-          </Container>
         </Grid>
+
+        {/* selected conversation details */}
+        {selectedConversation && (
+          <Grid
+            item
+            xs={8}
+            sx={{ backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}
+          >
+            <Stack
+              direction={'row'}
+              sx={{
+                py: 2,
+                px: 2,
+                borderBottom: '1px solid',
+                borderBottomColor: blueGrey[100],
+                WebkitAppRegion: 'drag',
+                cursor: 'pointer',
+              }}
+              alignItems={'center'}
+              justifyContent={'flex-start'}
+            >
+              <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
+
+                <Typography color={'GrayText'} variant="overline">
+                  {'Viet Phan'}
+                </Typography>
+              </Stack>
+
+              <Box sx={{ ml: 'auto' }}>
+                <IconButton size="small">
+                  <FiMoreVertical />
+                </IconButton>
+              </Box>
+            </Stack>
+
+            <Container maxWidth={false} sx={{ position: 'relative', flex: 1 }}>
+              <Container maxWidth="xs">
+                <Stack
+                  justifyContent={'flex-start'}
+                  alignItems={'center'}
+                  sx={{
+                    pt: 2,
+                  }}
+                >
+                  <Typography variant="caption">yesterday</Typography>
+
+                  <Paper elevation={1} sx={{ p: 1, width: '100%' }}>
+                    <Stack direction={'row'} alignItems="center">
+                      <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                        <Avatar
+                          alt={'Arjun Patel'}
+                          src="https://mui.com/static/images/avatar/2.jpg"
+                        />
+
+                        <Typography color={'GrayText'} variant="overline">
+                          {'Viet Phan'}
+                        </Typography>
+                      </Stack>
+
+                      <Box
+                        sx={{
+                          ml: 'auto',
+                          color: 'GrayText',
+                        }}
+                      >
+                        <FiPlay />
+                      </Box>
+                    </Stack>
+                  </Paper>
+                </Stack>
+
+                <Stack
+                  justifyContent={'flex-start'}
+                  alignItems={'center'}
+                  sx={{
+                    pt: 2,
+                  }}
+                >
+                  <Typography variant="caption">today</Typography>
+
+                  <Paper elevation={8} sx={{ p: 1, width: '100%' }}>
+                    <Stack direction={'row'} alignItems="center">
+                      <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                        <Avatar
+                          alt={'Arjun Patel'}
+                          src="https://mui.com/static/images/avatar/2.jpg"
+                        />
+
+                        <Typography color={'GrayText'} variant="overline">
+                          {'Viet Phan'}
+                        </Typography>
+                      </Stack>
+
+                      <Box
+                        sx={{
+                          ml: 'auto',
+                          color: 'GrayText',
+                        }}
+                      >
+                        <FiPlay />
+                      </Box>
+                    </Stack>
+                  </Paper>
+                </Stack>
+
+                <Stack
+                  justifyContent={'flex-start'}
+                  alignItems={'center'}
+                  sx={{
+                    pt: 2,
+                  }}
+                >
+                  <Typography variant="caption">right now</Typography>
+
+                  <Paper elevation={24} sx={{ p: 1, width: '100%' }}>
+                    <Stack direction={'row'} alignItems="center">
+                      <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                        <Avatar
+                          alt={'Arjun Patel'}
+                          src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
+                        />
+
+                        <Typography color={'GrayText'} variant="overline">
+                          {'Arjun Patel'}
+                        </Typography>
+                      </Stack>
+
+                      <Box
+                        sx={{
+                          ml: 'auto',
+                          color: 'GrayText',
+                        }}
+                      >
+                        <FiPlay />
+                      </Box>
+                    </Stack>
+                  </Paper>
+                </Stack>
+              </Container>
+
+              <Box
+                sx={{
+                  position: 'absolute',
+                  zIndex: 10,
+                  bottom: 0,
+                  right: 0,
+                  padding: 3,
+                }}
+              >
+                <Fab color="primary" aria-label="add" size="medium">
+                  <FiSun />
+                </Fab>
+              </Box>
+            </Container>
+          </Grid>
+        )}
       </Grid>
 
       {children}
@@ -508,6 +535,13 @@ function ListConversations() {
           </ListSubheader>
         }
       >
+        {Object.values(conversationMap).map((currentConversation) => (
+          <ConversationRow
+            key={`${currentConversation.id}-priorityConvoList`}
+            conversation={currentConversation}
+          />
+        ))}
+
         <ListItem>
           <ListItemButton selected={true}>
             <ListItemAvatar>
@@ -536,7 +570,9 @@ function ListConversations() {
           </ListItemButton>
         </ListItem>
       </List>
+
       <Divider />
+
       <List
         sx={{
           pt: 2,
@@ -585,5 +621,56 @@ function ListConversations() {
         </ListItem>
       </List>
     </>
+  );
+}
+
+function ConversationRow({ conversation }: { conversation: Conversation }) {
+  const { user } = useAuth();
+  const { getUser } = useTerminal();
+
+  const [conversationUsers, setConversationUsers] = useImmer<User[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const userPromises = conversation.membersList
+        .filter((memberId) => memberId !== user.uid)
+        .map(async (memberId) => await getUser(memberId));
+
+      const userSettled = await Promise.all(userPromises);
+
+      setConversationUsers(userSettled);
+    })();
+
+    return;
+  }, [conversation.membersList, getUser, user, setConversationUsers]);
+
+  return (
+    <ListItem key={`${conversation.id}-priorityConvoList`}>
+      <ListItemButton selected={true}>
+        <Box sx={{ color: 'GrayText' }}>
+          <FiCircle />
+        </Box>
+
+        <ListItemText
+          secondary={conversationUsers
+            .map((conversationUser) => conversationUser.displayName)
+            .join(', ')}
+        />
+
+        <ListItemAvatar>
+          <AvatarGroup variant={'rounded'}>
+            {conversationUsers.map((conversationUser, index) => (
+              <Avatar
+                key={`${conversation.id}-${conversationUser.uid}-convoIcon`}
+                alt={conversationUser?.displayName}
+                src={conversationUser?.photoUrl}
+              />
+            ))}
+          </AvatarGroup>
+        </ListItemAvatar>
+
+        {/* <Typography variant={'caption'}>20 sec</Typography> */}
+      </ListItemButton>
+    </ListItem>
   );
 }
