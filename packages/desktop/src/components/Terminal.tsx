@@ -179,6 +179,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         enqueueSnackbar('started conversation!', { variant: 'success' });
 
         setSelectedConversationId(newConversationId);
+
+        setSearchVal('');
       } catch (error) {
         enqueueSnackbar('Something went wrong, please try again', { variant: 'error' });
       }
@@ -541,34 +543,6 @@ function ListConversations() {
             conversation={currentConversation}
           />
         ))}
-
-        <ListItem>
-          <ListItemButton selected={true}>
-            <ListItemAvatar>
-              <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
-            </ListItemAvatar>
-
-            <ListItemText primary="Viet" />
-
-            <Typography variant={'caption'}>20 sec</Typography>
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem>
-          <ListItemButton>
-            <ListItemAvatar>
-              <NirvanaAvatar
-                avatars={[
-                  { alt: 'Arjun Patel', src: 'https://mui.com/static/images/avatar/3.jpg' },
-                ]}
-              />
-            </ListItemAvatar>
-
-            <ListItemText primary="Agnes" />
-
-            <Typography variant={'caption'}>34 min ago</Typography>
-          </ListItemButton>
-        </ListItem>
       </List>
 
       <Divider />
@@ -583,50 +557,14 @@ function ListConversations() {
             <Typography variant="subtitle2"> Inbox</Typography>
           </ListSubheader>
         }
-      >
-        <ListItem>
-          <ListItemButton sx={{ opacity: 0.5 }}>
-            <ListItemAvatar>
-              <Avatar
-                sx={{
-                  filter: `grayscale(1)`,
-                }}
-                alt={'Arjun Patel'}
-                src="https://mui.com/static/images/avatar/5.jpg"
-              />
-            </ListItemAvatar>
-
-            <ListItemText secondary="Jeremy Leon" sx={{ color: blueGrey[300] }} />
-
-            <Badge color="primary" badgeContent=" " variant="dot"></Badge>
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem>
-          <ListItemButton sx={{ opacity: 0.5 }}>
-            <ListItemAvatar>
-              <Avatar
-                sx={{
-                  filter: `grayscale(1)`,
-                }}
-                alt={'Arjun Patel'}
-                src="https://mui.com/static/images/avatar/4.jpg"
-              />
-            </ListItemAvatar>
-
-            <ListItemText secondary="James Lin" sx={{ color: blueGrey[300] }} />
-
-            <Typography variant={'caption'}>2 hours ago</Typography>
-          </ListItemButton>
-        </ListItem>
-      </List>
+      ></List>
     </>
   );
 }
 
 function ConversationRow({ conversation }: { conversation: Conversation }) {
   const { user } = useAuth();
-  const { getUser } = useTerminal();
+  const { getUser, selectedConversation } = useTerminal();
 
   const [conversationUsers, setConversationUsers] = useImmer<User[]>([]);
 
@@ -646,16 +584,14 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
 
   return (
     <ListItem key={`${conversation.id}-priorityConvoList`}>
-      <ListItemButton selected={true}>
-        <Box sx={{ color: 'GrayText' }}>
+      <ListItemButton selected={selectedConversation?.id === conversation.id}>
+        <Box sx={{ color: 'GrayText', fontSize: 10, mr: 2 }}>
           <FiCircle />
         </Box>
 
-        <ListItemText
-          secondary={conversationUsers
-            .map((conversationUser) => conversationUser.displayName)
-            .join(', ')}
-        />
+        <Typography sx={{ mr: 'auto', color: 'GrayText' }} variant={'overline'}>
+          {conversationUsers.map((conversationUser) => conversationUser.displayName).join(', ')}
+        </Typography>
 
         <ListItemAvatar>
           <AvatarGroup variant={'rounded'}>
