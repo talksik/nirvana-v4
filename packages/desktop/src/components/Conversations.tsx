@@ -17,9 +17,10 @@ import {
   IconButton,
   Box,
   Tooltip,
+  ListItemSecondaryAction,
 } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
-import { FiActivity, FiInbox, FiSearch, FiUsers } from 'react-icons/fi';
+import { FiActivity, FiInbox, FiSearch, FiUsers, FiCoffee } from 'react-icons/fi';
 import NirvanaAvatar from './NirvanaAvatar';
 import { useDebounce, useKey } from 'react-use';
 import { useSnackbar } from 'notistack';
@@ -114,6 +115,8 @@ const Conversations = () => {
 };
 
 function ListPeople({ people }: { people: User[] }) {
+  const { handleQuickDial } = useTerminal();
+
   return (
     <List
       sx={{
@@ -133,14 +136,16 @@ function ListPeople({ people }: { people: User[] }) {
 
       {people.map((person) => (
         <ListItem key={`${person.uid}-searchUsers`}>
-          <ListItemButton selected={true}>
+          <ListItemButton onClick={() => handleQuickDial(person.uid)}>
             <ListItemAvatar>
               <Avatar alt={person.displayName} src={person.photoUrl} />
             </ListItemAvatar>
 
             <ListItemText primary={person.displayName} />
 
-            <Typography variant={'caption'}>20 sec</Typography>
+            <ListItemSecondaryAction sx={{ color: 'GrayText' }}>
+              <FiCoffee />
+            </ListItemSecondaryAction>
           </ListItemButton>
         </ListItem>
       ))}

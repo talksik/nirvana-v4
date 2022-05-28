@@ -1,10 +1,13 @@
 import { FieldValue, serverTimestamp, Timestamp } from 'firebase/firestore';
 export default class Conversation {
-  constructor(
-    public id: string,
-    public name: string,
+  id: string;
 
+  constructor(
     public createdByUserId: string,
+
+    public membersList: string[],
+
+    public name?: string,
 
     public lastUpdatedDate = Timestamp.now(),
 
@@ -14,11 +17,11 @@ export default class Conversation {
   ) {}
 }
 
-export class Member {
-  constructor(
-    public id: string,
-    public userId: string,
-    public role: 'admin' | 'regular',
-    public joinedDate = Timestamp.now(),
-  ) {}
-}
+// export class Member {
+//   constructor(
+//     public id: string,
+//     public userId: string,
+//     public role: 'admin' | 'regular',
+//     public joinedDate = Timestamp.now(),
+//   ) {}
+// }

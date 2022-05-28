@@ -1,6 +1,7 @@
 import { Timestamp } from 'firebase/firestore';
 
 export class User {
+  id: string;
   lastUpdatedDate?: Timestamp;
 
   constructor(

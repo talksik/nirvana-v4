@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useCallback, useMemo } from 'react';
 
 import { Container } from '@mui/system';
 import { Avatar, Box, Fab, Grid, IconButton, Paper, Stack, Typography } from '@mui/material';
@@ -9,10 +9,14 @@ import { useSnackbar } from 'notistack';
 import Conversations from './Conversations';
 import Navbar from './Navbar';
 import Conversation from '@nirvana/core/src/models/conversation.model';
+import useAuth from '../providers/AuthProvider';
+import { createOneOnOneConversation } from '../firebase/firestore';
 
 interface ITerminalContext {
   conversations: Conversation[];
-  selectedConversation?: string;
+  selectedConversation?: Conversation;
+
+  handleQuickDial?: (otherUserId: string) => void;
 }
 
 const TerminalContext = React.createContext<ITerminalContext>({
@@ -37,11 +41,56 @@ const TerminalContext = React.createContext<ITerminalContext>({
 
 export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const { enqueueSnackbar } = useSnackbar();
+  const { user } = useAuth();
+
+  const [selectedConversationId, setSelectedConversationId] = useState<string>(undefined);
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
 
+  // cache of selected conversation
+
+  const selectedConversation: Conversation | undefined = useMemo(() => {
+    // get conversation if not here
+    // select if we do have it
+
+    return undefined;
+  }, [selectedConversationId]);
+
+  // handle create or open existing conversation
+  // not 100% consistent to the second, but still works...don't need atomicity
+  const handleQuickDial = useCallback(
+    async (otherUserId: string) => {
+      try {
+        // check all current conversations which should be live listened to
+
+        // if there is already a convo with exactly me and him, then select it
+        const findExistingConversation = conversations.find((convo) => {
+          if (
+            convo.membersInRoom?.length === 2 &&
+            convo.membersInRoom.includes(user.uid) &&
+            convo.membersInRoom.includes(otherUserId)
+          ) {
+            return true;
+          }
+          return false;
+        });
+
+        if (findExistingConversation) {
+          setSelectedConversationId(findExistingConversation.id);
+          return;
+        }
+
+        // create conversation in this case
+        await createOneOnOneConversation(otherUserId, user.uid);
+      } catch (error) {
+        enqueueSnackbar('Something went wrong, please try again', { variant: 'error' });
+      }
+    },
+    [conversations, enqueueSnackbar, user],
+  );
+
   return (
-    <TerminalContext.Provider value={{ selectedConversation: undefined, conversations }}>
+    <TerminalContext.Provider value={{ selectedConversation, conversations, handleQuickDial }}>
       <Grid container spacing={0}>
         <Grid
           item

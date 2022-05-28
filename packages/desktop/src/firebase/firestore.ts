@@ -21,24 +21,38 @@ import {
 import { User as FirebaseUser } from 'firebase/auth';
 import { firestoreDb } from './connect';
 import { User } from '@nirvana/core/src/models/user.model';
+import Conversation from '@nirvana/core/src/models/conversation.model';
+
+interface Document {
+  id: string;
+}
 
 /**
  * UTILS
  */
-const converter = <T>() => ({
+const converter = <T extends Document>() => ({
   toFirestore: (data: T) => ({ ...data }),
-  fromFirestore: (snap: QueryDocumentSnapshot) => snap.data() as T,
+  fromFirestore: (snap: QueryDocumentSnapshot) => {
+    const data = snap.data() as T;
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    data.id = snap.id;
+
+    return data;
+  },
 });
 
-const docPoint = <T>(collectionPath: string) =>
+const docPoint = <T extends Document>(collectionPath: string) =>
   firestoreDb && doc(getFirestore(), collectionPath).withConverter(converter<T>());
 
-const collectionPoint = <T>(collectionPath: string) =>
+const collectionPoint = <T extends Document>(collectionPath: string) =>
   firestoreDb && collection(getFirestore(), collectionPath).withConverter(converter<T>());
 
 const db = {
   users: collectionPoint<User>(`users`),
   user: (userId: string) => docPoint<User>(`users/${userId}`),
+  conversations: collectionPoint<Conversation>(`conversations`),
+  conversation: (conversationId: string) => docPoint<User>(`conversations/${conversationId}`),
 };
 
 // enum COLLECTION {
@@ -96,4 +110,41 @@ export const searchUsers = async (searchQuery: string): Promise<User[] | undefin
 
     throw new Error('Error');
   }
+};
+
+export const createOneOnOneConversation = async (
+  otherUserId: string,
+  myUserId: string,
+): Promise<string> => {
+  const conversation = new Conversation(myUserId, [myUserId, otherUserId]);
+
+  try {
+    await setDoc(
+      db.conversations(user.uid),
+      new User(
+        user.uid,
+        user.providerId,
+        user.email,
+        user.displayName,
+        user.photoURL,
+        user.phoneNumber,
+      ),
+      { merge: true },
+    );
+  } catch (e) {
+    console.error('Error creating user: ', e);
+
+    throw new Error('Error creating user');
+  }
+  return '';
+
+  // const docRef =
+  // const docSnap = await getDoc(docRef);
+
+  // if (docSnap.exists()) {
+  //   console.log("Document data:", docSnap.data());
+  // } else {
+  //   // doc.data() will be undefined in this case
+  //   console.log("No such document!");
+  // }
 };
