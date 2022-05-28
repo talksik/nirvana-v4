@@ -626,14 +626,15 @@ function MainPanel() {
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: 5,
+            gap: 2,
+            flex: 1,
             background: blueGrey[50],
           }}
         >
           <Typography variant="h6">{`Hi ${
             user.displayName?.split(' ')[0] ?? 'there'
           }!`}</Typography>
-          <Typography variant="subtitle2">Take a deep breath in.</Typography>
+          <Typography variant="caption">Take a deep breath in.</Typography>
         </Container>
       )}
     </Grid>
