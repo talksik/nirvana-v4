@@ -72,6 +72,7 @@ interface ITerminalContext {
   conversationMap: ConversationMap;
 
   selectedConversation?: Conversation;
+  selectConversation?: (conversationId: string) => void;
 
   handleQuickDial?: (otherUserId: string) => void;
 
@@ -116,6 +117,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     const unsub = onSnapshot(getConversationsQueryLIVE(user.uid), (querySnapshot) => {
       const conversations = querySnapshot.docs.map((doc) => doc.data());
 
+      console.log('got new or updated conversations', conversations);
       updateConversationMap((draft) => {
         conversations.forEach((convo) => {
           draft[convo.id] = convo;
@@ -241,9 +243,20 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     [setSearching, setSearchVal],
   );
 
+  const selectConversation = useCallback(
+    (conversationId: string) => setSelectedConversationId(conversationId),
+    [setSelectedConversationId],
+  );
+
   return (
     <TerminalContext.Provider
-      value={{ selectedConversation, conversationMap, getUser, handleQuickDial }}
+      value={{
+        selectedConversation,
+        conversationMap,
+        getUser,
+        handleQuickDial,
+        selectConversation,
+      }}
     >
       <Grid container spacing={0}>
         <Grid
@@ -409,7 +422,7 @@ function ListConversations() {
 
 function ConversationRow({ conversation }: { conversation: Conversation }) {
   const { user } = useAuth();
-  const { getUser, selectedConversation } = useTerminal();
+  const { getUser, selectedConversation, selectConversation } = useTerminal();
 
   const [conversationUsers, setConversationUsers] = useImmer<User[]>([]);
 
@@ -429,7 +442,10 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
 
   return (
     <ListItem key={`${conversation.id}-priorityConvoList`}>
-      <ListItemButton selected={selectedConversation?.id === conversation.id}>
+      <ListItemButton
+        selected={selectedConversation?.id === conversation.id}
+        onClick={() => selectConversation(conversation.id)}
+      >
         <Box sx={{ color: 'GrayText', fontSize: 10, mr: 2 }}>
           <FiCircle />
         </Box>
