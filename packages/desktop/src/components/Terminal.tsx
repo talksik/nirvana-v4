@@ -118,6 +118,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
       const conversations = querySnapshot.docs.map((doc) => doc.data());
 
       console.log('got new or updated conversations', conversations);
+
       updateConversationMap((draft) => {
         conversations.forEach((convo) => {
           draft[convo.id] = convo;
@@ -287,6 +288,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
                   display: 'flex',
                   flexDirection: 'row',
                   bgcolor: blueGrey[100],
+                  opacity: '50%',
                   borderRadius: 1,
                   px: 1,
                   py: 0.5,
