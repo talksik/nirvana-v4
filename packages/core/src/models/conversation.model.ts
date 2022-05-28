@@ -6,9 +6,11 @@ export default class Conversation {
 
     public createdByUserId: string,
 
-    public lastUpdatedDate,
+    public lastUpdatedDate = Timestamp.now(),
 
-    public createdDate,
+    public createdDate = Timestamp.now(),
+
+    public membersInRoom: string[] = [],
   ) {}
 }
 
@@ -17,6 +19,6 @@ export class Member {
     public id: string,
     public userId: string,
     public role: 'admin' | 'regular',
-    public joinedDate = serverTimestamp(),
+    public joinedDate = Timestamp.now(),
   ) {}
 }
