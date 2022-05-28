@@ -3,20 +3,13 @@ import React, { useCallback, useRef } from 'react';
 import { Container } from '@mui/system';
 import {
   Avatar,
-  Badge,
   Box,
   Divider,
   Fab,
   Grid,
   IconButton,
   Input,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemButton,
   ListItemIcon,
-  ListItemText,
-  ListSubheader,
   Menu,
   Paper,
   Stack,
@@ -26,9 +19,7 @@ import {
 import NirvanaLogo from './NirvanaLogo';
 import { blueGrey } from '@mui/material/colors';
 import {
-  FiActivity,
   FiHeadphones,
-  FiInbox,
   FiLogOut,
   FiMonitor,
   FiMoreVertical,
@@ -40,10 +31,11 @@ import {
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { useSnackbar } from 'notistack';
 import { useKey } from 'react-use';
-import NirvanaAvatar from './NirvanaAvatar';
 
 import MenuItem from '@mui/material/MenuItem';
 import useAuth from '../providers/AuthProvider';
+import Conversations from './Conversations';
+import Navbar from './Navbar';
 
 export default function Terminal() {
   const { enqueueSnackbar } = useSnackbar();
@@ -223,125 +215,6 @@ export default function Terminal() {
   );
 }
 
-const Navbar = () => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const { logout, user } = useAuth();
-
-  return (
-    <>
-      <Stack
-        direction="row"
-        justifyContent={'flex-start'}
-        alignItems={'center'}
-        sx={{
-          WebkitAppRegion: 'drag',
-          cursor: 'pointer',
-          pb: 1,
-        }}
-      >
-        <NirvanaLogo />
-
-        <Stack
-          spacing={1}
-          direction={'row'}
-          alignItems={'center'}
-          sx={{
-            ml: 'auto',
-            mr: 1,
-            color: 'GrayText',
-          }}
-        >
-          <Tooltip title="Sound configuration">
-            <IconButton color="inherit" size="small">
-              <FiHeadphones />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Desktop modes">
-            <IconButton color="inherit" size="small">
-              <FiMonitor />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Flow state">
-            <IconButton color="inherit" size="small">
-              <FiWind />
-            </IconButton>
-          </Tooltip>
-        </Stack>
-        <IconButton
-          onClick={handleClick}
-          size="small"
-          sx={{ ml: 2, borderRadius: 1 }}
-          aria-controls={open ? 'account-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-        >
-          <Avatar alt={user.displayName} src={user.photoURL} />
-        </IconButton>
-      </Stack>
-
-      <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            mt: 1.5,
-            '& .MuiAvatar-root': {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
-            },
-            '&:before': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: 'background.paper',
-              transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      >
-        <MenuItem>
-          <Avatar /> Profile
-        </MenuItem>
-        <MenuItem>
-          <Avatar /> My account
-        </MenuItem>
-
-        <Divider />
-
-        <MenuItem onClick={logout}>
-          <ListItemIcon>
-            <FiLogOut />
-          </ListItemIcon>
-          <Typography color="warning">Logout</Typography>
-        </MenuItem>
-      </Menu>
-    </>
-  );
-};
-
 const searchShortcut = 'Shift';
 const SecondNavbar = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -376,101 +249,5 @@ const SecondNavbar = () => {
 
       <KeyboardShortcutLabel label="Shift" />
     </Stack>
-  );
-};
-
-const Conversations = () => {
-  return (
-    <>
-      <List
-        sx={{
-          pt: 2,
-        }}
-        subheader={
-          <ListSubheader>
-            <FiActivity />
-            <Typography variant="subtitle2"> Priority</Typography>
-          </ListSubheader>
-        }
-      >
-        <ListItem>
-          <ListItemButton selected={true}>
-            <ListItemAvatar>
-              <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
-            </ListItemAvatar>
-
-            <ListItemText primary="Viet" />
-
-            <Typography variant={'caption'}>20 sec</Typography>
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem>
-          <ListItemButton>
-            <ListItemAvatar>
-              <NirvanaAvatar
-                avatars={[
-                  { alt: 'Arjun Patel', src: 'https://mui.com/static/images/avatar/3.jpg' },
-                ]}
-              />
-            </ListItemAvatar>
-
-            <ListItemText primary="Agnes" />
-
-            <Typography variant={'caption'}>34 min ago</Typography>
-          </ListItemButton>
-        </ListItem>
-      </List>
-
-      <Divider />
-
-      <List
-        sx={{
-          pt: 2,
-        }}
-        subheader={
-          <ListSubheader>
-            <FiInbox />
-            <Typography variant="subtitle2"> Inbox</Typography>
-          </ListSubheader>
-        }
-      >
-        <ListItem>
-          <ListItemButton sx={{ opacity: 0.5 }}>
-            <ListItemAvatar>
-              <Avatar
-                sx={{
-                  filter: `grayscale(1)`,
-                }}
-                alt={'Arjun Patel'}
-                src="https://mui.com/static/images/avatar/5.jpg"
-              />
-            </ListItemAvatar>
-
-            <ListItemText secondary="Jeremy Leon" sx={{ color: blueGrey[300] }} />
-
-            <Badge color="primary" badgeContent=" " variant="dot"></Badge>
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem>
-          <ListItemButton sx={{ opacity: 0.5 }}>
-            <ListItemAvatar>
-              <Avatar
-                sx={{
-                  filter: `grayscale(1)`,
-                }}
-                alt={'Arjun Patel'}
-                src="https://mui.com/static/images/avatar/4.jpg"
-              />
-            </ListItemAvatar>
-
-            <ListItemText secondary="James Lin" sx={{ color: blueGrey[300] }} />
-
-            <Typography variant={'caption'}>2 hours ago</Typography>
-          </ListItemButton>
-        </ListItem>
-      </List>
-    </>
   );
 };
