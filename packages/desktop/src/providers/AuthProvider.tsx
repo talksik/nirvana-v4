@@ -7,6 +7,7 @@ import { blueGrey } from '@mui/material/colors';
 import Channels from '../electron/constants';
 import { firebaseAuth } from '../firebase/connect';
 import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import { useSnackbar } from 'notistack';
 
 const provider = new GoogleAuthProvider();
 
@@ -19,6 +20,8 @@ interface IAuthContext {
 const AuthContext = React.createContext<IAuthContext>({});
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const { enqueueSnackbar } = useSnackbar();
+
   useEffect(() => {
     window.electronAPI.once(Channels.GOOGLE_AUTH_TOKENS, async (tokens: Credentials) => {
       console.log('got tokens', tokens);
@@ -35,6 +38,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           // The signed-in user info.
           const user = result.user;
           console.log(user);
+
+          enqueueSnackbar('Signed in! All set!', { variant: 'success' });
         })
         .catch((error) => {
           // Handle Errors here.
@@ -45,6 +50,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           // The credential that was used.
           const credential = GoogleAuthProvider.credentialFromError(error);
           // ...
+
+          enqueueSnackbar('Something went wrong', { variant: 'error' });
         });
     });
   }, []);
