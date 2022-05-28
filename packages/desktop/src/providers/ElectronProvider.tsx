@@ -63,11 +63,7 @@ export function ElectronProvider({ children }: { children: React.ReactNode }) {
       setIsWindowFocused(false);
 
       // TODO: testing mode... uncomment both instructions below
-      // setDesktopMode('overlayOnly');
-
-      // todo: make sure that if I am toggle broadcasted into a line, then don't deselect selected line
-      // the overlay should be showing selected line if I am broadcasting toggled into it as well as of course all other toggle tuned ones
-      // setSelectedLineId(null);
+      setDesktopMode('overlayOnly');
     });
 
     window.electronAPI.on(Channels.ON_WINDOW_FOCUS, () => {
