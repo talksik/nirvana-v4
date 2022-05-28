@@ -20,6 +20,7 @@ import { useSnackbar } from 'notistack';
 import { createUser } from '../firebase/firestore';
 
 import CircularProgress from '@mui/material/CircularProgress';
+import NirvanaLogo from '../components/NirvanaLogo';
 
 interface IAuthContext {
   user?: FirebaseUser;
@@ -137,12 +138,14 @@ const Login = () => {
       maxWidth={false}
       sx={{
         display: 'flex',
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
+        gap: 5,
         background: blueGrey[50],
       }}
     >
+      <NirvanaLogo />
       <Button onClick={handleLogin} variant="outlined" color="primary" startIcon={<FcGoogle />}>
         Continue with Google
       </Button>
