@@ -14,9 +14,12 @@ import {
   Typography,
   Input,
   CircularProgress,
+  IconButton,
+  Box,
+  Tooltip,
 } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
-import { FiActivity, FiInbox, FiSearch } from 'react-icons/fi';
+import { FiActivity, FiInbox, FiSearch, FiUsers } from 'react-icons/fi';
 import NirvanaAvatar from './NirvanaAvatar';
 import { useDebounce, useKey } from 'react-use';
 import { useSnackbar } from 'notistack';
@@ -68,32 +71,41 @@ const Conversations = () => {
 
   return (
     <>
-      <Stack
-        direction={'row'}
-        sx={{
-          position: 'relative',
-          display: 'flex',
-          flexDirection: 'row',
-          bgcolor: blueGrey[100],
-          borderRadius: 1,
-          px: 1,
-          py: 0.5,
-        }}
-        alignItems={'center'}
-        spacing={1}
-      >
-        <FiSearch style={{ color: blueGrey[500] }} />
+      <Stack direction={'row'} alignItems="center" justifyContent={'flex-start'} spacing={1}>
+        <Stack
+          direction={'row'}
+          sx={{
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'row',
+            bgcolor: blueGrey[100],
+            borderRadius: 1,
+            px: 1,
+            py: 0.5,
+            flex: 1,
+          }}
+          alignItems={'center'}
+          spacing={1}
+        >
+          <FiSearch style={{ color: blueGrey[500] }} />
 
-        <Input
-          onChange={handleChangeSearchInput}
-          value={searchVal}
-          placeholder={'Find or start a conversation'}
-          inputRef={searchRef}
-        />
+          <Input
+            onChange={handleChangeSearchInput}
+            value={searchVal}
+            placeholder={'Find or start a conversation'}
+            inputRef={searchRef}
+          />
 
-        {searching && <CircularProgress size={20} />}
+          {searching && <CircularProgress size={20} />}
 
-        <KeyboardShortcutLabel label="Shift" />
+          <KeyboardShortcutLabel label="Shift" />
+        </Stack>
+
+        <Tooltip title={'Group conversation'}>
+          <IconButton color="secondary" size={'small'}>
+            <FiUsers />
+          </IconButton>
+        </Tooltip>
       </Stack>
 
       {searchVal ? <ListPeople people={searchUsersResults} /> : <ListConversations />}
@@ -114,8 +126,8 @@ function ListPeople({ people }: { people: User[] }) {
       }
     >
       {people.length === 0 && (
-        <Typography variant="caption">
-          Sorry please try someone else or invite them to nirvana.
+        <Typography align="center" variant="caption">
+          {`Can't find someone? Invite them!`}
         </Typography>
       )}
 
@@ -140,7 +152,11 @@ function ListConversations() {
   const { conversations } = useTerminal();
 
   if (conversations.length === 0) {
-    return <Typography variant="caption">Find someone by email or name to get started!</Typography>;
+    return (
+      <Typography align="center" variant="caption">
+        Look for someone by name or email to start a conversation!
+      </Typography>
+    );
   }
 
   return (
