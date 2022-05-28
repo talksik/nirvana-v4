@@ -18,12 +18,14 @@ import {
   ListSubheader,
   Paper,
   Stack,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import NirvanaLogo from './NirvanaLogo';
 import { blueGrey } from '@mui/material/colors';
 import {
   FiActivity,
+  FiHeadphones,
   FiInbox,
   FiMonitor,
   FiMoreVertical,
@@ -76,6 +78,7 @@ export default function Terminal() {
             sx={{
               WebkitAppRegion: 'drag',
               cursor: 'pointer',
+              pb: 1,
             }}
           >
             <NirvanaLogo />
@@ -90,12 +93,21 @@ export default function Terminal() {
                 color: 'GrayText',
               }}
             >
-              <IconButton color="inherit" size="small">
-                <FiMonitor />
-              </IconButton>
-              <IconButton color="inherit" size="small">
-                <FiWind />
-              </IconButton>
+              <Tooltip title="Sound configuration">
+                <IconButton color="inherit" size="small">
+                  <FiHeadphones />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Desktop modes">
+                <IconButton color="inherit" size="small">
+                  <FiMonitor />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Flow state">
+                <IconButton color="inherit" size="small">
+                  <FiWind />
+                </IconButton>
+              </Tooltip>
             </Stack>
             <Avatar
               alt={'Arjun Patel'}
