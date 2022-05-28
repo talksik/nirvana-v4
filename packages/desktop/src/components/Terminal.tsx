@@ -1,39 +1,11 @@
-import React, { useCallback, useRef, useContext } from 'react';
+import React, { useContext } from 'react';
 
 import { Container } from '@mui/system';
-import {
-  Avatar,
-  Box,
-  Divider,
-  Fab,
-  Grid,
-  IconButton,
-  Input,
-  ListItemIcon,
-  Menu,
-  Paper,
-  Stack,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import NirvanaLogo from './NirvanaLogo';
+import { Avatar, Box, Fab, Grid, IconButton, Paper, Stack, Typography } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
-import {
-  FiHeadphones,
-  FiLogOut,
-  FiMonitor,
-  FiMoreVertical,
-  FiPlay,
-  FiSearch,
-  FiSun,
-  FiWind,
-} from 'react-icons/fi';
-import KeyboardShortcutLabel from './KeyboardShortcutLabel';
+import { FiMoreVertical, FiPlay, FiSun } from 'react-icons/fi';
 import { useSnackbar } from 'notistack';
-import { useKey } from 'react-use';
 
-import MenuItem from '@mui/material/MenuItem';
-import useAuth from '../providers/AuthProvider';
 import Conversations from './Conversations';
 import Navbar from './Navbar';
 
