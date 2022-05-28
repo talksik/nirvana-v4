@@ -23,6 +23,7 @@ import { User as FirebaseUser } from 'firebase/auth';
 import { firestoreDb } from './connect';
 import { User } from '@nirvana/core/src/models/user.model';
 import Conversation from '@nirvana/core/src/models/conversation.model';
+import useAuth from '../providers/AuthProvider';
 
 interface Document {
   id: string;
@@ -127,17 +128,27 @@ export const getUserById = async (userId: string): Promise<User | undefined> => 
 };
 
 // get the conversations for particular user
-export const getConversationsQueryLIVE = async (userId: string) =>
-  query(db.conversations, where('membersList', 'array-contains', userId));
+export const useGetConversationsQueryLIVE = () => {
+  const { user } = useAuth();
 
+  return query(db.conversations, where('membersList', 'array-contains', user.uid));
+};
+
+/**
+ *
+ * @param otherUserId
+ * @param myUserId
+ * @returns id of new conversation
+ */
 export const createOneOnOneConversation = async (
   otherUserId: string,
   myUserId: string,
-): Promise<void> => {
+): Promise<string | undefined> => {
   const newConversation = new Conversation(myUserId, [myUserId, otherUserId]);
 
   try {
-    await addDoc(db.conversations, newConversation);
+    const newDoc = await addDoc(db.conversations, newConversation);
+    return newDoc.id;
   } catch (e) {
     console.error('Error creating user: ', e);
 

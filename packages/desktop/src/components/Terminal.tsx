@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback, useMemo } from 'react';
+import React, { useContext, useState, useCallback, useMemo, useEffect } from 'react';
 
 import { Container } from '@mui/system';
 import { Avatar, Box, Fab, Grid, IconButton, Paper, Stack, Typography } from '@mui/material';
@@ -10,10 +10,15 @@ import Conversations from './Conversations';
 import Navbar from './Navbar';
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
-import { createOneOnOneConversation } from '../firebase/firestore';
+import {
+  createOneOnOneConversation,
+  getConversationsQueryLIVE,
+  useGetConversationsQueryLIVE,
+} from '../firebase/firestore';
 import { Link, AudioClip, Image } from '@nirvana/core/src/models/content.model';
 import { useImmer } from 'use-immer';
 import { User } from '@nirvana/core/src/models/user.model';
+import { onSnapshot } from 'firebase/firestore';
 
 type ConversationMap = {
   [conversationId: string]: Conversation;
@@ -71,6 +76,19 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const [userMap, updateUserMap] = useImmer<UserMap>({});
   const [contentMap, updatecontentMap] = useImmer<ConversationContentMap>({});
 
+  const queryLiveConversations = useGetConversationsQueryLIVE();
+
+  useEffect(() => {
+    const unsub = onSnapshot(queryLiveConversations, (querySnapshot) => {
+      const convos = querySnapshot.docs.map((doc) => doc.data());
+
+      enqueueSnackbar('got conversations...logging', { variant: 'success' });
+      console.log(convos);
+    });
+
+    return () => unsub();
+  }, [queryLiveConversations]);
+
   // cache of selected conversation
   const selectedConversation: Conversation | undefined = useMemo(() => {
     // select if we do have it
@@ -100,9 +118,9 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         // if there is already a convo with exactly me and him, then select it
         const findExistingConversation = Object.values(conversationMap).find((convo) => {
           if (
-            convo.membersInRoom?.length === 2 &&
-            convo.membersInRoom.includes(user.uid) &&
-            convo.membersInRoom.includes(otherUserId)
+            convo.membersList?.length === 2 &&
+            convo.membersList.includes(user.uid) &&
+            convo.membersList.includes(otherUserId)
           ) {
             return true;
           }
@@ -115,7 +133,11 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         }
 
         // create conversation in this case
-        await createOneOnOneConversation(otherUserId, user.uid);
+        const newConversationId = await createOneOnOneConversation(otherUserId, user.uid);
+
+        enqueueSnackbar('started conversation!', { variant: 'success' });
+
+        setSelectedConversationId(newConversationId);
       } catch (error) {
         enqueueSnackbar('Something went wrong, please try again', { variant: 'error' });
       }
