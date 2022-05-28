@@ -16,8 +16,9 @@ export default function KeyboardShortcutLabel({ label }: { label: string }) {
         px: 1,
         py: 0.25,
         border: `1px solid`,
-        borderColor: blueGrey[50],
-        color: blueGrey[50],
+        bgcolor: blueGrey[50],
+        boxShadow: 1,
+        color: blueGrey[300],
       }}
     >
       <Typography variant="caption">{label}</Typography>
