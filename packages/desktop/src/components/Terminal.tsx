@@ -43,7 +43,12 @@ export default function Terminal() {
       <Grid
         item
         xs={4}
-        sx={{ backgroundColor: blueGrey[50], boxShadow: 3, borderRight: `1px solid ${blueGrey}` }}
+        sx={{
+          zIndex: 2,
+          backgroundColor: blueGrey[50],
+          boxShadow: 3,
+          borderRight: `1px solid ${blueGrey}`,
+        }}
       >
         <Stack
           direction={'column'}
