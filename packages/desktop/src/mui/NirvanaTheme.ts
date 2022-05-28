@@ -45,9 +45,14 @@ export const NirvanaTheme = createTheme({
     },
 
     MuiListItem: {
+      styleOverrides: {
+        root: {
+          padding: '2px 0 2px 0 !important',
+        },
+      },
       defaultProps: {
         disableGutters: true,
-        disablePadding: true,
+        disablePadding: false,
       },
     },
 
@@ -63,7 +68,8 @@ export const NirvanaTheme = createTheme({
       styleOverrides: {
         root: {
           '&.MuiListSubheader-root': {
-            lineHeight: 1,
+            lineHeight: 2,
+            paddingBottom: '4px',
             display: 'flex',
             gap: '0.7em',
             alignItems: 'center',
