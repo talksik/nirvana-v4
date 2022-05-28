@@ -56,7 +56,7 @@ export function ElectronProvider({ children }: { children: React.ReactNode }) {
 
   // handle window focus and unfocus
   useEffect(() => {
-    window.electronAPI.on(Channels.ON_WINDOW_BLUR, () => {
+    const blurListener = window.electronAPI.on(Channels.ON_WINDOW_BLUR, () => {
       console.log(
         'window blurring now, should be always on top and then ill tell main process to change dimensions',
       );
@@ -66,10 +66,14 @@ export function ElectronProvider({ children }: { children: React.ReactNode }) {
       //   setDesktopMode('overlayOnly');
     });
 
-    window.electronAPI.on(Channels.ON_WINDOW_FOCUS, () => {
+    const focusListener = window.electronAPI.on(Channels.ON_WINDOW_FOCUS, () => {
       console.log('window focusing now');
       setIsWindowFocused(true);
     });
+
+    return () => {
+      //   window.removeEventListener(Channels.ON_WINDOW_BLUR, blurListener);
+    };
   }, [setDesktopMode, setIsWindowFocused]);
 
   const handleToggleDesktopMode = useCallback(() => {
