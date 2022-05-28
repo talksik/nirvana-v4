@@ -7,7 +7,7 @@ const myApiOauth = new ElectronGoogleOAuth2(
   '423533244953-banligobgbof8hg89i6cr1l7u0p7c2pk.apps.googleusercontent.com',
   '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',
   [''],
-  { successRedirectURL: 'http://localhost:3000/auth/success' },
+  { successRedirectURL: 'https://usenirvana.com' },
 );
 
 // FRESH GOOGLE LOGIN
