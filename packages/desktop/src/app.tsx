@@ -2,7 +2,7 @@ import { ThemeProvider } from '@mui/material';
 import * as React from 'react';
 
 import ReactDOM from 'react-dom/client';
-import Terminal from './components/Terminal';
+import { TerminalProvider } from './components/Terminal';
 
 import { SnackbarProvider } from 'notistack';
 import { NirvanaTheme } from './mui/NirvanaTheme';
@@ -20,7 +20,7 @@ root.render(
         <ErrorParent>
           <ElectronProvider>
             <AuthProvider>
-              <Terminal />
+              <TerminalProvider />
             </AuthProvider>
           </ElectronProvider>
         </ErrorParent>
