@@ -10,11 +10,7 @@ import Conversations from './Conversations';
 import Navbar from './Navbar';
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
-import {
-  createOneOnOneConversation,
-  getConversationsQueryLIVE,
-  useGetConversationsQueryLIVE,
-} from '../firebase/firestore';
+import { createOneOnOneConversation, useGetConversationsQueryLIVE } from '../firebase/firestore';
 import { Link, AudioClip, Image } from '@nirvana/core/src/models/content.model';
 import { useImmer } from 'use-immer';
 import { User } from '@nirvana/core/src/models/user.model';
@@ -91,6 +87,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
   // cache of selected conversation
   const selectedConversation: Conversation | undefined = useMemo(() => {
+    if (!selectedConversationId) return undefined;
+
     // select if we do have it
 
     const conversation = conversationMap[selectedConversationId];

@@ -154,9 +154,9 @@ function ListPeople({ people }: { people: User[] }) {
 }
 
 function ListConversations() {
-  const { conversations } = useTerminal();
+  const { conversationMap } = useTerminal();
 
-  if (conversations.length === 0) {
+  if (Object.keys(conversationMap).length === 0) {
     return (
       <Typography align="center" variant="caption">
         Look for someone by name or email to start a conversation!

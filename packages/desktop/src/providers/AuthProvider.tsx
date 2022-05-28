@@ -17,13 +17,15 @@ import {
   getAuth,
 } from 'firebase/auth';
 import { useSnackbar } from 'notistack';
-import { createUser } from '../firebase/firestore';
+import { createUser, getUserById } from '../firebase/firestore';
 
 import CircularProgress from '@mui/material/CircularProgress';
 import NirvanaLogo from '../components/NirvanaLogo';
+import { User } from '@nirvana/core/src/models/user.model';
 
 interface IAuthContext {
   user?: FirebaseUser;
+  nirvanaUser?: User;
   logout?: () => void;
 }
 
@@ -34,6 +36,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // since auth.currentuser isn't updating
   const [currentUser, setCurrentUser] = useState<FirebaseUser>(null);
+  const [currentNirvanaUser, setCurrentNirvanaUser] = useState<User>(null);
 
   // are we still waiting on initial auth to trigger?
   const [authIniting, setAuthIniting] = useState<boolean>(true);
@@ -43,8 +46,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log('auth changed!!!!', user);
 
       if (user) {
-        // TODO: add user to user's table with new sign in infp
-        await createUser(user);
+        // getting from our data store of users
+        let fetchedNirvanaUser = await getUserById(user.uid);
+
+        if (!fetchedNirvanaUser) {
+          await createUser(user);
+
+          fetchedNirvanaUser = await getUserById(user.uid);
+        }
+
+        setCurrentNirvanaUser(fetchedNirvanaUser);
 
         setCurrentUser(user);
       } else {
@@ -58,7 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     });
 
     return () => authListener();
-  }, [setCurrentUser, enqueueSnackbar, setAuthIniting]);
+  }, [setCurrentUser, enqueueSnackbar, setAuthIniting, setCurrentNirvanaUser]);
 
   useEffect(() => {
     const tokenListener = window.electronAPI.once(
@@ -124,8 +135,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
   return (
-    <AuthContext.Provider value={{ user: currentUser, logout }}>
-      {currentUser ? <>{children}</> : <Login />}
+    <AuthContext.Provider value={{ user: currentUser, logout, nirvanaUser: currentNirvanaUser }}>
+      {currentUser && currentNirvanaUser ? <>{children}</> : <Login />}
     </AuthContext.Provider>
   );
 };
