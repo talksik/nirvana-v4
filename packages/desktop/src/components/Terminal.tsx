@@ -60,7 +60,15 @@ export default function Terminal() {
             height: 'inherit',
           }}
         >
-          <Stack direction="row" justifyContent={'flex-start'} alignItems={'center'}>
+          <Stack
+            direction="row"
+            justifyContent={'flex-start'}
+            alignItems={'center'}
+            sx={{
+              '-webkit-app-region': 'drag',
+              cursor: 'pointer',
+            }}
+          >
             <NirvanaLogo />
 
             <Typography variant="overline" sx={{ m: 'auto', fontWeight: 'semi-bold' }}>
@@ -189,7 +197,14 @@ export default function Terminal() {
       <Grid item xs={8} sx={{ backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
         <Stack
           direction={'row'}
-          sx={{ py: 2, px: 2, borderBottom: '1px solid', borderBottomColor: blueGrey[100] }}
+          sx={{
+            py: 2,
+            px: 2,
+            borderBottom: '1px solid',
+            borderBottomColor: blueGrey[100],
+            '-webkit-app-region': 'drag',
+            cursor: 'pointer',
+          }}
           alignItems={'center'}
           justifyContent={'flex-start'}
         >
