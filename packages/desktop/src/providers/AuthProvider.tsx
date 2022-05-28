@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Realm from 'realm';
 
 interface IAuthContext {
@@ -7,6 +7,12 @@ interface IAuthContext {
 
 const AuthContext = React.createContext<IAuthContext>({});
 
-const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
 };
+
+const useAuth = () => {
+  return useContext(AuthContext);
+};
+
+export default useAuth;

@@ -1,4 +1,4 @@
-import { Button, createTheme, ThemeProvider, Typography } from '@mui/material';
+import { ThemeProvider } from '@mui/material';
 import * as React from 'react';
 
 import ReactDOM from 'react-dom/client';
@@ -7,6 +7,7 @@ import Terminal from './components/Terminal';
 import { SnackbarProvider } from 'notistack';
 import { NirvanaTheme } from './mui/NirvanaTheme';
 import { ElectronProvider } from './providers/ElectronProvider';
+import { AuthProvider } from './providers/AuthProvider';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
@@ -14,7 +15,9 @@ root.render(
     <ThemeProvider theme={NirvanaTheme}>
       <SnackbarProvider maxSnack={3}>
         <ElectronProvider>
-          <Terminal />
+          <AuthProvider>
+            <Terminal />
+          </AuthProvider>
         </ElectronProvider>
       </SnackbarProvider>
     </ThemeProvider>
