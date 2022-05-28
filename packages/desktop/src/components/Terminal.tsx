@@ -403,6 +403,7 @@ function ListConversations({ lookingForSomeone = false }: { lookingForSomeone: b
         }
       >
         {lookingForSomeone && <CircularProgress />}
+
         {Object.values(conversationMap).map((currentConversation) => (
           <ConversationRow
             key={`${currentConversation.id}-priorityConvoList`}
@@ -469,6 +470,7 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
                 key={`${conversation.id}-${conversationUser.uid}-convoIcon`}
                 alt={conversationUser?.displayName}
                 src={conversationUser?.photoUrl}
+                sx={{ width: 30, height: 30 }}
               />
             ))}
           </AvatarGroup>
