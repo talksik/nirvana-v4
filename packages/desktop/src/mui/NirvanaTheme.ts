@@ -1,0 +1,43 @@
+import { createTheme } from '@mui/material';
+
+export const NirvanaTheme = createTheme({
+  typography: {
+    fontFamily: ['IBM Plex Sans', 'sans-serif'].join(','),
+    overline: {
+      letterSpacing: 2,
+    },
+  },
+  palette: {
+    primary: {
+      main: '#438E86',
+    },
+    secondary: {
+      main: '#FFB6B6',
+    },
+  },
+  components: {
+    // Name of the component
+    MuiButtonBase: {
+      defaultProps: {
+        // The props to change the default for.
+        disableRipple: true, // No more ripple, on the whole application 💣!
+      },
+    },
+    MuiAvatar: {
+      defaultProps: {
+        variant: 'rounded',
+      },
+    },
+    MuiInput: {
+      styleOverrides: {
+        root: {
+          fontSize: '0.9em',
+        },
+      },
+      defaultProps: {
+        disableUnderline: true,
+        fullWidth: true,
+      },
+    },
+  },
+});

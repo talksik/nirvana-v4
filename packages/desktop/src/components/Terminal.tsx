@@ -1,21 +1,11 @@
 import React from 'react';
 
 import { Container } from '@mui/system';
-import {
-  alpha,
-  Avatar,
-  Box,
-  Button,
-  Grid,
-  InputBase,
-  Paper,
-  Stack,
-  styled,
-  Typography,
-} from '@mui/material';
+import { Avatar, Box, Grid, Input, Stack, Typography } from '@mui/material';
 import NirvanaLogo from './NirvanaLogo';
-import { grey } from '@mui/material/colors';
+import { blueGrey } from '@mui/material/colors';
 import { FiSearch } from 'react-icons/fi';
+import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 
 export default function Terminal() {
   return (
@@ -23,7 +13,7 @@ export default function Terminal() {
       <Grid
         item
         xs={4}
-        sx={{ backgroundColor: '#f3f4f6', boxShadow: 3, borderRight: '1px solid lightgray' }}
+        sx={{ backgroundColor: blueGrey[50], boxShadow: 3, borderRight: `1px solid ${blueGrey}` }}
       >
         <Stack
           direction={'column'}
@@ -47,17 +37,26 @@ export default function Terminal() {
             />
           </Stack>
 
-          <Box
+          <Stack
+            direction={'row'}
             sx={{
               position: 'relative',
               display: 'flex',
               flexDirection: 'row',
-              backgroundColor: grey,
-              padding: 1,
+              bgcolor: blueGrey[100],
+              borderRadius: 1,
+              px: 1,
+              py: 0.5,
             }}
+            alignItems={'center'}
+            spacing={1}
           >
-            <FiSearch />
-          </Box>
+            <FiSearch style={{ color: blueGrey[500] }} />
+
+            <Input placeholder={'Find or start a conversation'} />
+
+            <KeyboardShortcutLabel label="tab" />
+          </Stack>
         </Stack>
       </Grid>
       <Grid item xs={8} sx={{ backgroundColor: 'white', padding: 1 }}>
