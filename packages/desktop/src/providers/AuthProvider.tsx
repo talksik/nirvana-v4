@@ -117,6 +117,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         <CircularProgress />
       </Container>
     );
+
   return (
     <AuthContext.Provider value={{ user: currentUser, logout }}>
       {currentUser ? <>{children}</> : <Login />}

@@ -14,6 +14,7 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemButton,
+  ListItemIcon,
   ListItemText,
   ListSubheader,
   Menu,
@@ -28,6 +29,7 @@ import {
   FiActivity,
   FiHeadphones,
   FiInbox,
+  FiLogOut,
   FiMonitor,
   FiMoreVertical,
   FiPlay,
@@ -41,6 +43,7 @@ import { useKey } from 'react-use';
 import NirvanaAvatar from './NirvanaAvatar';
 
 import MenuItem from '@mui/material/MenuItem';
+import useAuth from '../providers/AuthProvider';
 
 export default function Terminal() {
   const { enqueueSnackbar } = useSnackbar();
@@ -230,6 +233,8 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
+  const { logout } = useAuth();
+
   return (
     <>
       <Stack
@@ -273,7 +278,7 @@ const Navbar = () => {
         <IconButton
           onClick={handleClick}
           size="small"
-          sx={{ ml: 2 }}
+          sx={{ ml: 2, borderRadius: 1 }}
           aria-controls={open ? 'account-menu' : undefined}
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
@@ -286,22 +291,55 @@ const Navbar = () => {
       </Stack>
 
       <Menu
-        id="account-menu"
         anchorEl={anchorEl}
+        id="account-menu"
         open={open}
         onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
+        onClick={handleClose}
+        PaperProps={{
+          elevation: 0,
+          sx: {
+            overflow: 'visible',
+            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            mt: 1.5,
+            '& .MuiAvatar-root': {
+              width: 32,
+              height: 32,
+              ml: -0.5,
+              mr: 1,
+            },
+            '&:before': {
+              content: '""',
+              display: 'block',
+              position: 'absolute',
+              top: 0,
+              right: 14,
+              width: 10,
+              height: 10,
+              bgcolor: 'background.paper',
+              transform: 'translateY(-50%) rotate(45deg)',
+              zIndex: 0,
+            },
+          },
         }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <MenuItem>
+          <Avatar /> Profile
+        </MenuItem>
+        <MenuItem>
+          <Avatar /> My account
+        </MenuItem>
+
+        <Divider />
+
+        <MenuItem onClick={logout}>
+          <ListItemIcon>
+            <FiLogOut />
+          </ListItemIcon>
+          <Typography color="warning">Logout</Typography>
+        </MenuItem>
       </Menu>
     </>
   );
