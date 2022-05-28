@@ -16,12 +16,13 @@ import {
   ListItemButton,
   ListItemText,
   ListSubheader,
+  Paper,
   Stack,
   Typography,
 } from '@mui/material';
 import NirvanaLogo from './NirvanaLogo';
 import { blueGrey } from '@mui/material/colors';
-import { FiActivity, FiInbox, FiMoreVertical, FiSearch, FiSun } from 'react-icons/fi';
+import { FiActivity, FiInbox, FiMoreVertical, FiPlay, FiSearch, FiSun } from 'react-icons/fi';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { useSnackbar } from 'notistack';
 import { useKey } from 'react-use';
@@ -208,9 +209,101 @@ export default function Terminal() {
         </Stack>
 
         <Container maxWidth={false} sx={{ position: 'relative', flex: 1 }}>
-          <Container maxWidth="sm">
-            <Stack justifyContent={'flex-start'} alignItems={'center'}>
+          <Container maxWidth="xs">
+            <Stack
+              justifyContent={'flex-start'}
+              alignItems={'center'}
+              sx={{
+                pt: 2,
+              }}
+            >
               <Typography variant="caption">yesterday</Typography>
+
+              <Paper elevation={1} sx={{ p: 1, width: '100%' }}>
+                <Stack direction={'row'} alignItems="center">
+                  <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                    <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
+
+                    <Typography color={'GrayText'} variant="overline">
+                      {'Viet Phan'}
+                    </Typography>
+                  </Stack>
+
+                  <Box
+                    sx={{
+                      ml: 'auto',
+                      color: 'GrayText',
+                    }}
+                  >
+                    <FiPlay />
+                  </Box>
+                </Stack>
+              </Paper>
+            </Stack>
+
+            <Stack
+              justifyContent={'flex-start'}
+              alignItems={'center'}
+              sx={{
+                pt: 2,
+              }}
+            >
+              <Typography variant="caption">today</Typography>
+
+              <Paper elevation={8} sx={{ p: 1, width: '100%' }}>
+                <Stack direction={'row'} alignItems="center">
+                  <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                    <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
+
+                    <Typography color={'GrayText'} variant="overline">
+                      {'Viet Phan'}
+                    </Typography>
+                  </Stack>
+
+                  <Box
+                    sx={{
+                      ml: 'auto',
+                      color: 'GrayText',
+                    }}
+                  >
+                    <FiPlay />
+                  </Box>
+                </Stack>
+              </Paper>
+            </Stack>
+
+            <Stack
+              justifyContent={'flex-start'}
+              alignItems={'center'}
+              sx={{
+                pt: 2,
+              }}
+            >
+              <Typography variant="caption">right now</Typography>
+
+              <Paper elevation={24} sx={{ p: 1, width: '100%' }}>
+                <Stack direction={'row'} alignItems="center">
+                  <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                    <Avatar
+                      alt={'Arjun Patel'}
+                      src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
+                    />
+
+                    <Typography color={'GrayText'} variant="overline">
+                      {'Arjun Patel'}
+                    </Typography>
+                  </Stack>
+
+                  <Box
+                    sx={{
+                      ml: 'auto',
+                      color: 'GrayText',
+                    }}
+                  >
+                    <FiPlay />
+                  </Box>
+                </Stack>
+              </Paper>
             </Stack>
           </Container>
 
