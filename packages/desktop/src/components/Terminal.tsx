@@ -6,8 +6,11 @@ import NirvanaLogo from './NirvanaLogo';
 import { blueGrey } from '@mui/material/colors';
 import { FiSearch } from 'react-icons/fi';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
+import { useSnackbar } from 'notistack';
 
 export default function Terminal() {
+  const { enqueueSnackbar } = useSnackbar();
+
   return (
     <Grid container spacing={0}>
       <Grid
