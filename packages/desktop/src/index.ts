@@ -43,54 +43,55 @@ const createWindow = (): void => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow);
-
-app.whenReady().then(() => {
-  // dynamically changing the window bounds
-  ipcMain.on(Channels.RESIZE_WINDOW, (event, req: DimensionChangeRequest) => {
-    if (req.setAlwaysOnTop) {
-      browserWindow.setAlwaysOnTop(true, 'floating');
-    } else {
-      browserWindow.setAlwaysOnTop(false);
-    }
-
-    if (req.addDimensions) {
-      const currentDimensions = browserWindow.getSize();
-      browserWindow.setSize(
-        currentDimensions[0] + req.dimensions.width,
-        currentDimensions[1] + req.dimensions.height,
-        false,
-      );
-    } else {
-      browserWindow.setSize(req.dimensions.width, req.dimensions.height, false);
-    }
-
-    if (req.setPosition) {
-      if (req.setPosition === 'center') {
-        browserWindow.center();
+app
+  .whenReady()
+  .then(createWindow)
+  .then(() => {
+    // dynamically changing the window bounds
+    ipcMain.on(Channels.RESIZE_WINDOW, (event, req: DimensionChangeRequest) => {
+      if (req.setAlwaysOnTop) {
+        browserWindow.setAlwaysOnTop(true, 'floating');
+      } else {
+        browserWindow.setAlwaysOnTop(false);
       }
 
-      if (req.setPosition === 'topRight') {
-        browserWindow.setPosition(display.bounds.width - req.dimensions.width, 0);
-
-        console.log(display.bounds);
+      if (req.addDimensions) {
+        const currentDimensions = browserWindow.getSize();
+        browserWindow.setSize(
+          currentDimensions[0] + req.dimensions.width,
+          currentDimensions[1] + req.dimensions.height,
+          false,
+        );
+      } else {
+        browserWindow.setSize(req.dimensions.width, req.dimensions.height, false);
       }
-    }
-  });
 
-  // globalShortcut.register("`", () => {
-  //   console.log("Electron loves global shortcuts!");
-  // });
+      if (req.setPosition) {
+        if (req.setPosition === 'center') {
+          browserWindow.center();
+        }
 
-  // on blur, show overlay, and tell app to trigger overlay mode
-  browserWindow.on('blur', () => {
-    browserWindow.webContents.send(Channels.ON_WINDOW_BLUR);
-  });
+        if (req.setPosition === 'topRight') {
+          browserWindow.setPosition(display.bounds.width - req.dimensions.width, 0);
 
-  browserWindow.on('focus', () => {
-    browserWindow.webContents.send(Channels.ON_WINDOW_FOCUS);
+          console.log(display.bounds);
+        }
+      }
+    });
+
+    // globalShortcut.register("`", () => {
+    //   console.log("Electron loves global shortcuts!");
+    // });
+
+    // on blur, show overlay, and tell app to trigger overlay mode
+    browserWindow.on('blur', () => {
+      browserWindow.webContents.send(Channels.ON_WINDOW_BLUR);
+    });
+
+    browserWindow.on('focus', () => {
+      browserWindow.webContents.send(Channels.ON_WINDOW_FOCUS);
+    });
   });
-});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

@@ -63,7 +63,7 @@ export function ElectronProvider({ children }: { children: React.ReactNode }) {
       setIsWindowFocused(false);
 
       // TODO: testing mode... uncomment both instructions below
-      setDesktopMode('overlayOnly');
+      //   setDesktopMode('overlayOnly');
     });
 
     window.electronAPI.on(Channels.ON_WINDOW_FOCUS, () => {
