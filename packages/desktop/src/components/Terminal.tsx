@@ -53,7 +53,7 @@ import { User } from '@nirvana/core/src/models/user.model';
 import { onSnapshot } from 'firebase/firestore';
 
 import NirvanaAvatar from './NirvanaAvatar';
-import { useDebounce, useKey } from 'react-use';
+import { useDebounce, useKey, useKeyPressEvent } from 'react-use';
 
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 type ConversationMap = {
@@ -216,7 +216,19 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const [searchUsersResults, setSearchUsersResults] = useState<User[]>([]);
   const [searching, setSearching] = useState<boolean>(false);
 
-  useKey('Shift', onSearchFocus);
+  useKeyPressEvent('Shift', onSearchFocus);
+
+  // when user wants to talk,
+  //  unmute them and send clip for everyone to hear in the distance
+  const handleBroadcast = useCallback(() => {
+    enqueueSnackbar('started recording');
+  }, []);
+
+  const handleStopBroadcast = useCallback(() => {
+    enqueueSnackbar('stopped...', { variant: 'info' });
+  }, []);
+
+  useKeyPressEvent('`', handleBroadcast, handleStopBroadcast);
 
   const [, cancel] = useDebounce(
     async () => {
