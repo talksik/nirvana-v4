@@ -1,14 +1,18 @@
 import { Button, Container } from '@mui/material';
 import React, { useContext, useEffect, useCallback } from 'react';
-import Realm from 'realm';
 
 import { FcGoogle } from 'react-icons/fc';
 import { blueGrey } from '@mui/material/colors';
 import Channels from '../electron/constants';
-import { firebase } from '../firebase/connect';
+import { firebaseAuth } from '../firebase/connect';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+
+const provider = new GoogleAuthProvider();
+
+provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
 
 interface IAuthContext {
-  user?: Realm.User;
+  user?: any;
 }
 
 const AuthContext = React.createContext<IAuthContext>({});
@@ -31,7 +35,29 @@ const Login = () => {
   // take user to browser to complete authentication
   const handleLogin = useCallback(() => {
     // send to main process
-    window.electronAPI.auth.initiateLogin();
+    // window.electronAPI.auth.initiateLogin();
+
+    signInWithPopup(firebaseAuth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+
+        console.log(result);
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
   }, []);
 
   return (
