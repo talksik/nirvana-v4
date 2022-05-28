@@ -233,7 +233,7 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   return (
     <>
@@ -283,10 +283,7 @@ const Navbar = () => {
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
         >
-          <Avatar
-            alt={'Arjun Patel'}
-            src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
-          />
+          <Avatar alt={user.displayName} src={user.photoURL} />
         </IconButton>
       </Stack>
 
