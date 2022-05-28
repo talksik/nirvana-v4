@@ -7,6 +7,7 @@ import {
   Box,
   Divider,
   Grid,
+  IconButton,
   Input,
   List,
   ListItem,
@@ -19,7 +20,7 @@ import {
 } from '@mui/material';
 import NirvanaLogo from './NirvanaLogo';
 import { blueGrey } from '@mui/material/colors';
-import { FiActivity, FiInbox, FiSearch } from 'react-icons/fi';
+import { FiActivity, FiInbox, FiMoreVertical, FiSearch } from 'react-icons/fi';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { useSnackbar } from 'notistack';
 import { useKey } from 'react-use';
@@ -98,7 +99,7 @@ export default function Terminal() {
             }
           >
             <ListItem>
-              <ListItemButton>
+              <ListItemButton selected={true}>
                 <ListItemAvatar>
                   <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
                 </ListItemAvatar>
@@ -177,10 +178,31 @@ export default function Terminal() {
           </List>
         </Stack>
       </Grid>
-      <Grid item xs={8} sx={{ backgroundColor: 'white', padding: 1 }}>
-        <Container disableGutters>
-          <Typography variant="h6">Canvas</Typography>
-        </Container>
+
+      <Grid item xs={8} sx={{ backgroundColor: 'white' }}>
+        <Stack
+          direction={'row'}
+          sx={{ py: 2, px: 2, borderBottom: '1px solid', borderBottomColor: blueGrey[100] }}
+          alignItems={'center'}
+          justifyContent={'flex-start'}
+        >
+          <Stack spacing={2} direction={'row'} alignItems={'center'}>
+            <Avatar
+              alt={'Arjun Patel'}
+              src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
+            />
+
+            <Typography color={'GrayText'} variant="overline">
+              {'Viet Phan'}
+            </Typography>
+          </Stack>
+
+          <Box sx={{ ml: 'auto' }}>
+            <IconButton size="small">
+              <FiMoreVertical />
+            </IconButton>
+          </Box>
+        </Stack>
       </Grid>
     </Grid>
   );
