@@ -95,8 +95,49 @@ const Conversations = () => {
         <KeyboardShortcutLabel label="Shift" />
       </Stack>
 
-      {searchVal && <ListPeople people={searchUsersResults} />}
+      {searchVal ? <ListPeople people={searchUsersResults} /> : <></>}
+    </>
+  );
+};
 
+function ListPeople({ people }: { people: User[] }) {
+  return (
+    <List
+      sx={{
+        pt: 2,
+      }}
+      subheader={
+        <ListSubheader>
+          <Typography variant="subtitle2"> Search Results</Typography>
+        </ListSubheader>
+      }
+    >
+      {people.length === 0 && (
+        <Typography variant="caption">
+          Sorry please try someone else or invite them to nirvana.
+        </Typography>
+      )}
+
+      {people.map((person) => (
+        <ListItem key={`${person.uid}-searchUsers`}>
+          <ListItemButton selected={true}>
+            <ListItemAvatar>
+              <Avatar alt={person.displayName} src={person.photoUrl} />
+            </ListItemAvatar>
+
+            <ListItemText primary={person.displayName} />
+
+            <Typography variant={'caption'}>20 sec</Typography>
+          </ListItemButton>
+        </ListItem>
+      ))}
+    </List>
+  );
+}
+
+function StaticListConversations() {
+  return (
+    <>
       <List
         sx={{
           pt: 2,
@@ -185,41 +226,6 @@ const Conversations = () => {
         </ListItem>
       </List>
     </>
-  );
-};
-
-function ListPeople({ people }: { people: User[] }) {
-  return (
-    <List
-      sx={{
-        pt: 2,
-      }}
-      subheader={
-        <ListSubheader>
-          <Typography variant="subtitle2"> Search Results</Typography>
-        </ListSubheader>
-      }
-    >
-      {people.length === 0 && (
-        <Typography variant="caption">
-          Sorry please try someone else or invite them to nirvana.
-        </Typography>
-      )}
-
-      {people.map((person) => (
-        <ListItem key={`${person.uid}-searchUsers`}>
-          <ListItemButton selected={true}>
-            <ListItemAvatar>
-              <Avatar alt={person.displayName} src={person.photoUrl} />
-            </ListItemAvatar>
-
-            <ListItemText primary={person.displayName} />
-
-            <Typography variant={'caption'}>20 sec</Typography>
-          </ListItemButton>
-        </ListItem>
-      ))}
-    </List>
   );
 }
 export default Conversations;

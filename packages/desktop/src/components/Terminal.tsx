@@ -15,6 +15,22 @@ interface ITerminalContext {
 
 const TerminalContext = React.createContext<ITerminalContext>({});
 
+// TODOS
+// fetch all conversations that I am part of
+
+// create a convo
+// 1. search
+// 2. click on person
+// 3. search database if there is already a convo for this
+//   - if yes: select this one
+//   - if no: create one
+// 4. show the conversation details page show on right
+// 5. connect live if other person there
+// 6. send first clip
+// 7. display all blocks/clips for convo simple and separate
+
+// if no conversations, show stale state + create one with nirvana
+
 export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const { enqueueSnackbar } = useSnackbar();
 
