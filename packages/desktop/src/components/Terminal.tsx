@@ -22,6 +22,7 @@ import { FiActivity, FiInbox, FiSearch } from 'react-icons/fi';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { useSnackbar } from 'notistack';
 import { useKey } from 'react-use';
+import NirvanaAvatar from './NirvanaAvatar';
 
 export default function Terminal() {
   const { enqueueSnackbar } = useSnackbar();
@@ -120,7 +121,11 @@ export default function Terminal() {
 
             <ListItem>
               <ListItemAvatar>
-                <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/3.jpg" />
+                <NirvanaAvatar
+                  avatars={[
+                    { alt: 'Arjun Patel', src: 'https://mui.com/static/images/avatar/3.jpg' },
+                  ]}
+                />
               </ListItemAvatar>
 
               <ListItemText
