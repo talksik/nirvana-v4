@@ -113,6 +113,23 @@ export const searchUsers = async (searchQuery: string): Promise<User[] | undefin
   }
 };
 
+export const getUserById = async (userId: string): Promise<User | undefined> => {
+  const docSnap = await getDoc(db.user(userId));
+
+  if (docSnap.exists()) {
+    return docSnap.data();
+  } else {
+    // doc.data() will be undefined in this case
+    console.log('No such user!');
+  }
+
+  return undefined;
+};
+
+// get the conversations for particular user
+export const getConversationsQueryLIVE = async (userId: string) =>
+  query(db.conversations, where('membersList', 'array-contains', userId));
+
 export const createOneOnOneConversation = async (
   otherUserId: string,
   myUserId: string,
