@@ -9,7 +9,6 @@ import { NirvanaTheme } from './mui/NirvanaTheme';
 import { ElectronProvider } from './providers/ElectronProvider';
 import { AuthProvider } from './providers/AuthProvider';
 
-import './firebase/connect';
 import ErrorParent from './providers/ErrorBoundary';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);

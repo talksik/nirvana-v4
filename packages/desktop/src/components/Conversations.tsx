@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 
 import {
   Avatar,
@@ -17,21 +17,37 @@ import {
 import { blueGrey } from '@mui/material/colors';
 import { FiActivity, FiInbox, FiSearch } from 'react-icons/fi';
 import NirvanaAvatar from './NirvanaAvatar';
-import { useKey } from 'react-use';
+import { useDebounce, useKey } from 'react-use';
 import { useSnackbar } from 'notistack';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
+import { searchUsers, User } from '../firebase/firestore';
 
 const Conversations = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const searchRef = useRef<HTMLInputElement>(null);
+  const [searchVal, setSearchVal] = useState<string>('');
 
-  const onSearch = useCallback(() => {
+  const onSearchFocus = useCallback(() => {
     enqueueSnackbar('search focused');
     if (searchRef?.current) searchRef.current.focus();
-  }, []);
+  }, [enqueueSnackbar, searchRef]);
 
-  useKey('Shift', onSearch);
+  const [searchUsersResults, setSearchUsersResults] = useState<User[]>([]);
+
+  useKey('Shift', onSearchFocus);
+
+  const [, cancel] = useDebounce(
+    async () => {
+      if (searchVal) {
+        enqueueSnackbar('searching...', { variant: 'info' });
+
+        setSearchUsersResults(await searchUsers(searchVal));
+      }
+    },
+    500,
+    [searchVal, enqueueSnackbar, setSearchUsersResults],
+  );
 
   return (
     <>
@@ -51,10 +67,17 @@ const Conversations = () => {
       >
         <FiSearch style={{ color: blueGrey[500] }} />
 
-        <Input placeholder={'Find or start a conversation'} inputRef={searchRef} />
+        <Input
+          onChange={(e) => setSearchVal(e.target.value)}
+          value={searchVal}
+          placeholder={'Find or start a conversation'}
+          inputRef={searchRef}
+        />
 
         <KeyboardShortcutLabel label="Shift" />
       </Stack>
+
+      {searchVal && <ListPeople people={searchUsersResults} />}
 
       <List
         sx={{
@@ -149,4 +172,39 @@ const Conversations = () => {
   );
 };
 
+function ListPeople({ people }: { people: User[] }) {
+  return (
+    <List
+      sx={{
+        pt: 2,
+      }}
+      subheader={
+        <ListSubheader>
+          <FiActivity />
+          <Typography variant="subtitle2"> Priority</Typography>
+        </ListSubheader>
+      }
+    >
+      {people.length === 0 && (
+        <Typography variant="caption">
+          Sorry please try someone else or invite them to nirvana.
+        </Typography>
+      )}
+
+      {people.map((person) => (
+        <ListItem key={`${person.uid}-searchUsers`}>
+          <ListItemButton selected={true}>
+            <ListItemAvatar>
+              <Avatar alt={person.displayName} src={person.photoUrl} />
+            </ListItemAvatar>
+
+            <ListItemText primary={person.displayName} />
+
+            <Typography variant={'caption'}>20 sec</Typography>
+          </ListItemButton>
+        </ListItem>
+      ))}
+    </List>
+  );
+}
 export default Conversations;
