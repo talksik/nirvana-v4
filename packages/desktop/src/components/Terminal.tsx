@@ -14,6 +14,8 @@ import {
   Typography,
 } from '@mui/material';
 import NirvanaLogo from './NirvanaLogo';
+import { grey } from '@mui/material/colors';
+import { FiSearch } from 'react-icons/fi';
 
 export default function Terminal() {
   return (
@@ -45,7 +47,17 @@ export default function Terminal() {
             />
           </Stack>
 
-          <Box sx={{ position: 'relative', backgroundColor: 'gray' }}></Box>
+          <Box
+            sx={{
+              position: 'relative',
+              display: 'flex',
+              flexDirection: 'row',
+              backgroundColor: grey,
+              padding: 1,
+            }}
+          >
+            <FiSearch />
+          </Box>
         </Stack>
       </Grid>
       <Grid item xs={8} sx={{ backgroundColor: 'white', padding: 1 }}>

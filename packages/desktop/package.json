@@ -95,6 +95,7 @@
     "@mui/material": "^5.8.1",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react-dom": "^18.1.0",
+    "react-icons": "^4.3.1"
   }
 }
