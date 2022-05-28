@@ -102,7 +102,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = useCallback(() => firebaseAuth.signOut(), []);
 
-  if (authIniting) return <CircularProgress />;
+  if (authIniting)
+    return (
+      <Container
+        maxWidth={false}
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          background: blueGrey[50],
+        }}
+      >
+        <CircularProgress />
+      </Container>
+    );
   return (
     <AuthContext.Provider value={{ user: currentUser, logout }}>
       {currentUser ? <>{children}</> : <Login />}
