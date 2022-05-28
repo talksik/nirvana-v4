@@ -555,25 +555,33 @@ function ConversationDetails() {
         alignItems={'center'}
         justifyContent={'flex-start'}
       >
-        <Stack spacing={2} direction={'row'} alignItems={'center'}>
-          <AvatarGroup variant={'rounded'}>
-            {conversationUsers.map((conversationUser, index) => (
-              <Avatar
-                key={`${selectedConversation.id}-${conversationUser.uid}-convoIcon`}
-                alt={conversationUser?.displayName}
-                src={conversationUser?.photoUrl}
-                sx={{ width: 30, height: 30 }}
-              />
-            ))}
-          </AvatarGroup>
+        <IconButton color="primary" size="small">
+          <FiSun />
+        </IconButton>
 
-          <Typography sx={{ color: 'GrayText' }} variant={'overline'}>
-            {selectedConversation.name ??
-              conversationUsers.map((conversationUser) => conversationUser.displayName).join(', ')}
-          </Typography>
-        </Stack>
+        <Typography sx={{ color: 'GrayText' }} variant={'overline'}>
+          {selectedConversation.name ??
+            conversationUsers.map((conversationUser) => conversationUser.displayName).join(', ')}
+        </Typography>
 
-        <Box sx={{ ml: 'auto' }}>
+        <AvatarGroup variant={'rounded'} sx={{ ml: 'auto' }}>
+          {conversationUsers.map((conversationUser, index) => (
+            <Avatar
+              key={`${selectedConversation.id}-${conversationUser.uid}-convoIcon`}
+              alt={conversationUser?.displayName}
+              src={conversationUser?.photoUrl}
+              sx={{
+                width: 30,
+                height: 30,
+                opacity: selectedConversation.membersInRoom.includes(conversationUser.uid)
+                  ? '100%'
+                  : '20%',
+              }}
+            />
+          ))}
+        </AvatarGroup>
+
+        <Box>
           <IconButton size="small">
             <FiMoreVertical />
           </IconButton>
