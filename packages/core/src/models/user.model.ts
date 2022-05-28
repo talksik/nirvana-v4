@@ -4,6 +4,8 @@ export class User {
   id: string;
   lastUpdatedDate?: Timestamp;
 
+  priorityConversations?: string[]; // id of all priority convos
+
   constructor(
     public uid: string,
     public providerId: string,
