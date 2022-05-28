@@ -73,6 +73,8 @@ export function ElectronProvider({ children }: { children: React.ReactNode }) {
 
     return () => {
       //   window.removeEventListener(Channels.ON_WINDOW_BLUR, blurListener);
+      blurListener();
+      focusListener();
     };
   }, [setDesktopMode, setIsWindowFocused]);
 

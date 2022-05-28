@@ -12,12 +12,11 @@ import {
   setPersistence,
   browserLocalPersistence,
   User as FirebaseUser,
+  onAuthStateChanged,
+  updateCurrentUser,
+  getAuth,
 } from 'firebase/auth';
 import { useSnackbar } from 'notistack';
-
-const provider = new GoogleAuthProvider();
-
-provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
 
 interface IAuthContext {
   user?: FirebaseUser;
@@ -27,6 +26,24 @@ const AuthContext = React.createContext<IAuthContext>({});
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const { enqueueSnackbar } = useSnackbar();
+
+  // since auth.currentuser isn't updating
+  const [currentUser, setCurrentUser] = useState<FirebaseUser>(null);
+
+  useEffect(() => {
+    const authListener = onAuthStateChanged(firebaseAuth, (user) => {
+      console.log('auth changed!!!!', user);
+
+      if (user) {
+        setCurrentUser(user);
+      } else {
+        // User is signed out
+        // ...
+      }
+    });
+
+    return () => authListener();
+  }, [setCurrentUser]);
 
   useEffect(() => {
     const tokenListener = window.electronAPI.once(
@@ -47,7 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               // The signed-in user info.
               const user = result.user;
               console.log(user);
-
+              updateCurrentUser(firebaseAuth, user);
               enqueueSnackbar('Signed in! All set!', { variant: 'success' });
             });
           })
@@ -70,8 +87,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [enqueueSnackbar]);
 
   return (
-    <AuthContext.Provider value={{ user: firebaseAuth.currentUser }}>
-      {firebaseAuth.currentUser ? <>{children}</> : <Login />}
+    <AuthContext.Provider value={{ user: currentUser }}>
+      {currentUser ? <>{children}</> : <Login />}
     </AuthContext.Provider>
   );
 };
