@@ -7,7 +7,7 @@ export default class Conversation {
 
     public membersList: string[],
 
-    public name?: string,
+    public name: string | null = null,
 
     public lastUpdatedDate = Timestamp.now(),
 

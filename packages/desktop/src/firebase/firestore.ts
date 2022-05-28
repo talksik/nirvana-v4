@@ -144,7 +144,7 @@ export const createOneOnOneConversation = async (
   otherUserId: string,
   myUserId: string,
 ): Promise<string | undefined> => {
-  const newConversation = new Conversation(myUserId, [myUserId, otherUserId]);
+  const newConversation = new Conversation(myUserId, [myUserId, otherUserId], null);
 
   try {
     const newDoc = await addDoc(db.conversations, newConversation);
