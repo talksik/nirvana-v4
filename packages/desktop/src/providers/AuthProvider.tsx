@@ -64,6 +64,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const tokenListener = window.electronAPI.once(
       Channels.GOOGLE_AUTH_TOKENS,
       async (tokens: Credentials) => {
+        setAuthIniting(true);
+
         console.log('got tokens', tokens);
 
         const credential = GoogleAuthProvider.credential(tokens.id_token);
@@ -84,6 +86,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             });
           })
           .catch((error: any) => {
+            setAuthIniting(false);
+
             // Handle Errors here.
             const errorCode = error.code;
             const errorMessage = error.message;
@@ -99,7 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     );
 
     return () => tokenListener();
-  }, [enqueueSnackbar]);
+  }, [enqueueSnackbar, setAuthIniting]);
 
   const logout = useCallback(() => firebaseAuth.signOut(), []);
 
