@@ -1,8 +1,9 @@
 {
-  "name": "nirvana-v4",
+  "name": "nirvana",
   "version": "1.0.0",
-  "main": "index.js",
   "repository": "https://github.com/talksik/nirvana-v4.git",
   "author": "talksik <patel.arjun50@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "workspaces": ["packages/*"],
+  "private": true
 }
