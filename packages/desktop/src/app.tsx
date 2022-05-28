@@ -10,6 +10,9 @@ import { ElectronProvider } from './providers/ElectronProvider';
 import { AuthProvider } from './providers/AuthProvider';
 
 import ErrorParent from './providers/ErrorBoundary';
+import { connectCore } from '@nirvana/core/src/index';
+
+connectCore();
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(

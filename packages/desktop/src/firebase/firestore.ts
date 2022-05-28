@@ -20,6 +20,7 @@ import {
 
 import { User as FirebaseUser } from 'firebase/auth';
 import { firestoreDb } from './connect';
+import { User } from '@nirvana/core/src/models/user.model';
 
 /**
  * UTILS
@@ -39,20 +40,6 @@ const db = {
   users: collectionPoint<User>(`users`),
   user: (userId: string) => docPoint<User>(`users/${userId}`),
 };
-
-export class User {
-  lastUpdatedDate?: Timestamp;
-
-  constructor(
-    public uid: string,
-    public providerId: string,
-    public email: string,
-    public displayName?: string,
-    public photoUrl?: string,
-    public phoneNumber?: string,
-    public createdDate: Timestamp = Timestamp.now(),
-  ) {}
-}
 
 // enum COLLECTION {
 //   users = 'users',
