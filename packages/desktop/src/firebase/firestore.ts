@@ -16,6 +16,7 @@ import {
   limit,
   startAt,
   endAt,
+  addDoc,
 } from 'firebase/firestore';
 
 import { User as FirebaseUser } from 'firebase/auth';
@@ -115,36 +116,29 @@ export const searchUsers = async (searchQuery: string): Promise<User[] | undefin
 export const createOneOnOneConversation = async (
   otherUserId: string,
   myUserId: string,
-): Promise<string> => {
-  const conversation = new Conversation(myUserId, [myUserId, otherUserId]);
+): Promise<void> => {
+  const newConversation = new Conversation(myUserId, [myUserId, otherUserId]);
 
   try {
-    await setDoc(
-      db.conversations(user.uid),
-      new User(
-        user.uid,
-        user.providerId,
-        user.email,
-        user.displayName,
-        user.photoURL,
-        user.phoneNumber,
-      ),
-      { merge: true },
-    );
+    await addDoc(db.conversations, newConversation);
   } catch (e) {
     console.error('Error creating user: ', e);
 
     throw new Error('Error creating user');
   }
-  return '';
+};
 
-  // const docRef =
-  // const docSnap = await getDoc(docRef);
+export const createGroupConversation = async (
+  otherUserIds: string[],
+  myUserId: string,
+): Promise<void> => {
+  const newConversation = new Conversation(myUserId, [myUserId, ...otherUserIds]);
 
-  // if (docSnap.exists()) {
-  //   console.log("Document data:", docSnap.data());
-  // } else {
-  //   // doc.data() will be undefined in this case
-  //   console.log("No such document!");
-  // }
+  try {
+    await addDoc(db.conversations, newConversation);
+  } catch (e) {
+    console.error('Error creating user: ', e);
+
+    throw new Error('Error creating user');
+  }
 };
