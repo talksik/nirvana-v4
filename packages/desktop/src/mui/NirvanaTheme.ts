@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material';
+import { createTheme, experimental_sx as sx } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
 
 export const NirvanaTheme = createTheme({
@@ -19,6 +19,7 @@ export const NirvanaTheme = createTheme({
       main: '#FFB6B6',
     },
   },
+
   components: {
     // Name of the component
     MuiButtonBase: {
@@ -28,6 +29,11 @@ export const NirvanaTheme = createTheme({
       },
     },
     MuiAvatar: {
+      styleOverrides: {
+        root: sx({
+          boxShadow: 1,
+        }),
+      },
       defaultProps: {
         variant: 'rounded',
       },
@@ -75,6 +81,14 @@ export const NirvanaTheme = createTheme({
             alignItems: 'center',
             backgroundColor: 'transparent',
           },
+        },
+      },
+    },
+
+    MuiFab: {
+      styleOverrides: {
+        root: {
+          borderRadius: 5,
         },
       },
     },

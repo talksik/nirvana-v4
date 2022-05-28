@@ -6,6 +6,7 @@ import {
   Badge,
   Box,
   Divider,
+  Fab,
   Grid,
   IconButton,
   Input,
@@ -20,7 +21,7 @@ import {
 } from '@mui/material';
 import NirvanaLogo from './NirvanaLogo';
 import { blueGrey } from '@mui/material/colors';
-import { FiActivity, FiInbox, FiMoreVertical, FiSearch } from 'react-icons/fi';
+import { FiActivity, FiInbox, FiMoreVertical, FiSearch, FiSun } from 'react-icons/fi';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { useSnackbar } from 'notistack';
 import { useKey } from 'react-use';
@@ -184,7 +185,7 @@ export default function Terminal() {
         </Stack>
       </Grid>
 
-      <Grid item xs={8} sx={{ backgroundColor: 'white' }}>
+      <Grid item xs={8} sx={{ backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
         <Stack
           direction={'row'}
           sx={{ py: 2, px: 2, borderBottom: '1px solid', borderBottomColor: blueGrey[100] }}
@@ -192,10 +193,7 @@ export default function Terminal() {
           justifyContent={'flex-start'}
         >
           <Stack spacing={2} direction={'row'} alignItems={'center'}>
-            <Avatar
-              alt={'Arjun Patel'}
-              src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
-            />
+            <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
 
             <Typography color={'GrayText'} variant="overline">
               {'Viet Phan'}
@@ -208,6 +206,28 @@ export default function Terminal() {
             </IconButton>
           </Box>
         </Stack>
+
+        <Container maxWidth={false} sx={{ position: 'relative', flex: 1 }}>
+          <Container maxWidth="sm">
+            <Stack justifyContent={'flex-start'} alignItems={'center'}>
+              <Typography variant="caption">yesterday</Typography>
+            </Stack>
+          </Container>
+
+          <Box
+            sx={{
+              position: 'absolute',
+              zIndex: 10,
+              bottom: 0,
+              right: 0,
+              padding: 3,
+            }}
+          >
+            <Fab color="primary" aria-label="add" size="medium">
+              <FiSun />
+            </Fab>
+          </Box>
+        </Container>
       </Grid>
     </Grid>
   );
