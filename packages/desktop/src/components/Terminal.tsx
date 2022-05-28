@@ -11,6 +11,7 @@ import {
   List,
   ListItem,
   ListItemAvatar,
+  ListItemButton,
   ListItemText,
   ListSubheader,
   Stack,
@@ -97,53 +98,31 @@ export default function Terminal() {
             }
           >
             <ListItem>
-              <ListItemAvatar>
-                <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
-              </ListItemAvatar>
+              <ListItemButton>
+                <ListItemAvatar>
+                  <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
+                </ListItemAvatar>
 
-              <ListItemText
-                primary="Viet"
-                secondary={
-                  <React.Fragment>
-                    <Typography
-                      sx={{ display: 'inline' }}
-                      component="span"
-                      variant="body2"
-                      color="text.primary"
-                    >
-                      Ali Connors
-                    </Typography>
-                    {" — I'll be in your neighborhood doing errands this…"}
-                  </React.Fragment>
-                }
-              />
+                <ListItemText primary="Viet" />
+
+                <Typography variant={'caption'}>20 sec</Typography>
+              </ListItemButton>
             </ListItem>
 
             <ListItem>
-              <ListItemAvatar>
-                <NirvanaAvatar
-                  avatars={[
-                    { alt: 'Arjun Patel', src: 'https://mui.com/static/images/avatar/3.jpg' },
-                  ]}
-                />
-              </ListItemAvatar>
+              <ListItemButton>
+                <ListItemAvatar>
+                  <NirvanaAvatar
+                    avatars={[
+                      { alt: 'Arjun Patel', src: 'https://mui.com/static/images/avatar/3.jpg' },
+                    ]}
+                  />
+                </ListItemAvatar>
 
-              <ListItemText
-                primary="Agnes"
-                secondary={
-                  <React.Fragment>
-                    <Typography
-                      sx={{ display: 'inline' }}
-                      component="span"
-                      variant="body2"
-                      color="text.primary"
-                    >
-                      to Scott, Alex, Jennifer
-                    </Typography>
-                    {" — Wish I could come, but I'm out of town this…"}
-                  </React.Fragment>
-                }
-              />
+                <ListItemText primary="Agnes" />
+
+                <Typography variant={'caption'}>34 min ago</Typography>
+              </ListItemButton>
             </ListItem>
           </List>
 
@@ -161,31 +140,39 @@ export default function Terminal() {
             }
           >
             <ListItem>
-              <ListItemAvatar>
-                <Avatar
-                  sx={{ height: 25, width: 25 }}
-                  alt={'Arjun Patel'}
-                  src="https://mui.com/static/images/avatar/5.jpg"
-                />
-              </ListItemAvatar>
+              <ListItemButton sx={{ opacity: 0.5 }}>
+                <ListItemAvatar>
+                  <Avatar
+                    sx={{
+                      filter: `grayscale(1)`,
+                    }}
+                    alt={'Arjun Patel'}
+                    src="https://mui.com/static/images/avatar/5.jpg"
+                  />
+                </ListItemAvatar>
 
-              <ListItemText primary="James Lin" />
+                <ListItemText secondary="Jeremy Leon" sx={{ color: blueGrey[300] }} />
 
-              <Badge color="primary" badgeContent=" " variant="dot"></Badge>
+                <Badge color="primary" badgeContent=" " variant="dot"></Badge>
+              </ListItemButton>
             </ListItem>
 
             <ListItem>
-              <ListItemAvatar>
-                <Avatar
-                  sx={{ height: 25, width: 25 }}
-                  alt={'Arjun Patel'}
-                  src="https://mui.com/static/images/avatar/4.jpg"
-                />
-              </ListItemAvatar>
+              <ListItemButton sx={{ opacity: 0.5 }}>
+                <ListItemAvatar>
+                  <Avatar
+                    sx={{
+                      filter: `grayscale(1)`,
+                    }}
+                    alt={'Arjun Patel'}
+                    src="https://mui.com/static/images/avatar/4.jpg"
+                  />
+                </ListItemAvatar>
 
-              <ListItemText primary="Janet" />
+                <ListItemText secondary="James Lin" sx={{ color: blueGrey[300] }} />
 
-              <Typography variant={'caption'}>2 hours ago</Typography>
+                <Typography variant={'caption'}>2 hours ago</Typography>
+              </ListItemButton>
             </ListItem>
           </List>
         </Stack>

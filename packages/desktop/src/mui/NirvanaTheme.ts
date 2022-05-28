@@ -44,6 +44,21 @@ export const NirvanaTheme = createTheme({
       },
     },
 
+    MuiListItem: {
+      defaultProps: {
+        disableGutters: true,
+        disablePadding: true,
+      },
+    },
+
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 5,
+        },
+      },
+    },
+
     MuiListSubheader: {
       styleOverrides: {
         root: {
