@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import NirvanaLogo from './NirvanaLogo';
 import { blueGrey } from '@mui/material/colors';
-import { FiActivity, FiSearch } from 'react-icons/fi';
+import { FiActivity, FiInbox, FiSearch } from 'react-icons/fi';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { useSnackbar } from 'notistack';
 import { useKey } from 'react-use';
@@ -118,8 +118,6 @@ export default function Terminal() {
               />
             </ListItem>
 
-            <Divider variant="inset" component="li" />
-
             <ListItem>
               <ListItemAvatar>
                 <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/3.jpg" />
@@ -152,7 +150,7 @@ export default function Terminal() {
             }}
             subheader={
               <ListSubheader>
-                <FiActivity />
+                <FiInbox />
                 <Typography variant="subtitle2"> Inbox</Typography>
               </ListSubheader>
             }
@@ -170,8 +168,6 @@ export default function Terminal() {
 
               <Badge color="primary" badgeContent=" " variant="dot"></Badge>
             </ListItem>
-
-            <Divider variant="inset" component="li" />
 
             <ListItem>
               <ListItemAvatar>
