@@ -16,7 +16,7 @@ import { User as FirebaseUser } from 'firebase/auth';
  * UTILS
  */
 const converter = <T>() => ({
-  toFirestore: (data: T) => data,
+  toFirestore: (data: T) => ({ ...data }),
   fromFirestore: (snap: QueryDocumentSnapshot) => snap.data() as T,
 });
 
@@ -24,7 +24,6 @@ const dataPoint = <T>(collectionPath: string) =>
   doc(getFirestore(), collectionPath).withConverter(converter<T>());
 
 const db = {
-  users: dataPoint<User[]>('users'),
   user: (userId: string) => dataPoint<User>(`users/${userId}`),
 };
 
@@ -62,5 +61,7 @@ export const createUser = async (user: FirebaseUser) => {
     );
   } catch (e) {
     console.error('Error creating user: ', e);
+
+    throw new Error('Error creating user');
   }
 };

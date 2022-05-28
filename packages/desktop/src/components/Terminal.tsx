@@ -16,6 +16,7 @@ import {
   ListItemButton,
   ListItemText,
   ListSubheader,
+  Menu,
   Paper,
   Stack,
   Tooltip,
@@ -38,6 +39,8 @@ import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { useSnackbar } from 'notistack';
 import { useKey } from 'react-use';
 import NirvanaAvatar from './NirvanaAvatar';
+
+import MenuItem from '@mui/material/MenuItem';
 
 export default function Terminal() {
   const { enqueueSnackbar } = useSnackbar();
@@ -218,50 +221,89 @@ export default function Terminal() {
 }
 
 const Navbar = () => {
-  return (
-    <Stack
-      direction="row"
-      justifyContent={'flex-start'}
-      alignItems={'center'}
-      sx={{
-        WebkitAppRegion: 'drag',
-        cursor: 'pointer',
-        pb: 1,
-      }}
-    >
-      <NirvanaLogo />
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
+  return (
+    <>
       <Stack
-        spacing={1}
-        direction={'row'}
+        direction="row"
+        justifyContent={'flex-start'}
         alignItems={'center'}
         sx={{
-          ml: 'auto',
-          mr: 1,
-          color: 'GrayText',
+          WebkitAppRegion: 'drag',
+          cursor: 'pointer',
+          pb: 1,
         }}
       >
-        <Tooltip title="Sound configuration">
-          <IconButton color="inherit" size="small">
-            <FiHeadphones />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Desktop modes">
-          <IconButton color="inherit" size="small">
-            <FiMonitor />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Flow state">
-          <IconButton color="inherit" size="small">
-            <FiWind />
-          </IconButton>
-        </Tooltip>
+        <NirvanaLogo />
+
+        <Stack
+          spacing={1}
+          direction={'row'}
+          alignItems={'center'}
+          sx={{
+            ml: 'auto',
+            mr: 1,
+            color: 'GrayText',
+          }}
+        >
+          <Tooltip title="Sound configuration">
+            <IconButton color="inherit" size="small">
+              <FiHeadphones />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Desktop modes">
+            <IconButton color="inherit" size="small">
+              <FiMonitor />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Flow state">
+            <IconButton color="inherit" size="small">
+              <FiWind />
+            </IconButton>
+          </Tooltip>
+        </Stack>
+        <IconButton
+          onClick={handleClick}
+          size="small"
+          sx={{ ml: 2 }}
+          aria-controls={open ? 'account-menu' : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? 'true' : undefined}
+        >
+          <Avatar
+            alt={'Arjun Patel'}
+            src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
+          />
+        </IconButton>
       </Stack>
-      <Avatar
-        alt={'Arjun Patel'}
-        src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
-      />
-    </Stack>
+
+      <Menu
+        id="account-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        <MenuItem onClick={handleClose}>Profile</MenuItem>
+        <MenuItem onClick={handleClose}>My account</MenuItem>
+        <MenuItem onClick={handleClose}>Logout</MenuItem>
+      </Menu>
+    </>
   );
 };
 

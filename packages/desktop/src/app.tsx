@@ -10,17 +10,20 @@ import { ElectronProvider } from './providers/ElectronProvider';
 import { AuthProvider } from './providers/AuthProvider';
 
 import './firebase/connect';
+import ErrorParent from './providers/ErrorBoundary';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={NirvanaTheme}>
       <SnackbarProvider maxSnack={3}>
-        <ElectronProvider>
-          <AuthProvider>
-            <Terminal />
-          </AuthProvider>
-        </ElectronProvider>
+        <ErrorParent>
+          <ElectronProvider>
+            <AuthProvider>
+              <Terminal />
+            </AuthProvider>
+          </ElectronProvider>
+        </ErrorParent>
       </SnackbarProvider>
     </ThemeProvider>
   </React.StrictMode>,
