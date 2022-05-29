@@ -133,7 +133,7 @@ export default function ConversationDetails() {
       <Container maxWidth={false} sx={{ position: 'relative', flex: 1, overflow: 'auto' }}>
         <ConversationHistory />
 
-        <Box
+        {/* <Box
           sx={{
             position: 'absolute',
             zIndex: 10,
@@ -145,7 +145,7 @@ export default function ConversationDetails() {
           <Fab color="primary" aria-label="add" size="medium">
             <FiSun />
           </Fab>
-        </Box>
+        </Box> */}
       </Container>
     </>
   );

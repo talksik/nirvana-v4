@@ -20,9 +20,10 @@ import {
   Menu,
   MenuItem,
   ListItemIcon,
+  Fab,
 } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
-import { FiZap, FiHeadphones, FiLogOut, FiMonitor } from 'react-icons/fi';
+import { FiZap, FiHeadphones, FiLogOut, FiMonitor, FiSun } from 'react-icons/fi';
 import { useSnackbar } from 'notistack';
 
 import Conversation from '@nirvana/core/src/models/conversation.model';
@@ -545,6 +546,11 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               justifyContent: 'flex-start',
               gap: 2,
               width: '100%',
+
+              zIndex: 10,
+              boxShadow: 10,
+
+              bgcolor: blueGrey[200],
             }}
           >
             <Stack
@@ -561,7 +567,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               <IconButton
                 onClick={handleClick}
                 size="small"
-                sx={{ mr: 'auto', borderRadius: 1 }}
+                sx={{ borderRadius: 1 }}
                 aria-controls={open ? 'account-menu' : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
@@ -569,27 +575,42 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
                 <Avatar alt={user.displayName} src={user.photoURL} />
               </IconButton>
 
-              <Box
-                sx={{
-                  mr: 'auto',
-                }}
+              <Stack
+                direction={'row'}
+                alignItems={'center'}
                 component="div"
+                sx={{ mr: 'auto', flex: 1 }}
               >
+                <Tooltip title="Sound configuration">
+                  <IconButton color="inherit" size="small">
+                    <FiHeadphones />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Desktop modes">
+                  <IconButton color="inherit" size="small">
+                    <FiMonitor />
+                  </IconButton>
+                </Tooltip>
+
                 <Button size={'small'} color={'secondary'} variant="text">
                   flow
                 </Button>
-              </Box>
+              </Stack>
 
-              <Tooltip title="Sound configuration">
-                <IconButton color="inherit" size="small">
-                  <FiHeadphones />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Desktop modes">
-                <IconButton color="inherit" size="small">
-                  <FiMonitor />
-                </IconButton>
-              </Tooltip>
+              {/* todo: add a third mode which is when toggle broadcasting */}
+              {selectedConversation ? (
+                <Tooltip title="Speak or toggle by clicking here!">
+                  <Fab color="primary" aria-label="add" size="medium">
+                    <FiSun />
+                  </Fab>
+                </Tooltip>
+              ) : (
+                <Tooltip title="No conversation selected!">
+                  <IconButton color="inherit" size="small">
+                    <FiSun />
+                  </IconButton>
+                </Tooltip>
+              )}
             </Stack>
 
             <Menu
