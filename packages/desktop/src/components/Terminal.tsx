@@ -58,9 +58,8 @@ import {
   joinConversation,
   leaveConversation,
   searchUsers,
-  sendAudioClipToConversation,
+  sendContentBlockToConversation,
 } from '../firebase/firestore';
-import { Link, AudioClip, Image } from '@nirvana/core/src/models/content.model';
 import { useImmer } from 'use-immer';
 import { User } from '@nirvana/core/src/models/user.model';
 import { onSnapshot } from 'firebase/firestore';
@@ -71,6 +70,7 @@ import { useDebounce, useEffectOnce, useKeyPressEvent } from 'react-use';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import Channels from '../electron/constants';
 import { uploadAudioClip } from '../firebase/firebaseStorage';
+import { ContentBlock, ContentType } from '@nirvana/core/src/models/content.model';
 type ConversationMap = {
   [conversationId: string]: Conversation;
 };
@@ -80,7 +80,7 @@ type UserMap = {
 };
 
 type ConversationContentMap = {
-  [conversationId: string]: { audio: AudioClip[]; links: Link[]; images: Image[] };
+  [conversationId: string]: ContentBlock[];
 };
 
 interface ITerminalContext {
@@ -175,7 +175,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     return () => unsub();
   }, [user, updateConversationMap, enqueueSnackbar]);
 
-  // cached listeners for audioClips
+  // cached listeners for a
   // useEffect(() => {
 
   // }, [])
@@ -296,8 +296,13 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         audioChunks[0],
       );
 
-      const audioClip = new AudioClip(user.uid, downloadUrl);
-      await sendAudioClipToConversation(audioClip, selectedConversation.id);
+      const contentBlock = new ContentBlock(
+        user.uid,
+        downloadUrl,
+        ContentType.audio,
+        audioChunks[0].type,
+      );
+      await sendContentBlockToConversation(contentBlock, selectedConversation.id);
 
       enqueueSnackbar('clip sent!', { variant: 'success' });
     } catch (error) {

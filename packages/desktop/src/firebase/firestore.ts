@@ -32,7 +32,7 @@ import Conversation, {
   MemberState,
 } from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
-import { AudioClip } from '@nirvana/core/src/models/content.model';
+import { ContentBlock } from '@nirvana/core/src/models/content.model';
 
 interface Document {
   id: string;
@@ -66,8 +66,8 @@ const db = {
   conversation: (conversationId: string) =>
     docPoint<Conversation>(`conversations/${conversationId}`),
 
-  conversationAudioClips: (conversationId: string) =>
-    collectionPoint<AudioClip>(`conversations/${conversationId}/audioClips`),
+  conversationContent: (conversationId: string) =>
+    collectionPoint<ContentBlock>(`conversations/${conversationId}/content`),
 };
 
 // enum COLLECTION {
@@ -203,9 +203,12 @@ export const createGroupConversation = async (
   }
 };
 
-export const sendAudioClipToConversation = async (audioClip: AudioClip, conversationId: string) => {
+export const sendContentBlockToConversation = async (
+  contentBlock: ContentBlock,
+  conversationId: string,
+) => {
   try {
-    await addDoc(db.conversationAudioClips(conversationId), audioClip);
+    await addDoc(db.conversationContent(conversationId), contentBlock);
   } catch (e) {
     console.error('Error  ', e);
 
