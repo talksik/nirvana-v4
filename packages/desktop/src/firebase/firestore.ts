@@ -121,9 +121,6 @@ export const searchUsers = async (searchQuery: string): Promise<User[] | undefin
     const emailquerySnap = await getDocs(emaildocSearchQuery);
     const namequerySnap = await getDocs(nameSearchQuery);
 
-    console.log(nameManipulatedQuery);
-    console.log(namequerySnap);
-
     return [
       ...emailquerySnap.docs.map((doc) => doc.data()),
       ...namequerySnap.docs.map((doc) => doc.data()),
