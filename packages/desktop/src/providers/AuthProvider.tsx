@@ -134,9 +134,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       </Container>
     );
 
+  if (!currentUser || !currentNirvanaUser) return <Login />;
+
   return (
     <AuthContext.Provider value={{ user: currentUser, logout, nirvanaUser: currentNirvanaUser }}>
-      {currentUser && currentNirvanaUser ? <>{children}</> : <Login />}
+      {children}
     </AuthContext.Provider>
   );
 };

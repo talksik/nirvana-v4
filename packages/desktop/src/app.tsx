@@ -16,23 +16,23 @@ connectCore();
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-  <React.StrictMode>
-    <ThemeProvider theme={NirvanaTheme}>
-      <SnackbarProvider
-        maxSnack={3}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-      >
-        <ErrorParent>
-          <ElectronProvider>
-            <AuthProvider>
-              <TerminalProvider />
-            </AuthProvider>
-          </ElectronProvider>
-        </ErrorParent>
-      </SnackbarProvider>
-    </ThemeProvider>
-  </React.StrictMode>,
+  <ThemeProvider theme={NirvanaTheme}>
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{
+        vertical: 'top',
+        horizontal: 'right',
+      }}
+    >
+      <ErrorParent>
+        <ElectronProvider>
+          <AuthProvider>
+            <TerminalProvider>
+              <></>
+            </TerminalProvider>
+          </AuthProvider>
+        </ElectronProvider>
+      </ErrorParent>
+    </SnackbarProvider>
+  </ThemeProvider>,
 );

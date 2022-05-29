@@ -62,7 +62,7 @@ import { User } from '@nirvana/core/src/models/user.model';
 import { onSnapshot } from 'firebase/firestore';
 
 import NirvanaAvatar from './NirvanaAvatar';
-import { useDebounce, useKeyPressEvent } from 'react-use';
+import { useDebounce, useEffectOnce, useKeyPressEvent } from 'react-use';
 
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import Channels from '../electron/constants';
@@ -96,6 +96,23 @@ const TerminalContext = React.createContext<ITerminalContext>({
 
   isUserSpeaking: false,
 });
+
+// global audio data in memory
+let audioChunks: Blob[] = [];
+const handleMediaRecorderData = (e: BlobEvent) => {
+  audioChunks.push(e.data);
+};
+
+const handleOnStopRecording = (e: BlobEvent) => {
+  console.log(audioChunks);
+  const blob = new Blob(audioChunks);
+  const audioUrl = URL.createObjectURL(blob);
+  const player = new Audio(audioUrl);
+  player.autoplay = true;
+};
+const handleOnStartRecording = (e: BlobEvent) => {
+  audioChunks = [];
+};
 
 // TODOS
 // fetch all conversations that I am part of
@@ -248,29 +265,73 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const [isUserSpeaking, setIsUserSpeaking] = useState<boolean>(false);
 
   const [userAudioStream, setUserAudioStream] = useState<MediaStream>(null);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>(null);
 
   const handleAskForMicrophonePermissions = useCallback(() => {
-    window.electronAPI.send(Channels.ASK_MICROPHONE_PERMISSIONS);
-  }, []);
+    // fix this...has to do with mac configuration
+    // window.electronAPI.send(Channels.ASK_MICROPHONE_PERMISSIONS);
 
-  // when user wants to talk,
+    navigator.mediaDevices
+      .getUserMedia({ audio: true })
+      .then((localUserMedia: MediaStream) => {
+        setUserAudioStream(localUserMedia);
+
+        const userMediaRecoder = new MediaRecorder(localUserMedia);
+        setMediaRecorder(userMediaRecoder);
+        userMediaRecoder.ondataavailable = handleMediaRecorderData;
+        userMediaRecoder.onstop = handleOnStopRecording;
+        userMediaRecoder.onstart = handleOnStartRecording;
+
+        enqueueSnackbar('got mic');
+
+        console.log(localUserMedia);
+      })
+      .catch((error) => {
+        enqueueSnackbar('Check your audio mic permissions in preferences!!', { variant: 'error' });
+        console.error(error);
+      });
+  }, [setUserAudioStream, enqueueSnackbar, setMediaRecorder]);
+
+  // on load, try getting microphone access
+  useEffect(() => {
+    handleAskForMicrophonePermissions();
+  }, [handleAskForMicrophonePermissions]);
+
+  // const handleRecorderStopped = useCallback(async () => {
+  //  await
+
+  // }, [])
+
+  //  when user wants to talk,
   //  unmute them and send clip for everyone to hear in the distance
   const handleBroadcast = useCallback(() => {
     if (!userAudioStream) {
-      enqueueSnackbar('Check your audio mic permissions!', { variant: 'error' });
+      enqueueSnackbar('Check your audio mic permissions in preferences!!', { variant: 'error' });
+
       handleAskForMicrophonePermissions();
       return;
     }
+
+    // prevent while delaying stopping
+    // ? better to just start after 200 ms as put below for the delay of stopping recording?
+    if (mediaRecorder.state === 'recording') return;
+
+    mediaRecorder.start();
+
     setIsUserSpeaking(true);
 
     enqueueSnackbar('started recording');
-  }, [setIsUserSpeaking, userAudioStream, handleAskForMicrophonePermissions]);
+  }, [setIsUserSpeaking, userAudioStream, mediaRecorder, handleAskForMicrophonePermissions]);
 
   const handleStopBroadcast = useCallback(() => {
     if (isUserSpeaking) {
       setIsUserSpeaking(false);
-
       enqueueSnackbar('stopped...', { variant: 'info' });
+
+      // actually stop talking after 2 seconds to capture everything
+      setTimeout(() => {
+        mediaRecorder.stop();
+      }, 200);
     }
   }, [setIsUserSpeaking, isUserSpeaking]);
 
