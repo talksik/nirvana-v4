@@ -858,8 +858,15 @@ function ConversationDetails() {
   useEffect(() => {
     joinConversation(selectedConversation.id, user.uid);
 
+    const handleCloseWindow = (event: BeforeUnloadEvent) => {
+      leaveConversation(selectedConversation.id, user.uid);
+    };
+
+    window.addEventListener('beforeunload', handleCloseWindow);
+
     return () => {
       leaveConversation(selectedConversation.id, user.uid);
+      window.removeEventListener('beforeunload', handleCloseWindow);
     };
   }, [selectedConversation.id, user.uid]);
 
