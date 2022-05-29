@@ -227,7 +227,11 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
     // TODO: future work/optimization
     // if we removed a conversation, unsubscribe from content listener as well
-  }, [conversationMap, updatecontentMap, enqueueSnackbar, setContentListeners]);
+
+    return () => {
+      Object.values(contentListeners).forEach((unsub) => unsub());
+    };
+  }, [conversationMap, updatecontentMap, enqueueSnackbar, setContentListeners, contentListeners]);
 
   // cache of selected conversation
   const selectedConversation: Conversation | undefined = useMemo(() => {
