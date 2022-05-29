@@ -146,7 +146,7 @@ export const getConversationsQueryLIVE = (userId: string) =>
 
 // get content blocks for particular conversation
 export const getConversationContentQueryLIVE = (conversationId: string) =>
-  query(db.conversationContent(conversationId));
+  query(db.conversationContent(conversationId), orderBy('createdDate', 'desc'));
 
 /**
  *
