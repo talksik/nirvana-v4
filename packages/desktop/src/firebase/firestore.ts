@@ -29,6 +29,7 @@ import Conversation, {
   MemberState,
 } from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
+import { AudioClip } from '@nirvana/core/src/models/content.model';
 
 interface Document {
   id: string;
@@ -60,6 +61,9 @@ const db = {
   user: (userId: string) => docPoint<User>(`users/${userId}`),
   conversations: collectionPoint<Conversation>(`conversations`),
   conversation: (conversationId: string) => docPoint<User>(`conversations/${conversationId}`),
+
+  conversationAudioClips: (conversationId: string) =>
+    collectionPoint<AudioClip>(`conversations/${conversationId}/audioClips`),
 };
 
 // enum COLLECTION {
@@ -188,6 +192,16 @@ export const createGroupConversation = async (
 
   try {
     await addDoc(db.conversations, newConversation);
+  } catch (e) {
+    console.error('Error creating user: ', e);
+
+    throw new Error('Error creating user');
+  }
+};
+
+export const sendAudioClipToConversation = async (audioClip: AudioClip, conversationId: string) => {
+  try {
+    await addDoc(db.conversationAudioClips(conversationId), audioClip);
   } catch (e) {
     console.error('Error creating user: ', e);
 

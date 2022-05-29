@@ -43,6 +43,7 @@ import {
   FiLogOut,
   FiMonitor,
   FiWind,
+  FiCloudRain,
 } from 'react-icons/fi';
 import { useSnackbar } from 'notistack';
 
@@ -55,6 +56,7 @@ import {
   getConversationsQueryLIVE,
   getUserById,
   searchUsers,
+  sendAudioClipToConversation,
 } from '../firebase/firestore';
 import { Link, AudioClip, Image } from '@nirvana/core/src/models/content.model';
 import { useImmer } from 'use-immer';
@@ -66,6 +68,7 @@ import { useDebounce, useEffectOnce, useKeyPressEvent } from 'react-use';
 
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import Channels from '../electron/constants';
+import { uploadAudioClip } from '../firebase/firebaseStorage';
 type ConversationMap = {
   [conversationId: string]: Conversation;
 };
@@ -89,12 +92,14 @@ interface ITerminalContext {
   getUser?: (userId: string) => Promise<User | undefined>;
 
   isUserSpeaking: boolean;
+  isCloudDoingMagic: boolean;
 }
 
 const TerminalContext = React.createContext<ITerminalContext>({
   conversationMap: {},
 
   isUserSpeaking: false,
+  isCloudDoingMagic: false,
 });
 
 // global audio data in memory
@@ -103,13 +108,6 @@ const handleMediaRecorderData = (e: BlobEvent) => {
   audioChunks.push(e.data);
 };
 
-const handleOnStopRecording = (e: BlobEvent) => {
-  console.log(audioChunks);
-  const blob = new Blob(audioChunks);
-  const audioUrl = URL.createObjectURL(blob);
-  const player = new Audio(audioUrl);
-  player.autoplay = true;
-};
 const handleOnStartRecording = (e: BlobEvent) => {
   audioChunks = [];
 };
@@ -267,6 +265,33 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const [userAudioStream, setUserAudioStream] = useState<MediaStream>(null);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>(null);
 
+  // from the time of starting to speak to finally sent to everyone out there
+  // feeling to user that everyone is listening right now even though it's only recording
+  const [isCloudDoingMagic, setIsCloudDoingMagic] = useState<boolean>(false);
+
+  const handleOnStopRecording = useCallback(async () => {
+    console.log(audioChunks[0]);
+    const blob = new Blob(audioChunks);
+
+    const audioUrl = URL.createObjectURL(blob);
+    const player = new Audio(audioUrl);
+    player.autoplay = true;
+
+    try {
+      const downloadUrl = await uploadAudioClip(`${user.uid}-${new Date().valueOf()}`, blob);
+
+      const audioClip = new AudioClip(user.uid, downloadUrl);
+      await sendAudioClipToConversation(audioClip, selectedConversation.id);
+
+      enqueueSnackbar('clip sent!', { variant: 'success' });
+      setIsCloudDoingMagic(false);
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar('Problem in recording clip', { variant: 'error' });
+    }
+    enqueueSnackbar('clip sent!', { variant: 'success' });
+  }, [user.uid, setIsCloudDoingMagic, enqueueSnackbar, selectedConversation?.id]);
+
   const handleAskForMicrophonePermissions = useCallback(() => {
     // fix this...has to do with mac configuration
     // window.electronAPI.send(Channels.ASK_MICROPHONE_PERMISSIONS);
@@ -290,21 +315,20 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         enqueueSnackbar('Check your audio mic permissions in preferences!!', { variant: 'error' });
         console.error(error);
       });
-  }, [setUserAudioStream, enqueueSnackbar, setMediaRecorder]);
+  }, [setUserAudioStream, enqueueSnackbar, setMediaRecorder, handleOnStopRecording]);
 
   // on load, try getting microphone access
   useEffect(() => {
     handleAskForMicrophonePermissions();
   }, [handleAskForMicrophonePermissions]);
 
-  // const handleRecorderStopped = useCallback(async () => {
-  //  await
-
-  // }, [])
-
   //  when user wants to talk,
   //  unmute them and send clip for everyone to hear in the distance
   const handleBroadcast = useCallback(() => {
+    if (!selectedConversationId) {
+      enqueueSnackbar('You must select a conversation first!!!', { variant: 'warning' });
+    }
+
     if (!userAudioStream) {
       enqueueSnackbar('Check your audio mic permissions in preferences!!', { variant: 'error' });
 
@@ -316,12 +340,19 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     // ? better to just start after 200 ms as put below for the delay of stopping recording?
     if (mediaRecorder.state === 'recording') return;
 
-    mediaRecorder.start();
-
-    setIsUserSpeaking(true);
-
     enqueueSnackbar('started recording');
-  }, [setIsUserSpeaking, userAudioStream, mediaRecorder, handleAskForMicrophonePermissions]);
+    setIsCloudDoingMagic(true);
+    mediaRecorder.start();
+    setIsUserSpeaking(true);
+  }, [
+    selectedConversationId,
+    setIsUserSpeaking,
+    userAudioStream,
+    mediaRecorder,
+    handleAskForMicrophonePermissions,
+    setIsCloudDoingMagic,
+    enqueueSnackbar,
+  ]);
 
   const handleStopBroadcast = useCallback(() => {
     if (isUserSpeaking) {
@@ -333,7 +364,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         mediaRecorder.stop();
       }, 200);
     }
-  }, [setIsUserSpeaking, isUserSpeaking]);
+  }, [setIsUserSpeaking, isUserSpeaking, mediaRecorder, enqueueSnackbar]);
 
   useKeyPressEvent('`', handleBroadcast, handleStopBroadcast);
 
@@ -386,6 +417,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         getUser,
         handleQuickDial,
         selectConversation,
+        isCloudDoingMagic,
       }}
     >
       <Grid container spacing={0}>
@@ -791,10 +823,11 @@ function MainPanel() {
 
 function ConversationDetails() {
   const { user } = useAuth();
-
-  const { getUser, selectedConversation, selectConversation } = useTerminal();
-
+  const { getUser, selectedConversation, selectConversation, isCloudDoingMagic } = useTerminal();
   const [conversationUsers, setConversationUsers] = useImmer<User[]>([]);
+
+  // TODO: at the terminal level, make sure we are listening for audio clips
+  // and here it's just an access of that map of content for each conversation's blocks
 
   // join the room
   useEffect(() => {
@@ -866,7 +899,7 @@ function ConversationDetails() {
       </Stack>
 
       <Container maxWidth={false} sx={{ position: 'relative', flex: 1 }}>
-        {/* <ConversationHistory /> */}
+        <ConversationHistory />
 
         <Box
           sx={{
@@ -887,6 +920,7 @@ function ConversationDetails() {
 }
 
 function ConversationHistory() {
+  const { isCloudDoingMagic } = useTerminal();
   return (
     <Container maxWidth="xs">
       <Stack
@@ -950,6 +984,12 @@ function ConversationHistory() {
           </Stack>
         </Paper>
       </Stack>
+
+      {isCloudDoingMagic && (
+        <IconButton color="secondary">
+          <FiCloudRain />
+        </IconButton>
+      )}
 
       <Stack
         justifyContent={'flex-start'}

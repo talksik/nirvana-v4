@@ -1,6 +1,6 @@
 import { Timestamp } from 'firebase/firestore';
 
-interface IContent {
+export interface IContent {
   id: string;
   creatorUserId: string;
   contentUrl: string; // remote resource of file/media
@@ -12,8 +12,9 @@ interface IContent {
 // ? persist length of clip for easier viewing for others...
 // ?they have to load it anyway and will get metadata anyway?
 export class AudioClip implements IContent {
+  id: string;
+
   constructor(
-    public id: string,
     public creatorUserId: string,
     public contentUrl: string,
     public createdDate: Timestamp = Timestamp.now(),
@@ -21,8 +22,8 @@ export class AudioClip implements IContent {
 }
 
 export class Link implements IContent {
+  id: string;
   constructor(
-    public id: string,
     public creatorUserId: string,
     public contentUrl: string,
     public createdDate: Timestamp = Timestamp.now(),
@@ -30,8 +31,9 @@ export class Link implements IContent {
 }
 
 export class Image implements IContent {
+  id: string;
+
   constructor(
-    public id: string,
     public creatorUserId: string,
     public contentUrl: string,
     public thumbnailUrl?: string,
