@@ -278,18 +278,22 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     player.autoplay = true;
 
     try {
-      const downloadUrl = await uploadAudioClip(`${user.uid}-${new Date().valueOf()}`, blob);
+      // ?should I send blob or first audio chunk in array?
+      const downloadUrl = await uploadAudioClip(
+        `${user.uid}-${new Date().valueOf()}`,
+        audioChunks[0],
+      );
 
       const audioClip = new AudioClip(user.uid, downloadUrl);
       await sendAudioClipToConversation(audioClip, selectedConversation.id);
 
       enqueueSnackbar('clip sent!', { variant: 'success' });
-      setIsCloudDoingMagic(false);
     } catch (error) {
       console.error(error);
       enqueueSnackbar('Problem in recording clip', { variant: 'error' });
     }
-    enqueueSnackbar('clip sent!', { variant: 'success' });
+
+    setIsCloudDoingMagic(false);
   }, [user.uid, setIsCloudDoingMagic, enqueueSnackbar, selectedConversation?.id]);
 
   const handleAskForMicrophonePermissions = useCallback(() => {
@@ -327,6 +331,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const handleBroadcast = useCallback(() => {
     if (!selectedConversationId) {
       enqueueSnackbar('You must select a conversation first!!!', { variant: 'warning' });
+      return;
     }
 
     if (!userAudioStream) {

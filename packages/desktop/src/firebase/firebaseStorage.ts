@@ -6,12 +6,16 @@ export const uploadAudioClip = async (uniqueFileName: string, blob: Blob) => {
   try {
     const audioClipsRef = ref(storage, `audioClips/${uniqueFileName}`);
 
+    const metadata = {
+      contentType: blob.type,
+    };
+
     // 'file' comes from the Blob or File API
-    const snapshot = await uploadBytes(audioClipsRef, blob);
+    const snapshot = await uploadBytes(audioClipsRef, blob, metadata);
 
     return await getDownloadURL(audioClipsRef);
   } catch (error) {
-    console.warn('problem in uploading audio clip');
+    console.warn(error);
 
     throw Error('problem in uploading audio clip');
   }
