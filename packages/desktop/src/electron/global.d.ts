@@ -15,6 +15,7 @@ declare global {
       window: {
         resizeWindow(dimensionChangeRequest: DimensionChangeRequest): void;
       };
+      send(channel: Channels, data?: any);
       on(channel: Channels, func: any): () => void;
       once(channel: Channels, func: any): () => void;
     };

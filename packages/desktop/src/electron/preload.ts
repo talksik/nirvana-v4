@@ -23,6 +23,10 @@ const electronAPI = {
     },
   },
 
+  send(channel: Channels, data?: any) {
+    ipcRenderer.send(channel, data);
+  },
+
   on(channel: Channels, func: any) {
     // const validChannels = ['ipc-example'];
     // if (validChannels.includes(channel)) {

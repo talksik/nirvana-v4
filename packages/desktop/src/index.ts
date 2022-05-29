@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, Display, screen } from 'electron';
+import { app, BrowserWindow, ipcMain, Display, screen, systemPreferences } from 'electron';
 
 import Channels, { DEFAULT_APP_PRESET, DimensionChangeRequest } from './electron/constants';
 import { handleGoogleLogin } from './electron/handleLogin';
@@ -63,6 +63,10 @@ app
     ipcMain.on(Channels.ACTIVATE_LOG_IN, async (event, arg) => {
       console.log('initiating log in');
       await handleGoogleLogin();
+    });
+
+    ipcMain.on(Channels.ASK_MICROPHONE_PERMISSIONS, async () => {
+      systemPreferences.askForMediaAccess('microphone');
     });
   })
   .then(() => {

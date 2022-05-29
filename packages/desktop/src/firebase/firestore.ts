@@ -134,7 +134,7 @@ export const getUserById = async (userId: string): Promise<User | undefined> => 
 
 // get the conversations for particular user
 export const getConversationsQueryLIVE = (userId: string) =>
-  query(db.conversations, where('memberIdsList', 'array-contains', userId));
+  query(db.conversations, where(`members.${userId}.isActive`, '==', true));
 
 /**
  *

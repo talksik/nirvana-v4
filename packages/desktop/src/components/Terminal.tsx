@@ -65,6 +65,7 @@ import NirvanaAvatar from './NirvanaAvatar';
 import { useDebounce, useKeyPressEvent } from 'react-use';
 
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
+import Channels from '../electron/constants';
 type ConversationMap = {
   [conversationId: string]: Conversation;
 };
@@ -86,10 +87,14 @@ interface ITerminalContext {
   handleQuickDial?: (otherUserId: string) => void;
 
   getUser?: (userId: string) => Promise<User | undefined>;
+
+  isUserSpeaking: boolean;
 }
 
 const TerminalContext = React.createContext<ITerminalContext>({
   conversationMap: {},
+
+  isUserSpeaking: false,
 });
 
 // TODOS
@@ -151,7 +156,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     });
 
     return () => unsub();
-  }, [user, enqueueSnackbar, updateConversationMap]);
+  }, [user, updateConversationMap]);
 
   // cache of selected conversation
   const selectedConversation: Conversation | undefined = useMemo(() => {
@@ -240,15 +245,32 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
   useKeyPressEvent('Shift', onSearchFocus);
 
+  const [isUserSpeaking, setIsUserSpeaking] = useState<boolean>(false);
+
+  const [userAudioStream, setUserAudioStream] = useState<MediaStream>(null);
+
+  const handleAskForMicrophonePermissions = useCallback(() => {
+    window.electronAPI.send(Channels.ASK_MICROPHONE_PERMISSIONS);
+  }, []);
+
   // when user wants to talk,
   //  unmute them and send clip for everyone to hear in the distance
   const handleBroadcast = useCallback(() => {
+    if (!userAudioStream) {
+      enqueueSnackbar('Check your audio mic permissions!', { variant: 'error' });
+      handleAskForMicrophonePermissions();
+      return;
+    }
+    setIsUserSpeaking(true);
+
     enqueueSnackbar('started recording');
-  }, []);
+  }, [setIsUserSpeaking, userAudioStream, handleAskForMicrophonePermissions]);
 
   const handleStopBroadcast = useCallback(() => {
+    setIsUserSpeaking(false);
+
     enqueueSnackbar('stopped...', { variant: 'info' });
-  }, []);
+  }, [setIsUserSpeaking]);
 
   useKeyPressEvent('`', handleBroadcast, handleStopBroadcast);
 
@@ -295,6 +317,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   return (
     <TerminalContext.Provider
       value={{
+        isUserSpeaking,
         selectedConversation,
         conversationMap,
         getUser,
@@ -633,8 +656,6 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
     return;
   }, [conversation.memberIdsList, getUser, user, setConversationUsers]);
 
-  console.log(conversationUsers);
-
   return (
     <ListItem key={`${conversation.id}-priorityConvoList`}>
       <ListItemButton
@@ -782,103 +803,7 @@ function ConversationDetails() {
       </Stack>
 
       <Container maxWidth={false} sx={{ position: 'relative', flex: 1 }}>
-        <Container maxWidth="xs">
-          <Stack
-            justifyContent={'flex-start'}
-            alignItems={'center'}
-            sx={{
-              pt: 2,
-            }}
-          >
-            <Typography variant="caption">yesterday</Typography>
-
-            <Paper elevation={1} sx={{ p: 1, width: '100%' }}>
-              <Stack direction={'row'} alignItems="center">
-                <Stack spacing={2} direction={'row'} alignItems={'center'}>
-                  <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
-
-                  <Typography color={'GrayText'} variant="overline">
-                    {'Viet Phan'}
-                  </Typography>
-                </Stack>
-
-                <Box
-                  sx={{
-                    ml: 'auto',
-                    color: 'GrayText',
-                  }}
-                >
-                  <FiPlay />
-                </Box>
-              </Stack>
-            </Paper>
-          </Stack>
-
-          <Stack
-            justifyContent={'flex-start'}
-            alignItems={'center'}
-            sx={{
-              pt: 2,
-            }}
-          >
-            <Typography variant="caption">today</Typography>
-
-            <Paper elevation={8} sx={{ p: 1, width: '100%' }}>
-              <Stack direction={'row'} alignItems="center">
-                <Stack spacing={2} direction={'row'} alignItems={'center'}>
-                  <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
-
-                  <Typography color={'GrayText'} variant="overline">
-                    {'Viet Phan'}
-                  </Typography>
-                </Stack>
-
-                <Box
-                  sx={{
-                    ml: 'auto',
-                    color: 'GrayText',
-                  }}
-                >
-                  <FiPlay />
-                </Box>
-              </Stack>
-            </Paper>
-          </Stack>
-
-          <Stack
-            justifyContent={'flex-start'}
-            alignItems={'center'}
-            sx={{
-              pt: 2,
-            }}
-          >
-            <Typography variant="caption">right now</Typography>
-
-            <Paper elevation={24} sx={{ p: 1, width: '100%' }}>
-              <Stack direction={'row'} alignItems="center">
-                <Stack spacing={2} direction={'row'} alignItems={'center'}>
-                  <Avatar
-                    alt={'Arjun Patel'}
-                    src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
-                  />
-
-                  <Typography color={'GrayText'} variant="overline">
-                    {'Arjun Patel'}
-                  </Typography>
-                </Stack>
-
-                <Box
-                  sx={{
-                    ml: 'auto',
-                    color: 'GrayText',
-                  }}
-                >
-                  <FiPlay />
-                </Box>
-              </Stack>
-            </Paper>
-          </Stack>
-        </Container>
+        {/* <ConversationHistory /> */}
 
         <Box
           sx={{
@@ -895,5 +820,107 @@ function ConversationDetails() {
         </Box>
       </Container>
     </>
+  );
+}
+
+function ConversationHistory() {
+  return (
+    <Container maxWidth="xs">
+      <Stack
+        justifyContent={'flex-start'}
+        alignItems={'center'}
+        sx={{
+          pt: 2,
+        }}
+      >
+        <Typography variant="caption">yesterday</Typography>
+
+        <Paper elevation={1} sx={{ p: 1, width: '100%' }}>
+          <Stack direction={'row'} alignItems="center">
+            <Stack spacing={2} direction={'row'} alignItems={'center'}>
+              <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
+
+              <Typography color={'GrayText'} variant="overline">
+                {'Viet Phan'}
+              </Typography>
+            </Stack>
+
+            <Box
+              sx={{
+                ml: 'auto',
+                color: 'GrayText',
+              }}
+            >
+              <FiPlay />
+            </Box>
+          </Stack>
+        </Paper>
+      </Stack>
+
+      <Stack
+        justifyContent={'flex-start'}
+        alignItems={'center'}
+        sx={{
+          pt: 2,
+        }}
+      >
+        <Typography variant="caption">today</Typography>
+
+        <Paper elevation={8} sx={{ p: 1, width: '100%' }}>
+          <Stack direction={'row'} alignItems="center">
+            <Stack spacing={2} direction={'row'} alignItems={'center'}>
+              <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
+
+              <Typography color={'GrayText'} variant="overline">
+                {'Viet Phan'}
+              </Typography>
+            </Stack>
+
+            <Box
+              sx={{
+                ml: 'auto',
+                color: 'GrayText',
+              }}
+            >
+              <FiPlay />
+            </Box>
+          </Stack>
+        </Paper>
+      </Stack>
+
+      <Stack
+        justifyContent={'flex-start'}
+        alignItems={'center'}
+        sx={{
+          pt: 2,
+        }}
+      >
+        <Typography variant="caption">right now</Typography>
+
+        <Paper elevation={24} sx={{ p: 1, width: '100%' }}>
+          <Stack direction={'row'} alignItems="center">
+            <Stack spacing={2} direction={'row'} alignItems={'center'}>
+              <Avatar
+                alt={'Arjun Patel'}
+                src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
+              />
+
+              <Typography color={'GrayText'} variant="overline">
+                {'Arjun Patel'}
+              </Typography>
+            </Stack>
+
+            <Box
+              sx={{
+                ml: 'auto',
+                color: 'GrayText',
+              }}
+            >
+              <FiPlay />
+            </Box>
+          </Stack>
+        </Paper>
+      </Stack>
+    </Container>
   );
 }
