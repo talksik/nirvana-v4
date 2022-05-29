@@ -4,7 +4,7 @@ const storage = getStorage();
 
 export const uploadAudioClip = async (uniqueFileName: string, blob: Blob) => {
   try {
-    const audioClipsRef = ref(storage, `audioClips/${uniqueFileName}`);
+    const audioClipsRef = ref(storage, `content/${uniqueFileName}`);
 
     const metadata = {
       contentType: blob.type,
