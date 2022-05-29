@@ -17,6 +17,9 @@ import {
   startAt,
   endAt,
   addDoc,
+  arrayUnion,
+  updateDoc,
+  arrayRemove,
 } from 'firebase/firestore';
 
 import { User as FirebaseUser } from 'firebase/auth';
@@ -60,7 +63,8 @@ const db = {
   users: collectionPoint<User>(`users`),
   user: (userId: string) => docPoint<User>(`users/${userId}`),
   conversations: collectionPoint<Conversation>(`conversations`),
-  conversation: (conversationId: string) => docPoint<User>(`conversations/${conversationId}`),
+  conversation: (conversationId: string) =>
+    docPoint<Conversation>(`conversations/${conversationId}`),
 
   conversationAudioClips: (conversationId: string) =>
     collectionPoint<AudioClip>(`conversations/${conversationId}/audioClips`),
@@ -163,9 +167,9 @@ export const createOneOnOneConversation = async (
     const newDoc = await addDoc(db.conversations, newConversation);
     return newDoc.id;
   } catch (e) {
-    console.error('Error creating user: ', e);
+    console.error('Error: ', e);
 
-    throw new Error('Error creating user');
+    throw new Error('Error');
   }
 };
 
@@ -193,9 +197,9 @@ export const createGroupConversation = async (
   try {
     await addDoc(db.conversations, newConversation);
   } catch (e) {
-    console.error('Error creating user: ', e);
+    console.error('Error : ', e);
 
-    throw new Error('Error creating user');
+    throw new Error('Error ');
   }
 };
 
@@ -203,8 +207,30 @@ export const sendAudioClipToConversation = async (audioClip: AudioClip, conversa
   try {
     await addDoc(db.conversationAudioClips(conversationId), audioClip);
   } catch (e) {
-    console.error('Error creating user: ', e);
+    console.error('Error  ', e);
 
-    throw new Error('Error creating user');
+    throw new Error('Error ');
+  }
+};
+
+// put the user in membersInroom
+export const joinConversation = async (conversationId: string, userId: string) => {
+  try {
+    await updateDoc(db.conversation(conversationId), { membersInRoom: arrayUnion(userId) });
+  } catch (e) {
+    console.error('Error ', e);
+
+    throw new Error('Error');
+  }
+};
+
+// leave membersInroom
+export const leaveConversation = async (conversationId: string, userId: string) => {
+  try {
+    await updateDoc(db.conversation(conversationId), { membersInRoom: arrayRemove(userId) });
+  } catch (e) {
+    console.error('Error ', e);
+
+    throw new Error('Error');
   }
 };

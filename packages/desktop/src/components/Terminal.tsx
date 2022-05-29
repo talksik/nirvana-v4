@@ -55,6 +55,8 @@ import {
   createOneOnOneConversation,
   getConversationsQueryLIVE,
   getUserById,
+  joinConversation,
+  leaveConversation,
   searchUsers,
   sendAudioClipToConversation,
 } from '../firebase/firestore';
@@ -826,6 +828,8 @@ function MainPanel() {
   );
 }
 
+const maxPriorityConvos = 5;
+
 function ConversationDetails() {
   const { user } = useAuth();
   const { getUser, selectedConversation, selectConversation, isCloudDoingMagic } = useTerminal();
@@ -834,12 +838,35 @@ function ConversationDetails() {
   // TODO: at the terminal level, make sure we are listening for audio clips
   // and here it's just an access of that map of content for each conversation's blocks
 
+  // the reference last active date based on current session of viewing this conversation
+  const [lastActiveDate, setLastActiveDate] = useState<Date>(null);
+
   // join the room
   useEffect(() => {
-    if (selectedConversation.membersInRoom?.length > 0) {
-      // join the audio room
+    if (selectedConversation.membersInRoom?.length > 1) {
+      // join the audio room with hms
     }
   }, [selectedConversation.membersInRoom]);
+
+  // update my last active date in this conversation
+  // put me in the membersInRoom
+  useEffect(() => {
+    setLastActiveDate((prevLastActiveForCurrentSession) => {
+      if (prevLastActiveForCurrentSession) return prevLastActiveForCurrentSession;
+
+      return selectedConversation.members[user.uid].lastActiveDate?.toDate();
+    });
+
+    if (!selectedConversation.memberIdsList.includes(user.uid))
+      joinConversation(selectedConversation.id, user.uid);
+
+    return () => {
+      leaveConversation(selectedConversation.id, user.uid);
+    };
+  }, [selectedConversation.members, user.uid, setLastActiveDate, selectedConversation.id]);
+
+  // TODO: uncheck priority or not
+  // soft max of 10...not going to enforce by counting all in database, but relying on client side list of convos
 
   useEffect(() => {
     (async () => {
