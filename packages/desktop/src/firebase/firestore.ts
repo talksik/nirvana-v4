@@ -17,13 +17,18 @@ import {
   startAt,
   endAt,
   addDoc,
+  writeBatch,
+  collectionGroup,
 } from 'firebase/firestore';
 
 import { User as FirebaseUser } from 'firebase/auth';
 import { firestoreDb } from './connect';
 import { User } from '@nirvana/core/src/models/user.model';
-import Conversation from '@nirvana/core/src/models/conversation.model';
-import useAuth from '../providers/AuthProvider';
+import Conversation, {
+  ConversationMember,
+  MemberRole,
+  MemberState,
+} from '@nirvana/core/src/models/conversation.model';
 
 interface Document {
   id: string;
@@ -50,11 +55,17 @@ const docPoint = <T extends Document>(collectionPath: string) =>
 const collectionPoint = <T extends Document>(collectionPath: string) =>
   firestoreDb && collection(getFirestore(), collectionPath).withConverter(converter<T>());
 
+// const collectionGroupPoint = <T extends Document>(collectionPath: string) =>
+//   firestoreDb && collectionGroup(getFirestore(), collectionPath).withConverter(converter<T>());
+
 const db = {
   users: collectionPoint<User>(`users`),
   user: (userId: string) => docPoint<User>(`users/${userId}`),
   conversations: collectionPoint<Conversation>(`conversations`),
-  conversation: (conversationId: string) => docPoint<User>(`conversations/${conversationId}`),
+  conversation: (conversationId: string) =>
+    docPoint<Conversation>(`conversations/${conversationId}`),
+  conversationMembers: collectionPoint<ConversationMember>(`conversationMembers`),
+  conversationMember: () => docPoint<ConversationMember>(`conversationMembers`),
 };
 
 // enum COLLECTION {
@@ -127,9 +138,20 @@ export const getUserById = async (userId: string): Promise<User | undefined> => 
   return undefined;
 };
 
-// get the conversations for particular user
-export const getConversationsQueryLIVE = (userId: string) =>
-  query(db.conversations, where('membersList', 'array-contains', userId));
+// get conversation members for all conversations that I am in
+export const getUserConversationMembersQueryLIVE = (userId: string) => {
+  return query(db.conversationMembers, where('userId', '==', userId));
+};
+
+// get all conversation members for a conversation
+export const getConversationMembersQueryLIVE = (conversationId: string) => {
+  return query(db.conversationMembers, where('conversationId', '==', conversationId));
+};
+
+// get document reference for specific conversation
+export const getConversationQueryLIVE = (conversationId: string) => {
+  return db.conversation(conversationId);
+};
 
 /**
  *
@@ -141,11 +163,34 @@ export const createOneOnOneConversation = async (
   otherUserId: string,
   myUserId: string,
 ): Promise<string | undefined> => {
-  const newConversation = new Conversation(myUserId, [myUserId, otherUserId], null);
-
   try {
-    const newDoc = await addDoc(db.conversations, newConversation);
-    return newDoc.id;
+    const newConversation = new Conversation(myUserId);
+    const newDocConversationInserted = await addDoc(db.conversations, newConversation);
+
+    const batch = writeBatch(firestoreDb);
+
+    // create all members
+    const adminMember = new ConversationMember(
+      myUserId,
+      newDocConversationInserted.id,
+      MemberRole.admin,
+      MemberState.priority,
+      null,
+    );
+    const otherMember = new ConversationMember(
+      otherUserId,
+      newDocConversationInserted.id,
+      MemberRole.regular,
+      MemberState.inbox,
+      null,
+    );
+
+    batch.set(db.conversationMember(), adminMember);
+    batch.set(db.conversationMember(), otherMember);
+
+    await batch.commit();
+
+    return newDocConversationInserted.id;
   } catch (e) {
     console.error('Error creating user: ', e);
 
@@ -156,11 +201,38 @@ export const createOneOnOneConversation = async (
 export const createGroupConversation = async (
   otherUserIds: string[],
   myUserId: string,
-): Promise<void> => {
-  const newConversation = new Conversation(myUserId, [myUserId, ...otherUserIds]);
-
+): Promise<string> => {
   try {
-    await addDoc(db.conversations, newConversation);
+    const newConversation = new Conversation(myUserId);
+    const newDocConversationInserted = await addDoc(db.conversations, newConversation);
+
+    const batch = writeBatch(firestoreDb);
+
+    const adminMember = new ConversationMember(
+      myUserId,
+      newDocConversationInserted.id,
+      MemberRole.admin,
+      MemberState.priority,
+      null,
+    );
+    batch.set(db.conversationMember(), adminMember);
+
+    // create all members
+    otherUserIds.forEach((otherUserId) => {
+      const otherMember = new ConversationMember(
+        otherUserId,
+        newDocConversationInserted.id,
+        MemberRole.regular,
+        MemberState.inbox,
+        null,
+      );
+
+      batch.set(db.conversationMember(), otherMember);
+    });
+
+    await batch.commit();
+
+    return newDocConversationInserted.id;
   } catch (e) {
     console.error('Error creating user: ', e);
 

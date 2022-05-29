@@ -48,25 +48,27 @@ import { useSnackbar } from 'notistack';
 
 import NirvanaLogo from './NirvanaLogo';
 
-import Conversation from '@nirvana/core/src/models/conversation.model';
+import Conversation, { ConversationMember } from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
 import {
   createOneOnOneConversation,
-  getConversationsQueryLIVE,
   getUserById,
+  getUserConversationMembersQueryLIVE,
   searchUsers,
 } from '../firebase/firestore';
 import { Link, AudioClip, Image } from '@nirvana/core/src/models/content.model';
 import { useImmer } from 'use-immer';
 import { User } from '@nirvana/core/src/models/user.model';
-import { onSnapshot } from 'firebase/firestore';
+import { onSnapshot, Unsubscribe } from 'firebase/firestore';
 
 import NirvanaAvatar from './NirvanaAvatar';
 import { useDebounce, useKey, useKeyPressEvent } from 'react-use';
 
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
+import { getConversationQueryLIVE } from '../firebase/firestore';
+
 type ConversationMap = {
-  [conversationId: string]: Conversation;
+  [conversationId: string]: Partial<MasterConversation>;
 };
 
 type UserMap = {
@@ -87,6 +89,8 @@ interface ITerminalContext {
 
   getUser?: (userId: string) => Promise<User | undefined>;
 }
+
+type MasterConversation = Conversation & { members: ConversationMember[] };
 
 const TerminalContext = React.createContext<ITerminalContext>({
   conversationMap: {},
@@ -121,23 +125,52 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const [userMap, updateUserMap] = useImmer<UserMap>({});
   const [contentMap, updatecontentMap] = useImmer<ConversationContentMap>({});
 
-  // fetch conversations
+  // fetch conversations that I am in
   useEffect(() => {
-    const unsub = onSnapshot(getConversationsQueryLIVE(user.uid), (querySnapshot) => {
-      const conversations = querySnapshot.docs.map((doc) => doc.data());
+    const unsubs: Unsubscribe[] = [];
 
-      console.log('got new or updated conversations', conversations);
+    const unsubMyConversationMembers = onSnapshot(
+      getUserConversationMembersQueryLIVE(user.uid),
+      (querySnapshot) => {
+        querySnapshot.docChanges().forEach((docSnapChange) => {
+          const conversationMember = docSnapChange.doc.data();
+          const conversationId = conversationMember.conversationId;
 
-      updateConversationMap((draft) => {
-        conversations.forEach((convo) => {
-          draft[convo.id] = convo;
+          // start listening to conversations
+          // get all of the other members
+          if (docSnapChange.type === 'added') {
+            const conversationSub = onSnapshot(getConversationQueryLIVE, (conversationSnapshot) => {
+              const conversation = conversationSnapshot
+            })
+            console.log('New city: ', docSnapChange.doc.data());
+          }
+          if (docSnapChange.type === 'modified') {
+            console.log('Modified city: ', docSnapChange.doc.data());
+          }
+          if (docSnapChange.type === 'removed') {
+            console.log('Removed city: ', docSnapChange.doc.data());
+          }
+
+          updateConversationMap((draft) => {
+            if (draft[conversationMember.conversationId]) {
+              if (draft[conversationMember.conversationId].members) {
+                draft[conversationMember.conversationId].members.push(conversationMember);
+              } else {
+                draft[conversationMember.conversationId].members = [conversationMember];
+              }
+            } else {
+              draft[conversationMember.conversationId] = { members: [conversationMember] };
+            }
+          });
         });
-      });
+      },
+    );
 
-      enqueueSnackbar('got conversations...logging', { variant: 'success' });
-    });
+    unsubs.push(unsubMyConversationMembers)
 
-    return () => unsub();
+    return () => {
+      unsubs.forEach((unsub) => unsub());
+    };
   }, [user, enqueueSnackbar, updateConversationMap]);
 
   // cache of selected conversation

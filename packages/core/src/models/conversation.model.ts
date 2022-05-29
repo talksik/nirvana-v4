@@ -5,23 +5,36 @@ export default class Conversation {
   constructor(
     public createdByUserId: string,
 
-    public membersList: string[],
-
     public name: string | null = null,
-
-    public lastUpdatedDate = Timestamp.now(),
 
     public createdDate = Timestamp.now(),
 
     public membersInRoom: string[] = [],
+
+    public lastActivityDate: Timestamp = Timestamp.now(),
   ) {}
 }
 
-// export class Member {
-//   constructor(
-//     public id: string,
-//     public userId: string,
-//     public role: 'admin' | 'regular',
-//     public joinedDate = Timestamp.now(),
-//   ) {}
-// }
+export class ConversationMember {
+  constructor(
+    public id: string, // NOTE: serves as the user ID
+    public conversationId: string,
+
+    public role: MemberRole,
+
+    public memberState: MemberState,
+
+    public lastActiveDate: Timestamp | null = null,
+    public joinedDate = Timestamp.now(),
+  ) {}
+}
+
+export enum MemberRole {
+  admin = 'admin',
+  regular = 'regular',
+}
+export enum MemberState {
+  priority = 'priority',
+  inbox = 'inbox',
+  // deleted = "deleted"
+}
