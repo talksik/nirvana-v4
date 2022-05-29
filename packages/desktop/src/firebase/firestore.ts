@@ -20,6 +20,7 @@ import {
   arrayUnion,
   updateDoc,
   arrayRemove,
+  serverTimestamp,
 } from 'firebase/firestore';
 
 import { User as FirebaseUser } from 'firebase/auth';
@@ -223,7 +224,10 @@ export const sendContentBlockToConversation = async (
 // put the user in membersInroom
 export const joinConversation = async (conversationId: string, userId: string) => {
   try {
-    await updateDoc(db.conversation(conversationId), { membersInRoom: arrayUnion(userId) });
+    await updateDoc(db.conversation(conversationId), {
+      [`membersInRoom`]: arrayUnion(userId),
+      [`members.${userId}.lastActiveDate`]: serverTimestamp(),
+    });
   } catch (e) {
     console.error('Error ', e);
 
@@ -234,7 +238,10 @@ export const joinConversation = async (conversationId: string, userId: string) =
 // leave membersInroom
 export const leaveConversation = async (conversationId: string, userId: string) => {
   try {
-    await updateDoc(db.conversation(conversationId), { membersInRoom: arrayRemove(userId) });
+    await updateDoc(db.conversation(conversationId), {
+      [`membersInRoom`]: arrayRemove(userId),
+      [`members.${userId}.lastActiveDate`]: serverTimestamp(),
+    });
   } catch (e) {
     console.error('Error ', e);
 

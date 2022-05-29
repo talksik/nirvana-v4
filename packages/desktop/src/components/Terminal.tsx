@@ -139,6 +139,42 @@ const handleOnStartRecording = (e: BlobEvent) => {
 
 // if no conversations, show stale state + create one with nirvana
 
+// 1. create group conversation page
+//   you know what to do...simple row of selected users...dropdown options should show searched user list
+//   use material selects for this dropdown to avoid all the work...and hide select-like things
+// 2. auto select that conversation and have it show up
+// 3. allow adding name when creating convo
+// 4.
+// 5. convo settings: add people (simple add method with firestore), change name | max 8 people
+
+/**
+ * Streaming stuff:
+ * - join a stream room if 2 or more in the list
+ * - leave on unmount
+ * - timer to unselect a conversation after 30 minutes...no fancy checking if user is there/active
+ * - show little control to see if
+ */
+
+/**
+ *
+ * media stuff:
+ * - paste image + view in history + with modal nice and big
+ * - paste a link + see in a content block
+ * - paste link of image and have it save as image
+ */
+
+/**
+ *
+ * tech debt: now go back and make convo line and side panel name and icons and all legit
+ */
+
+/**
+ * nice convo history
+ * - chunk has max of 1 minute
+ * - put current clip in next chunk if previous clip was more than 4 hours ago
+ * - put current clip in next chunk if it's after my last active date here
+ */
+
 // sort based on the different data sources: conversations, audio clips, etc.
 
 // todo: extract each use effect to custom hook and will be clean
