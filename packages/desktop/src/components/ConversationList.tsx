@@ -124,9 +124,9 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
             <FiSun />
           </IconButton>
         ) : (
-          <IconButton color="default" size="small">
+          <Box sx={{ color: 'GrayText', fontSize: 10, ml: 1 }}>
             <FiCircle />
-          </IconButton>
+          </Box>
         )}
 
         <Box sx={{ ml: 1, mr: 'auto', color: 'GrayText' }}>
