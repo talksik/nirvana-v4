@@ -215,7 +215,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
               if (docChange.type === 'added') {
                 // TODO: add to audio queue from here if there was an addition?
-                enqueueSnackbar('new content received!', { variant: 'default' });
                 updateContentMap((draftContent) => {
                   if (draftContent[conversationId]) {
                     draftContent[conversationId].push(currentContentBlock);
@@ -238,7 +237,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         draftListeners[conversationId] = contentListener;
       });
     },
-    [setContentListeners, updateContentMap, enqueueSnackbar],
+    [setContentListeners, updateContentMap],
   );
 
   // fetch conversations
@@ -268,8 +267,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
           }
         });
       });
-
-      enqueueSnackbar('fetched conversations', { variant: 'success' });
     });
 
     return () => unsub();
