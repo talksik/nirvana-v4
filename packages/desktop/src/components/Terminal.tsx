@@ -779,7 +779,13 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
                 key={`${conversation.id}-${conversationUser.uid}-convoIcon`}
                 alt={conversationUser?.displayName}
                 src={conversationUser?.photoUrl}
-                sx={{ width: 30, height: 30 }}
+                sx={{
+                  width: 30,
+                  height: 30,
+                  opacity: conversation.membersInRoom?.includes(conversationUser.uid)
+                    ? '100%'
+                    : '20%',
+                }}
               />
             ))}
           </AvatarGroup>
