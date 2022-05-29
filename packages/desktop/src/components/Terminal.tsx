@@ -1039,7 +1039,9 @@ function ConversationDetails() {
 function ConversationHistory() {
   const { isCloudDoingMagic, selectedConversation, conversationContentMap } = useTerminal();
 
-  const contentBlocks = conversationContentMap[selectedConversation?.id] ?? [];
+  const contentBlocks = useMemo(() => {
+    return conversationContentMap[selectedConversation.id] ?? [];
+  }, [conversationContentMap, selectedConversation.id]);
 
   return (
     <Container maxWidth="xs">
@@ -1092,6 +1094,8 @@ function ConversationHistory() {
                   {'Viet Phan'}
                 </Typography>
               </Stack> */}
+
+              <audio controls src={contentBlock.contentUrl} />
 
               <Box
                 sx={{
