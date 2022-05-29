@@ -1,18 +1,12 @@
-import React, { useContext, useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useContext, useState, useCallback, useMemo, useEffect } from 'react';
 
-import { Container } from '@mui/system';
 import {
   Avatar,
   Box,
-  Fab,
   Grid,
-  Paper,
-  Input,
-  CircularProgress,
   IconButton,
   Tooltip,
   Stack,
-  Badge,
   Divider,
   List,
   ListItem,
@@ -23,41 +17,21 @@ import {
   ListItemText,
   ListSubheader,
   Typography,
-  AvatarGroup,
   Menu,
   MenuItem,
   ListItemIcon,
 } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
-import {
-  FiMoreVertical,
-  FiPlay,
-  FiSun,
-  FiActivity,
-  FiInbox,
-  FiSearch,
-  FiUsers,
-  FiCoffee,
-  FiCircle,
-  FiHeadphones,
-  FiLogOut,
-  FiMonitor,
-  FiWind,
-  FiCloudRain,
-} from 'react-icons/fi';
+import { FiZap, FiHeadphones, FiLogOut, FiMonitor } from 'react-icons/fi';
 import { useSnackbar } from 'notistack';
 
-import NirvanaLogo from './NirvanaLogo';
-
-import Conversation, { ConversationMember } from '@nirvana/core/src/models/conversation.model';
+import Conversation from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
 import {
   createOneOnOneConversation,
   getConversationContentQueryLIVE,
   getConversationsQueryLIVE,
   getUserById,
-  joinConversation,
-  leaveConversation,
   searchUsers,
   sendContentBlockToConversation,
 } from '../firebase/firestore';
@@ -65,17 +39,8 @@ import { useImmer } from 'use-immer';
 import { User } from '@nirvana/core/src/models/user.model';
 import { onSnapshot, Unsubscribe } from 'firebase/firestore';
 
-import NirvanaAvatar from './NirvanaAvatar';
-import {
-  useDebounce,
-  useEffectOnce,
-  useKeyPressEvent,
-  useUnmount,
-  useUnmountPromise,
-} from 'react-use';
+import { useDebounce, useKeyPressEvent, useUnmount } from 'react-use';
 
-import KeyboardShortcutLabel from './KeyboardShortcutLabel';
-import Channels from '../electron/constants';
 import { uploadAudioClip } from '../firebase/firebaseStorage';
 import { ContentBlock, ContentType } from '@nirvana/core/src/models/content.model';
 import Navbar from './Navbar';
@@ -732,19 +697,20 @@ function ListPeople({ people }: { people: User[] }) {
       </ListItem>
 
       {people.map((person) => (
-        <ListItem key={`${person.uid}-searchUsers`}>
-          <ListItemButton onClick={() => handleQuickDial(person.uid)}>
-            <ListItemAvatar>
-              <Avatar alt={person.displayName} src={person.photoUrl} />
-            </ListItemAvatar>
+        <Tooltip key={`${person.uid}-searchUsers`} title={'quick dial'}>
+          <ListItem>
+            <ListItemButton onClick={() => handleQuickDial(person.uid)}>
+              <ListItemAvatar>
+                <Avatar alt={person.displayName} src={person.photoUrl} />
+              </ListItemAvatar>
+              <ListItemText primary={person.displayName} secondary={person.email} />
 
-            <ListItemText primary={person.displayName} secondary={person.email} />
-
-            <ListItemSecondaryAction sx={{ color: 'GrayText' }}>
-              <FiCoffee />
-            </ListItemSecondaryAction>
-          </ListItemButton>
-        </ListItem>
+              <ListItemSecondaryAction sx={{ color: 'GrayText' }}>
+                <FiZap />
+              </ListItemSecondaryAction>
+            </ListItemButton>
+          </ListItem>
+        </Tooltip>
       ))}
     </List>
   );
