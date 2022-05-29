@@ -23,6 +23,9 @@ import {
   ListSubheader,
   Typography,
   AvatarGroup,
+  Menu,
+  MenuItem,
+  ListItemIcon,
 } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
 import {
@@ -35,10 +38,15 @@ import {
   FiUsers,
   FiCoffee,
   FiCircle,
+  FiHeadphones,
+  FiLogOut,
+  FiMonitor,
+  FiWind,
 } from 'react-icons/fi';
 import { useSnackbar } from 'notistack';
 
-import Navbar from './Navbar';
+import NirvanaLogo from './NirvanaLogo';
+
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
 import {
@@ -104,7 +112,7 @@ const TerminalContext = React.createContext<ITerminalContext>({
 // todo: extract each use effect to custom hook and will be clean
 export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const { enqueueSnackbar } = useSnackbar();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
 
   const [selectedConversationId, setSelectedConversationId] = useState<string>(undefined);
 
@@ -260,6 +268,15 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     [setSelectedConversationId],
   );
 
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <TerminalContext.Provider
       value={{
@@ -279,6 +296,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
             backgroundColor: blueGrey[50],
             boxShadow: 3,
             borderRight: `1px solid ${blueGrey}`,
+            position: 'relative',
           }}
         >
           <Stack
@@ -289,9 +307,20 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               height: 'inherit',
             }}
           >
-            <Navbar />
+            {/* navbar */}
+            <Stack
+              direction="row"
+              justifyContent={'flex-start'}
+              alignItems={'center'}
+              spacing={2}
+              sx={{
+                WebkitAppRegion: 'drag',
+                cursor: 'pointer',
+                pb: 1,
+              }}
+            >
+              <NirvanaLogo />
 
-            <Stack direction={'row'} alignItems="center" justifyContent={'flex-start'} spacing={1}>
               <Stack
                 direction={'row'}
                 sx={{
@@ -329,6 +358,58 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               </Tooltip>
             </Stack>
 
+            <Menu
+              anchorEl={anchorEl}
+              id="account-menu"
+              open={open}
+              onClose={handleClose}
+              onClick={handleClose}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: 'visible',
+                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                  mt: 1.5,
+                  '& .MuiAvatar-root': {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
+                  },
+                  '&:before': {
+                    content: '""',
+                    display: 'block',
+                    position: 'absolute',
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: 'background.paper',
+                    transform: 'translateY(-50%) rotate(45deg)',
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              <MenuItem>
+                <Avatar /> Profile
+              </MenuItem>
+              <MenuItem>
+                <Avatar /> My account
+              </MenuItem>
+
+              <Divider />
+
+              <MenuItem onClick={logout}>
+                <ListItemIcon>
+                  <FiLogOut />
+                </ListItemIcon>
+                <Typography color="warning">Logout</Typography>
+              </MenuItem>
+            </Menu>
+
             {searchVal ? (
               <ListPeople people={searchUsersResults} />
             ) : (
@@ -337,6 +418,62 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               />
             )}
           </Stack>
+
+          {/* footer controls */}
+          <Box
+            sx={{
+              top: 'auto',
+              bottom: 0,
+              position: 'absolute',
+
+              borderTop: '1px solid',
+              borderTopColor: blueGrey[100],
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              gap: 2,
+              width: '100%',
+            }}
+          >
+            <Stack
+              spacing={1}
+              direction={'row'}
+              alignItems={'center'}
+              sx={{
+                ml: 'auto',
+                mr: 1,
+                color: 'GrayText',
+                p: 1,
+              }}
+            >
+              <Tooltip title="Sound configuration">
+                <IconButton color="inherit" size="small">
+                  <FiHeadphones />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Desktop modes">
+                <IconButton color="inherit" size="small">
+                  <FiMonitor />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Flow state">
+                <IconButton color="inherit" size="small">
+                  <FiWind />
+                </IconButton>
+              </Tooltip>
+
+              <IconButton
+                onClick={handleClick}
+                size="small"
+                sx={{ ml: 1, borderRadius: 1 }}
+                aria-controls={open ? 'account-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+              >
+                <Avatar alt={user.displayName} src={user.photoURL} />
+              </IconButton>
+            </Stack>
+          </Box>
         </Grid>
 
         <MainPanel />

@@ -71,7 +71,7 @@ const Navbar = () => {
         <IconButton
           onClick={handleClick}
           size="small"
-          sx={{ ml: 2, borderRadius: 1 }}
+          sx={{ ml: 1, borderRadius: 1 }}
           aria-controls={open ? 'account-menu' : undefined}
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
