@@ -21,6 +21,7 @@ import { blueGrey } from '@mui/material/colors';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { useSnackbar } from 'notistack';
 import { useKeyPressEvent } from 'react-use';
+import useTerminal from './Terminal';
 
 const Navbar = ({
   handleChangeSearchInput,
@@ -31,8 +32,9 @@ const Navbar = ({
   searchVal: string;
   isSearching: boolean;
 }) => {
-  const { logout, user } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
+
+  const { handleShowCreateConvoForm } = useTerminal();
 
   const searchRef = useRef<HTMLInputElement>(null);
   const onSearchFocus = useCallback(() => {
@@ -87,7 +89,7 @@ const Navbar = ({
       </Stack>
 
       <Tooltip title={'Group conversation'}>
-        <IconButton color="default" size={'small'}>
+        <IconButton color="default" size={'small'} onClick={handleShowCreateConvoForm}>
           <FiUsers />
         </IconButton>
       </Tooltip>

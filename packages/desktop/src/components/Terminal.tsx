@@ -72,6 +72,11 @@ interface ITerminalContext {
 
   isUserSpeaking: boolean;
   isCloudDoingMagic: boolean;
+
+  createConversationMode: boolean;
+  handleShowCreateConvoForm?: () => void;
+
+  handleEscape?: () => void;
 }
 
 const TerminalContext = React.createContext<ITerminalContext>({
@@ -80,6 +85,8 @@ const TerminalContext = React.createContext<ITerminalContext>({
 
   isUserSpeaking: false,
   isCloudDoingMagic: false,
+
+  createConversationMode: false,
 });
 
 // global audio data in memory
@@ -490,6 +497,17 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     setAnchorEl(null);
   };
 
+  // const handleCreateConversation = useCallback(() => {
+
+  // }, [])
+
+  const [createConversationMode, setCreateConversationMode] = useState<boolean>(false);
+
+  const handleShowCreateConvoForm = useCallback(() => {
+    setSelectedConversationId(undefined);
+    setCreateConversationMode(true);
+  }, [setCreateConversationMode, setSelectedConversationId]);
+
   return (
     <TerminalContext.Provider
       value={{
@@ -501,6 +519,9 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         selectConversation,
         isCloudDoingMagic,
         conversationContentMap,
+        createConversationMode,
+        handleShowCreateConvoForm,
+        handleEscape,
       }}
     >
       <Grid container spacing={0}>
