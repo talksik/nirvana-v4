@@ -512,21 +512,18 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
             backgroundColor: blueGrey[50],
             boxShadow: 3,
             borderRight: `1px solid ${blueGrey}`,
+
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
-          <Stack
-            direction={'column'}
-            spacing={1}
-            sx={{
-              p: 2,
-            }}
-          >
-            <Navbar
-              searchVal={searchVal}
-              isSearching={searching}
-              handleChangeSearchInput={handleChangeSearchInput}
-            />
+          <Navbar
+            searchVal={searchVal}
+            isSearching={searching}
+            handleChangeSearchInput={handleChangeSearchInput}
+          />
 
+          <Box sx={{ p: 2 }}>
             {searchVal ? (
               <ListPeople people={searchUsersResults} />
             ) : (
@@ -534,110 +531,110 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
                 lookingForSomeone={selectedConversationId && !selectedConversation}
               />
             )}
+          </Box>
 
-            {/* footer controls */}
-            <Box
+          {/* footer controls */}
+          <Box
+            sx={{
+              mt: 'auto',
+
+              borderTop: '1px solid',
+              borderTopColor: blueGrey[100],
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              gap: 2,
+              width: '100%',
+            }}
+          >
+            <Stack
+              spacing={1}
+              direction={'row'}
+              alignItems={'center'}
+              justifyContent={'flex-start'}
               sx={{
-                mt: 'auto',
-
-                borderTop: '1px solid',
-                borderTopColor: blueGrey[100],
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                gap: 2,
-                width: '100%',
+                color: 'GrayText',
+                p: 1,
+                flex: 1,
               }}
             >
-              <Stack
-                spacing={1}
-                direction={'row'}
-                alignItems={'center'}
-                justifyContent={'flex-start'}
+              <IconButton
+                onClick={handleClick}
+                size="small"
+                sx={{ mr: 'auto', borderRadius: 1 }}
+                aria-controls={open ? 'account-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+              >
+                <Avatar alt={user.displayName} src={user.photoURL} />
+              </IconButton>
+
+              <Box
                 sx={{
-                  color: 'GrayText',
-                  p: 1,
-                  flex: 1,
+                  mr: 'auto',
                 }}
+                component="div"
               >
-                <IconButton
-                  onClick={handleClick}
-                  size="small"
-                  sx={{ mr: 'auto', borderRadius: 1 }}
-                  aria-controls={open ? 'account-menu' : undefined}
-                  aria-haspopup="true"
-                  aria-expanded={open ? 'true' : undefined}
-                >
-                  <Avatar alt={user.displayName} src={user.photoURL} />
+                <Button size={'small'} color={'secondary'} variant="text">
+                  flow
+                </Button>
+              </Box>
+
+              <Tooltip title="Sound configuration">
+                <IconButton color="inherit" size="small">
+                  <FiHeadphones />
                 </IconButton>
+              </Tooltip>
+              <Tooltip title="Desktop modes">
+                <IconButton color="inherit" size="small">
+                  <FiMonitor />
+                </IconButton>
+              </Tooltip>
+            </Stack>
 
-                <Box
-                  sx={{
-                    mr: 'auto',
-                  }}
-                  component="div"
-                >
-                  <Button size={'small'} color={'secondary'} variant="text">
-                    flow
-                  </Button>
-                </Box>
-
-                <Tooltip title="Sound configuration">
-                  <IconButton color="inherit" size="small">
-                    <FiHeadphones />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Desktop modes">
-                  <IconButton color="inherit" size="small">
-                    <FiMonitor />
-                  </IconButton>
-                </Tooltip>
-              </Stack>
-
-              <Menu
-                anchorEl={anchorEl}
-                id="account-menu"
-                open={open}
-                onClose={handleClose}
-                onClick={handleClose}
-                PaperProps={{
-                  elevation: 0,
-                  sx: {
-                    overflow: 'visible',
-                    filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-                    mt: 1.5,
-                    '& .MuiAvatar-root': {
-                      width: 32,
-                      height: 32,
-                      ml: -0.5,
-                      mr: 1,
-                    },
-                    '&:before': {
-                      content: '""',
-                      display: 'block',
-                      position: 'absolute',
-                      top: 0,
-                      right: 14,
-                      width: 10,
-                      height: 10,
-                      bgcolor: 'background.paper',
-                      transform: 'translateY(-50%) rotate(45deg)',
-                      zIndex: 0,
-                    },
+            <Menu
+              anchorEl={anchorEl}
+              id="account-menu"
+              open={open}
+              onClose={handleClose}
+              onClick={handleClose}
+              PaperProps={{
+                elevation: 0,
+                sx: {
+                  overflow: 'visible',
+                  filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                  mt: 1.5,
+                  '& .MuiAvatar-root': {
+                    width: 32,
+                    height: 32,
+                    ml: -0.5,
+                    mr: 1,
                   },
-                }}
-                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-              >
-                <MenuItem onClick={logout}>
-                  <ListItemIcon>
-                    <FiLogOut />
-                  </ListItemIcon>
-                  <Typography color="warning">Logout</Typography>
-                </MenuItem>
-              </Menu>
-            </Box>
-          </Stack>
+                  '&:before': {
+                    content: '""',
+                    display: 'block',
+                    position: 'absolute',
+                    top: 0,
+                    right: 14,
+                    width: 10,
+                    height: 10,
+                    bgcolor: 'background.paper',
+                    transform: 'translateY(-50%) rotate(45deg)',
+                    zIndex: 0,
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              <MenuItem onClick={logout}>
+                <ListItemIcon>
+                  <FiLogOut />
+                </ListItemIcon>
+                <Typography color="warning">Logout</Typography>
+              </MenuItem>
+            </Menu>
+          </Box>
         </Grid>
 
         <MainPanel />

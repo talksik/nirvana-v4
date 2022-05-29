@@ -51,7 +51,7 @@ const Navbar = ({
       sx={{
         WebkitAppRegion: 'drag',
         cursor: 'pointer',
-        pb: 1,
+        p: 2,
       }}
     >
       <NirvanaLogo />

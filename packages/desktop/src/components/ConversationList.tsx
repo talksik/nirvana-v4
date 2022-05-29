@@ -52,9 +52,6 @@ export function ConversationList({ lookingForSomeone = false }: { lookingForSome
   return (
     <>
       <List
-        sx={{
-          pt: 2,
-        }}
         subheader={
           <ListSubheader>
             <FiActivity />
