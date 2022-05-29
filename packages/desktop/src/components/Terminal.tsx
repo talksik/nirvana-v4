@@ -78,6 +78,7 @@ import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import Channels from '../electron/constants';
 import { uploadAudioClip } from '../firebase/firebaseStorage';
 import { ContentBlock, ContentType } from '@nirvana/core/src/models/content.model';
+import Navbar from './Navbar';
 type ConversationMap = {
   [conversationId: string]: Conversation;
 };
@@ -351,22 +352,10 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     [userMap, updateUserMap],
   );
 
-  const searchRef = useRef<HTMLInputElement>(null);
-  const [searchVal, setSearchVal] = useState<string>('');
-
-  const onSearchFocus = useCallback(() => {
-    enqueueSnackbar('search focused');
-    if (searchRef?.current) searchRef.current.focus();
-  }, [enqueueSnackbar, searchRef]);
-
-  const [searchUsersResults, setSearchUsersResults] = useState<User[]>([]);
-  const [searching, setSearching] = useState<boolean>(false);
-
   const handleEscape = useCallback(() => {
     setSelectedConversationId(undefined);
   }, [setSelectedConversationId]);
 
-  useKeyPressEvent('Shift', onSearchFocus);
   useKeyPressEvent('Escape', handleEscape);
 
   const [isUserSpeaking, setIsUserSpeaking] = useState<boolean>(false);
@@ -487,6 +476,10 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
   useKeyPressEvent('`', handleBroadcast, handleStopBroadcast);
 
+  const [searchVal, setSearchVal] = useState<string>('');
+  const [searchUsersResults, setSearchUsersResults] = useState<User[]>([]);
+  const [searching, setSearching] = useState<boolean>(false);
+
   const [, cancel] = useDebounce(
     async () => {
       if (searchVal) {
@@ -560,56 +553,11 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               height: 'inherit',
             }}
           >
-            {/* navbar */}
-            <Stack
-              direction="row"
-              justifyContent={'flex-start'}
-              alignItems={'center'}
-              spacing={2}
-              sx={{
-                WebkitAppRegion: 'drag',
-                cursor: 'pointer',
-                pb: 1,
-              }}
-            >
-              <NirvanaLogo />
-
-              <Stack
-                direction={'row'}
-                sx={{
-                  position: 'relative',
-                  display: 'flex',
-                  flexDirection: 'row',
-                  bgcolor: blueGrey[100],
-                  opacity: '50%',
-                  borderRadius: 1,
-                  px: 1,
-                  py: 0.5,
-                  flex: 1,
-                }}
-                alignItems={'center'}
-                spacing={1}
-              >
-                <FiSearch style={{ color: blueGrey[500] }} />
-
-                <Input
-                  onChange={handleChangeSearchInput}
-                  value={searchVal}
-                  placeholder={'Find or start a conversation'}
-                  inputRef={searchRef}
-                />
-
-                {searching && <CircularProgress size={20} />}
-
-                <KeyboardShortcutLabel label="Shift" />
-              </Stack>
-
-              <Tooltip title={'Group conversation'}>
-                <IconButton color="default" size={'small'}>
-                  <FiUsers />
-                </IconButton>
-              </Tooltip>
-            </Stack>
+            <Navbar
+              searchVal={searchVal}
+              isSearching={searching}
+              handleChangeSearchInput={handleChangeSearchInput}
+            />
 
             {searchVal ? (
               <ListPeople people={searchUsersResults} />
