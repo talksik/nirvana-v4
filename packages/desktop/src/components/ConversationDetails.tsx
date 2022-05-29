@@ -18,6 +18,7 @@ import {
   Paper,
 } from '@mui/material';
 import { FiSun, FiMoreVertical, FiPlay, FiCloudRain } from 'react-icons/fi';
+import ConversationLabel from '../subcomponents/ConversationLabel';
 
 export default function ConversationDetails() {
   const { user } = useAuth();
@@ -98,10 +99,12 @@ export default function ConversationDetails() {
           <FiSun />
         </IconButton>
 
-        <Typography sx={{ color: 'GrayText' }} variant={'overline'}>
-          {selectedConversation.name ??
-            conversationUsers.map((conversationUser) => conversationUser.displayName).join(', ')}
-        </Typography>
+        <Box sx={{ mr: 'auto', color: 'GrayText' }}>
+          <ConversationLabel
+            users={conversationUsers}
+            conversationName={selectedConversation.name}
+          />
+        </Box>
 
         <AvatarGroup variant={'rounded'} sx={{ ml: 'auto' }}>
           {conversationUsers.map((conversationUser, index) => (
