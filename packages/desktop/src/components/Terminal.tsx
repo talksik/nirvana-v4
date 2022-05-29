@@ -185,40 +185,39 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   useEffect(() => {
     // go through all conversations
     Object.keys(conversationMap).forEach((conversationId) => {
+      // if we have a listener for conversation already, then just move on
+      if (contentListeners[conversationId]) return;
+
+      // if we don't, then create one for this conversation
+      const contentListener = onSnapshot(
+        getConversationContentQueryLIVE(conversationId),
+        (querySnapshot) => {
+          querySnapshot.docChanges().forEach((docChange) => {
+            const currentContentBlock = docChange.doc.data();
+
+            if (docChange.type === 'added') {
+              // TODO: add to audio queue from here if there was an addition?
+              enqueueSnackbar('new content received!', { variant: 'default' });
+              updateContentMap((draftContent) => {
+                if (draftContent[conversationId]) {
+                  draftContent[conversationId].push(currentContentBlock);
+                } else {
+                  draftContent[conversationId] = [currentContentBlock];
+                }
+              });
+            }
+            if (docChange.type === 'modified') {
+              //
+            }
+            if (docChange.type === 'removed') {
+              //
+            }
+          });
+        },
+      );
+
+      //add to map of listeners
       setContentListeners((draftListeners) => {
-        // if we have a listener for conversation already, then just move on
-        if (draftListeners[conversationId]) return;
-
-        // if we don't, then create one for this conversation
-        const contentListener = onSnapshot(
-          getConversationContentQueryLIVE(conversationId),
-          (querySnapshot) => {
-            querySnapshot.docChanges().forEach((docChange) => {
-              const currentContentBlock = docChange.doc.data();
-
-              if (docChange.type === 'added') {
-                // TODO: add to audio queue from here if there was an addition?
-                enqueueSnackbar('new content received!', { variant: 'default' });
-                updateContentMap((draftContent) => {
-                  if (draftContent[conversationId]) {
-                    draftContent[conversationId].push(currentContentBlock);
-                  } else {
-                    draftContent[conversationId] = [currentContentBlock];
-                  }
-                });
-              }
-              if (docChange.type === 'modified') {
-                //
-              }
-              if (docChange.type === 'removed') {
-                //
-              }
-            });
-          },
-        );
-
-        //add to map of listeners
-
         draftListeners[conversationId] = contentListener;
       });
     });
