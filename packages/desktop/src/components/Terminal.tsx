@@ -243,7 +243,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
       setSearching(false);
     },
-    500,
+    1000,
     [searchVal, enqueueSnackbar, setSearchUsersResults],
   );
 
@@ -323,7 +323,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               </Stack>
 
               <Tooltip title={'Group conversation'}>
-                <IconButton color="secondary" size={'small'}>
+                <IconButton color="default" size={'small'}>
                   <FiUsers />
                 </IconButton>
               </Tooltip>

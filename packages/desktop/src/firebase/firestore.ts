@@ -87,16 +87,16 @@ export const searchUsers = async (searchQuery: string): Promise<User[] | undefin
     const emaildocSearchQuery = query(
       db.users,
       orderBy('email'),
-      startAt(searchQuery),
-      endAt(searchQuery + '\uf8ff'),
+      startAt(searchQuery.toLowerCase()),
+      endAt(searchQuery.toLowerCase() + '\uf8ff'),
       limit(5),
     );
 
     const nameSearchQuery = query(
       db.users,
       orderBy('displayName'),
-      startAt(searchQuery),
-      endAt(searchQuery + '\uf8ff'),
+      startAt(searchQuery.toLocaleUpperCase()),
+      endAt(searchQuery.toLocaleUpperCase() + '\uf8ff'),
       limit(5),
     );
 
