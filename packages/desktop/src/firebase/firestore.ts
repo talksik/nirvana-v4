@@ -22,7 +22,12 @@ import {
 import { User as FirebaseUser } from 'firebase/auth';
 import { firestoreDb } from './connect';
 import { User } from '@nirvana/core/src/models/user.model';
-import Conversation, { ConversationMember, MemberMap, MemberRole, MemberState } from '@nirvana/core/src/models/conversation.model';
+import Conversation, {
+  ConversationMember,
+  MemberMap,
+  MemberRole,
+  MemberState,
+} from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
 
 interface Document {
@@ -129,7 +134,7 @@ export const getUserById = async (userId: string): Promise<User | undefined> => 
 
 // get the conversations for particular user
 export const getConversationsQueryLIVE = (userId: string) =>
-  query(db.conversations, where('membersList', 'array-contains', userId));
+  query(db.conversations, where('memberIdsList', 'array-contains', userId));
 
 /**
  *
@@ -141,14 +146,13 @@ export const createOneOnOneConversation = async (
   otherUserId: string,
   myUserId: string,
 ): Promise<string | undefined> => {
-  
-  const myMember = new ConversationMember(myUserId, MemberRole.admin, MemberState.inbox)
-  const otherMember = new ConversationMember(otherUserId, MemberRole.regular, MemberState.inbox)
+  const myMember = new ConversationMember(myUserId, MemberRole.admin, MemberState.inbox);
+  const otherMember = new ConversationMember(otherUserId, MemberRole.regular, MemberState.inbox);
 
   const newMemberMap: MemberMap = {
-    [myUserId]: {...myMember},
-    [otherUserId]: {...otherMember}
-  }
+    [myUserId]: { ...myMember },
+    [otherUserId]: { ...otherMember },
+  };
   const newConversation = new Conversation(myUserId, [myUserId, otherUserId], newMemberMap);
 
   try {
@@ -165,16 +169,20 @@ export const createGroupConversation = async (
   otherUserIds: string[],
   myUserId: string,
 ): Promise<void> => {
-  const myMember = new ConversationMember(myUserId, MemberRole.admin, MemberState.inbox)
-  
+  const myMember = new ConversationMember(myUserId, MemberRole.admin, MemberState.inbox);
+
   const newMemberMap: MemberMap = {
-    [myUserId]: {...myMember}
-  }
+    [myUserId]: { ...myMember },
+  };
 
   otherUserIds.forEach((otherMemberId) => {
-    const otherMember = new ConversationMember(otherMemberId, MemberRole.regular, MemberState.inbox)
-    newMemberMap[otherMemberId] = {...otherMember}
-  })
+    const otherMember = new ConversationMember(
+      otherMemberId,
+      MemberRole.regular,
+      MemberState.inbox,
+    );
+    newMemberMap[otherMemberId] = { ...otherMember };
+  });
 
   const newConversation = new Conversation(myUserId, [myUserId, ...otherUserIds], newMemberMap);
 
