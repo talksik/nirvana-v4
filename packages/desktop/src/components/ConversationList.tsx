@@ -32,6 +32,7 @@ import useTerminal from './Terminal';
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
 import { useImmer } from 'use-immer';
+import ConversationLabel from '../subcomponents/ConversationLabel';
 
 /**
  *
@@ -116,9 +117,9 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
           <FiCircle />
         </Box>
 
-        <Typography sx={{ mr: 'auto', color: 'GrayText' }} variant={'overline'}>
-          {conversationUsers.map((conversationUser) => conversationUser.displayName).join(', ')}
-        </Typography>
+        <Box sx={{ mr: 'auto', color: 'GrayText' }}>
+          <ConversationLabel users={conversationUsers} conversationName={conversation.name} />
+        </Box>
 
         <ListItemAvatar>
           <AvatarGroup variant={'rounded'}>
