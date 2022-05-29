@@ -209,6 +209,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   );
 
   // fetch conversations
+  // TODO: put members map in another collection to avoid all of the re-renders for all folks...
+  // duplicate data for better reads
   useEffect(() => {
     const unsub = onSnapshot(getConversationsQueryLIVE(user.uid), (querySnapshot) => {
       const conversations = querySnapshot.docs.map((doc) => doc.data());
