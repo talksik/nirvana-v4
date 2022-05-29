@@ -150,8 +150,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
       console.log('got new or updated conversations', conversations);
 
-      querySnapshot.docChanges().forEach((docChange) => {
-        updateConversationMap((draft) => {
+      updateConversationMap((draft) => {
+        querySnapshot.docChanges().forEach((docChange) => {
           const currentConversation = docChange.doc.data();
 
           if (docChange.type === 'added') {
@@ -169,11 +169,16 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         });
       });
 
-      enqueueSnackbar('got conversations...logging', { variant: 'success' });
+      enqueueSnackbar('fetched conversations', { variant: 'success' });
     });
 
     return () => unsub();
-  }, [user, updateConversationMap]);
+  }, [user, updateConversationMap, enqueueSnackbar]);
+
+  // cached listeners for audioClips
+  // useEffect(() => {
+
+  // }, [])
 
   // cache of selected conversation
   const selectedConversation: Conversation | undefined = useMemo(() => {
