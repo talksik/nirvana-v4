@@ -244,16 +244,17 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
       if (searchVal) {
         enqueueSnackbar('searching...', { variant: 'info' });
 
-        const results = await searchUsers(searchVal);
+        let results = await searchUsers(searchVal);
+        results = results.filter((userResult) => userResult.id !== user.uid);
         setSearchUsersResults(results);
 
-        console.warn(results);
+        console.warn('searched users', results);
       }
 
       setSearching(false);
     },
     1000,
-    [searchVal, enqueueSnackbar, setSearchUsersResults],
+    [searchVal, enqueueSnackbar, setSearchUsersResults, user],
   );
 
   const handleChangeSearchInput = useCallback(
@@ -359,8 +360,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               </Tooltip>
             </Stack>
 
-            
-
             {searchVal ? (
               <ListPeople people={searchUsersResults} />
             ) : (
@@ -386,7 +385,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               width: '100%',
             }}
           >
-
             <Stack
               spacing={1}
               direction={'row'}
@@ -507,16 +505,30 @@ function ListPeople({ people }: { people: User[] }) {
         pt: 2,
       }}
       subheader={
-        <ListSubheader>
-          <Typography variant="subtitle2"> Search Results</Typography>
+        <ListSubheader
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          <Typography align={'center'} variant="subtitle2">
+            Search Results
+          </Typography>
         </ListSubheader>
       }
     >
-      {people.length === 0 && (
-        <Typography align="center" variant="caption">
-          {`Can't find someone? Invite them!`}
-        </Typography>
-      )}
+      <ListItem
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        {people.length === 0 && (
+          <Typography align="center" variant="caption">
+            {`Can't find someone? Invite them!`}
+          </Typography>
+        )}
+      </ListItem>
 
       {people.map((person) => (
         <ListItem key={`${person.uid}-searchUsers`}>
