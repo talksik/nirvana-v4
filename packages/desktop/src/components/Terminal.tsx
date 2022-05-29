@@ -173,9 +173,9 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         // if there is already a convo with exactly me and him, then select it
         const findExistingConversation = Object.values(conversationMap).find((convo) => {
           if (
-            convo.membersList?.length === 2 &&
-            convo.membersList.includes(user.uid) &&
-            convo.membersList.includes(otherUserId)
+            convo.memberIdsList?.length === 2 &&
+            convo.memberIdsList.includes(user.uid) &&
+            convo.memberIdsList.includes(otherUserId)
           ) {
             return true;
           }
@@ -593,7 +593,7 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
 
   useEffect(() => {
     (async () => {
-      const userPromises = conversation.membersList
+      const userPromises = conversation.memberIdsList
         .filter((memberId) => memberId !== user.uid)
         .map(async (memberId) => await getUser(memberId));
 
@@ -603,7 +603,7 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
     })();
 
     return;
-  }, [conversation.membersList, getUser, user, setConversationUsers]);
+  }, [conversation.memberIdsList, getUser, user, setConversationUsers]);
 
   return (
     <ListItem key={`${conversation.id}-priorityConvoList`}>
@@ -684,7 +684,7 @@ function ConversationDetails() {
 
   useEffect(() => {
     (async () => {
-      const userPromises = selectedConversation.membersList
+      const userPromises = selectedConversation.memberIdsList
         .filter((memberId) => memberId !== user.uid)
         .map(async (memberId) => await getUser(memberId));
 
@@ -694,7 +694,7 @@ function ConversationDetails() {
     })();
 
     return;
-  }, [selectedConversation.membersList, getUser, user, setConversationUsers]);
+  }, [selectedConversation.memberIdsList, getUser, user, setConversationUsers]);
 
   return (
     <>

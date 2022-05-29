@@ -22,7 +22,7 @@ import {
 import { User as FirebaseUser } from 'firebase/auth';
 import { firestoreDb } from './connect';
 import { User } from '@nirvana/core/src/models/user.model';
-import Conversation from '@nirvana/core/src/models/conversation.model';
+import Conversation, { ConversationMember, MemberMap, MemberRole, MemberState } from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
 
 interface Document {
@@ -141,7 +141,15 @@ export const createOneOnOneConversation = async (
   otherUserId: string,
   myUserId: string,
 ): Promise<string | undefined> => {
-  const newConversation = new Conversation(myUserId, [myUserId, otherUserId], null);
+  
+  const myMember = new ConversationMember(myUserId, MemberRole.admin, MemberState.inbox)
+  const otherMember = new ConversationMember(otherUserId, MemberRole.regular, MemberState.inbox)
+
+  const newMemberMap: MemberMap = {
+    [myUserId]: {...myMember},
+    [otherUserId]: {...otherMember}
+  }
+  const newConversation = new Conversation(myUserId, [myUserId, otherUserId], newMemberMap);
 
   try {
     const newDoc = await addDoc(db.conversations, newConversation);
@@ -157,7 +165,18 @@ export const createGroupConversation = async (
   otherUserIds: string[],
   myUserId: string,
 ): Promise<void> => {
-  const newConversation = new Conversation(myUserId, [myUserId, ...otherUserIds]);
+  const myMember = new ConversationMember(myUserId, MemberRole.admin, MemberState.inbox)
+  
+  const newMemberMap: MemberMap = {
+    [myUserId]: {...myMember}
+  }
+
+  otherUserIds.forEach((otherMemberId) => {
+    const otherMember = new ConversationMember(otherMemberId, MemberRole.regular, MemberState.inbox)
+    newMemberMap[otherMemberId] = {...otherMember}
+  })
+
+  const newConversation = new Conversation(myUserId, [myUserId, ...otherUserIds], newMemberMap);
 
   try {
     await addDoc(db.conversations, newConversation);

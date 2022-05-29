@@ -5,7 +5,9 @@ export default class Conversation {
   constructor(
     public createdByUserId: string,
 
-    public membersList: string[],
+    public memberIdsList: string[],
+
+    public members: MemberMap,
 
     public name: string | null = null,
 
@@ -17,11 +19,29 @@ export default class Conversation {
   ) {}
 }
 
-// export class Member {
-//   constructor(
-//     public id: string,
-//     public userId: string,
-//     public role: 'admin' | 'regular',
-//     public joinedDate = Timestamp.now(),
-//   ) {}
-// }
+export type MemberMap = {
+  [memberId: string]: ConversationMember
+}
+
+export class ConversationMember {
+  constructor(
+    public userId: string, // NOTE: serves as the user ID
+
+    public role: MemberRole,
+
+    public memberState: MemberState,
+    public isActive: boolean = true,
+    public lastActiveDate: Timestamp | null = null,
+    public joinedDate = Timestamp.now(),
+  ) {}
+}
+
+export enum MemberRole {
+  admin = 'admin',
+  regular = 'regular',
+}
+export enum MemberState {
+  priority = 'priority',
+  inbox = 'inbox',
+  // deleted = "deleted"
+}
