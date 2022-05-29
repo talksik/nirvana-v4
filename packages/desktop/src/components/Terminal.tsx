@@ -848,18 +848,16 @@ function ConversationDetails() {
     }
   }, [selectedConversation.membersInRoom]);
 
-  // update my last active date in this conversation
-  // put me in the membersInRoom
+  // put me in the membersInRoom and leave every time I change conversations
   useEffect(() => {
-    // if not already joined, will join so others have presence
-    if (!selectedConversation.membersInRoom.includes(user.uid))
-      joinConversation(selectedConversation.id, user.uid);
+    joinConversation(selectedConversation.id, user.uid);
 
     return () => {
       leaveConversation(selectedConversation.id, user.uid);
     };
-  }, [selectedConversation.id, selectedConversation.membersInRoom, user.uid]);
+  }, [selectedConversation.id, user.uid]);
 
+  // update my last active date in this conversation for this viewing session's ui
   useEffect(() => {
     setLastActiveDate((prevLastActiveForCurrentSession) => {
       if (prevLastActiveForCurrentSession) return prevLastActiveForCurrentSession;
