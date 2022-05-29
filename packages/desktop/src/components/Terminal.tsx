@@ -128,9 +128,22 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
       console.log('got new or updated conversations', conversations);
 
-      updateConversationMap((draft) => {
-        conversations.forEach((convo) => {
-          draft[convo.id] = convo;
+      querySnapshot.docChanges().forEach((docChange) => {
+        updateConversationMap((draft) => {
+          const currentConversation = docChange.doc.data();
+
+          if (docChange.type === 'added') {
+            console.log('New conversation: ', currentConversation);
+            draft[currentConversation.id] = currentConversation;
+          }
+          if (docChange.type === 'modified') {
+            console.log('Modified conversation: ', currentConversation);
+            draft[currentConversation.id] = currentConversation;
+          }
+          if (docChange.type === 'removed') {
+            console.log('Removed conversation: ', currentConversation);
+            delete draft[currentConversation.id];
+          }
         });
       });
 
@@ -585,7 +598,7 @@ function ListConversations({ lookingForSomeone = false }: { lookingForSomeone: b
 
       <Divider />
 
-      <List
+      {/* <List
         sx={{
           pt: 2,
         }}
@@ -595,7 +608,7 @@ function ListConversations({ lookingForSomeone = false }: { lookingForSomeone: b
             <Typography variant="subtitle2"> Inbox</Typography>
           </ListSubheader>
         }
-      ></List>
+      ></List> */}
     </>
   );
 }
@@ -619,6 +632,8 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
 
     return;
   }, [conversation.memberIdsList, getUser, user, setConversationUsers]);
+
+  console.log(conversationUsers);
 
   return (
     <ListItem key={`${conversation.id}-priorityConvoList`}>
