@@ -16,7 +16,16 @@ export default function MainPanel() {
   // show who is
 
   return (
-    <Grid item xs={8} sx={{ backgroundColor: 'white', display: 'flex', flexDirection: 'column' }}>
+    <Grid
+      item
+      xs={8}
+      sx={{
+        backgroundColor: 'white',
+        display: 'flex',
+        flexDirection: 'column',
+        maxHeight: '100vh',
+      }}
+    >
       {selectedConversation ? (
         <ConversationDetails />
       ) : (

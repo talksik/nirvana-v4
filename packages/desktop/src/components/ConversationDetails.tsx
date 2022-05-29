@@ -127,7 +127,7 @@ export default function ConversationDetails() {
         </Box>
       </Stack>
 
-      <Container maxWidth={false} sx={{ position: 'relative', flex: 1 }}>
+      <Container maxWidth={false} sx={{ position: 'relative', flex: 1, overflow: 'auto' }}>
         <ConversationHistory />
 
         <Box

@@ -503,6 +503,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
       }}
     >
       <Grid container spacing={0}>
+        {/* side panel */}
         <Grid
           item
           xs={4}
