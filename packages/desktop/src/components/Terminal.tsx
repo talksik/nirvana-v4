@@ -267,10 +267,12 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   }, [setIsUserSpeaking, userAudioStream, handleAskForMicrophonePermissions]);
 
   const handleStopBroadcast = useCallback(() => {
-    setIsUserSpeaking(false);
+    if (isUserSpeaking) {
+      setIsUserSpeaking(false);
 
-    enqueueSnackbar('stopped...', { variant: 'info' });
-  }, [setIsUserSpeaking]);
+      enqueueSnackbar('stopped...', { variant: 'info' });
+    }
+  }, [setIsUserSpeaking, isUserSpeaking]);
 
   useKeyPressEvent('`', handleBroadcast, handleStopBroadcast);
 

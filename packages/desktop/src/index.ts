@@ -66,6 +66,7 @@ app
     });
 
     ipcMain.on(Channels.ASK_MICROPHONE_PERMISSIONS, async () => {
+      console.log('asking for user microphone');
       systemPreferences.askForMediaAccess('microphone');
     });
   })
