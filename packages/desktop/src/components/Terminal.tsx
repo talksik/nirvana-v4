@@ -62,7 +62,7 @@ import { User } from '@nirvana/core/src/models/user.model';
 import { onSnapshot } from 'firebase/firestore';
 
 import NirvanaAvatar from './NirvanaAvatar';
-import { useDebounce, useKey, useKeyPressEvent } from 'react-use';
+import { useDebounce, useKeyPressEvent } from 'react-use';
 
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 type ConversationMap = {
@@ -359,6 +359,79 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               </Tooltip>
             </Stack>
 
+            
+
+            {searchVal ? (
+              <ListPeople people={searchUsersResults} />
+            ) : (
+              <ListConversations
+                lookingForSomeone={selectedConversationId && !selectedConversation}
+              />
+            )}
+          </Stack>
+
+          {/* footer controls */}
+          <Box
+            sx={{
+              top: 'auto',
+              bottom: 0,
+              position: 'absolute',
+
+              borderTop: '1px solid',
+              borderTopColor: blueGrey[100],
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-start',
+              gap: 2,
+              width: '100%',
+            }}
+          >
+
+            <Stack
+              spacing={1}
+              direction={'row'}
+              alignItems={'center'}
+              justifyContent={'flex-start'}
+              sx={{
+                color: 'GrayText',
+                p: 1,
+                flex: 1,
+              }}
+            >
+              <IconButton
+                onClick={handleClick}
+                size="small"
+                sx={{ mr: 'auto', borderRadius: 1 }}
+                aria-controls={open ? 'account-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+              >
+                <Avatar alt={user.displayName} src={user.photoURL} />
+              </IconButton>
+
+              <Box
+                sx={{
+                  mr: 'auto',
+                }}
+                component="div"
+              >
+                <Button size={'small'} color={'secondary'} variant="text">
+                  flow
+                </Button>
+              </Box>
+
+              <Tooltip title="Sound configuration">
+                <IconButton color="inherit" size="small">
+                  <FiHeadphones />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Desktop modes">
+                <IconButton color="inherit" size="small">
+                  <FiMonitor />
+                </IconButton>
+              </Tooltip>
+            </Stack>
+
             <Menu
               anchorEl={anchorEl}
               id="account-menu"
@@ -410,76 +483,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
                 <Typography color="warning">Logout</Typography>
               </MenuItem>
             </Menu>
-
-            {searchVal ? (
-              <ListPeople people={searchUsersResults} />
-            ) : (
-              <ListConversations
-                lookingForSomeone={selectedConversationId && !selectedConversation}
-              />
-            )}
-          </Stack>
-
-          {/* footer controls */}
-          <Box
-            sx={{
-              top: 'auto',
-              bottom: 0,
-              position: 'absolute',
-
-              borderTop: '1px solid',
-              borderTopColor: blueGrey[100],
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'flex-start',
-              gap: 2,
-              width: '100%',
-            }}
-          >
-            <Stack
-              spacing={1}
-              direction={'row'}
-              alignItems={'center'}
-              justifyContent={'flex-start'}
-              sx={{
-                color: 'GrayText',
-                p: 1,
-                flex: 1,
-              }}
-            >
-              <IconButton
-                onClick={handleClick}
-                size="small"
-                sx={{ mr: 'auto', borderRadius: 1 }}
-                aria-controls={open ? 'account-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-              >
-                <Avatar alt={user.displayName} src={user.photoURL} />
-              </IconButton>
-
-              <Box
-                sx={{
-                  mr: 'auto',
-                }}
-                component="div"
-              >
-                <Button size={'small'} color={'secondary'} variant="text">
-                  flow
-                </Button>
-              </Box>
-
-              <Tooltip title="Sound configuration">
-                <IconButton color="inherit" size="small">
-                  <FiHeadphones />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Desktop modes">
-                <IconButton color="inherit" size="small">
-                  <FiMonitor />
-                </IconButton>
-              </Tooltip>
-            </Stack>
           </Box>
         </Grid>
 
