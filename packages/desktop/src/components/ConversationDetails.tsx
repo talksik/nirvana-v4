@@ -19,11 +19,15 @@ import {
 } from '@mui/material';
 import { FiSun, FiMoreVertical, FiPlay, FiCloudRain } from 'react-icons/fi';
 import ConversationLabel from '../subcomponents/ConversationLabel';
+import { useRendersCount } from 'react-use';
 
 export default function ConversationDetails() {
   const { user } = useAuth();
   const { getUser, selectedConversation, selectConversation, isCloudDoingMagic } = useTerminal();
   const [conversationUsers, setConversationUsers] = useImmer<User[]>([]);
+
+  const rendersCount = useRendersCount();
+  console.warn('RENDER COUNT | CONVERSATION DETAILS | ', rendersCount);
 
   // TODO: at the terminal level, make sure we are listening for audio clips
   // and here it's just an access of that map of content for each conversation's blocks

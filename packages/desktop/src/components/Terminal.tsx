@@ -40,7 +40,7 @@ import { useImmer } from 'use-immer';
 import { User } from '@nirvana/core/src/models/user.model';
 import { onSnapshot, Unsubscribe } from 'firebase/firestore';
 
-import { useDebounce, useKeyPressEvent, useUnmount } from 'react-use';
+import { useDebounce, useKeyPressEvent, useRendersCount, useUnmount } from 'react-use';
 
 import { uploadAudioClip } from '../firebase/firebaseStorage';
 import { ContentBlock, ContentType } from '@nirvana/core/src/models/content.model';
@@ -507,6 +507,9 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     setSelectedConversationId(undefined);
     setCreateConversationMode(true);
   }, [setCreateConversationMode, setSelectedConversationId]);
+
+  const rendersCount = useRendersCount();
+  console.warn('RENDER COUNT | TERMINAL | ', rendersCount);
 
   return (
     <TerminalContext.Provider

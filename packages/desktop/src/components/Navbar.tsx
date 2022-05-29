@@ -20,7 +20,7 @@ import useAuth from '../providers/AuthProvider';
 import { blueGrey } from '@mui/material/colors';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { useSnackbar } from 'notistack';
-import { useKeyPressEvent } from 'react-use';
+import { useKeyPressEvent, useRendersCount } from 'react-use';
 import useTerminal from './Terminal';
 
 const Navbar = ({
@@ -43,6 +43,9 @@ const Navbar = ({
   }, [enqueueSnackbar, searchRef]);
 
   useKeyPressEvent('Shift', onSearchFocus);
+
+  const rendersCount = useRendersCount();
+  console.warn('RENDER COUNT | NAVBAR | ', rendersCount);
 
   return (
     <Stack

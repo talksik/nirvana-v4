@@ -23,7 +23,7 @@ import {
 import { blueGrey } from '@mui/material/colors';
 import { FiActivity, FiInbox, FiSearch, FiUsers, FiCoffee, FiCircle } from 'react-icons/fi';
 import NirvanaAvatar from './NirvanaAvatar';
-import { useDebounce, useKey } from 'react-use';
+import { useDebounce, useKey, useRendersCount } from 'react-use';
 import { useSnackbar } from 'notistack';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { searchUsers } from '../firebase/firestore';
@@ -41,6 +41,9 @@ import ConversationLabel from '../subcomponents/ConversationLabel';
  */
 export function ConversationList({ lookingForSomeone = false }: { lookingForSomeone: boolean }) {
   const { conversationMap } = useTerminal();
+
+  const rendersCount = useRendersCount();
+  console.warn('RENDER COUNT | CONVERSATION LIST | ', rendersCount);
 
   if (Object.keys(conversationMap).length === 0) {
     return (
@@ -92,6 +95,9 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
   const { getUser, selectedConversation, selectConversation } = useTerminal();
 
   const [conversationUsers, setConversationUsers] = useImmer<User[]>([]);
+
+  const rendersCount = useRendersCount();
+  console.warn('RENDER COUNT | CONVERSATION LIST ROW | ', rendersCount);
 
   useEffect(() => {
     (async () => {

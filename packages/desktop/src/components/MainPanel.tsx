@@ -5,6 +5,8 @@ import useAuth from '../providers/AuthProvider';
 import ConversationDetails from './ConversationDetails';
 import useTerminal from './Terminal';
 
+import { useRendersCount } from 'react-use';
+
 export default function MainPanel() {
   const { user } = useAuth();
   const { selectedConversation, createConversationMode } = useTerminal();
@@ -14,6 +16,9 @@ export default function MainPanel() {
   // join the call so to speak
 
   // show who is
+
+  const rendersCount = useRendersCount();
+  console.warn('RENDER COUNT | MAINPANEL | ', rendersCount);
 
   const pageContent = useMemo(() => {
     if (selectedConversation) return <ConversationDetails />;
