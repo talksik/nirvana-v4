@@ -17,6 +17,7 @@ import {
   List,
   ListItem,
   ListItemAvatar,
+  Button,
   ListItemButton,
   ListItemSecondaryAction,
   ListItemText,
@@ -429,8 +430,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               borderTop: '1px solid',
               borderTopColor: blueGrey[100],
               display: 'flex',
-              justifyContent: 'flex-end',
               alignItems: 'center',
+              justifyContent: 'flex-start',
               gap: 2,
               width: '100%',
             }}
@@ -439,13 +440,35 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               spacing={1}
               direction={'row'}
               alignItems={'center'}
+              justifyContent={'flex-start'}
               sx={{
-                ml: 'auto',
-                mr: 1,
                 color: 'GrayText',
                 p: 1,
+                flex: 1,
               }}
             >
+              <IconButton
+                onClick={handleClick}
+                size="small"
+                sx={{ mr: 'auto', borderRadius: 1 }}
+                aria-controls={open ? 'account-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+              >
+                <Avatar alt={user.displayName} src={user.photoURL} />
+              </IconButton>
+
+              <Box
+                sx={{
+                  mr: 'auto',
+                }}
+                component="div"
+              >
+                <Button size={'small'} color={'secondary'} variant="text">
+                  flow
+                </Button>
+              </Box>
+
               <Tooltip title="Sound configuration">
                 <IconButton color="inherit" size="small">
                   <FiHeadphones />
@@ -456,22 +479,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
                   <FiMonitor />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Flow state">
-                <IconButton color="inherit" size="small">
-                  <FiWind />
-                </IconButton>
-              </Tooltip>
-
-              <IconButton
-                onClick={handleClick}
-                size="small"
-                sx={{ ml: 1, borderRadius: 1 }}
-                aria-controls={open ? 'account-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
-              >
-                <Avatar alt={user.displayName} src={user.photoURL} />
-              </IconButton>
             </Stack>
           </Box>
         </Grid>
