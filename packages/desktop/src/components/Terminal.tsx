@@ -21,6 +21,7 @@ import {
   MenuItem,
   ListItemIcon,
   Fab,
+  Switch,
 } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
 import { FiZap, FiHeadphones, FiLogOut, FiMonitor, FiSun } from 'react-icons/fi';
@@ -329,12 +330,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     [userMap, updateUserMap],
   );
 
-  const handleEscape = useCallback(() => {
-    setSelectedConversationId(undefined);
-  }, [setSelectedConversationId]);
-
-  useKeyPressEvent('Escape', handleEscape);
-
   const [isUserSpeaking, setIsUserSpeaking] = useState<boolean>(false);
 
   const [userAudioStream, setUserAudioStream] = useState<MediaStream>(null);
@@ -511,6 +506,13 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | TERMINAL | ', rendersCount);
 
+  const handleEscape = useCallback(() => {
+    setCreateConversationMode(false);
+    setSelectedConversationId(undefined);
+  }, [setSelectedConversationId, setCreateConversationMode]);
+
+  useKeyPressEvent('Escape', handleEscape);
+
   return (
     <TerminalContext.Provider
       value={{
@@ -599,6 +601,10 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
                 <Avatar alt={user.displayName} src={user.photoURL} />
               </IconButton>
 
+              <Tooltip title={'overlay mode'}>
+                <Switch color="secondary" size="small" />
+              </Tooltip>
+
               <Stack
                 direction={'row'}
                 alignItems={'center'}
@@ -608,11 +614,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
                 <Tooltip title="Sound configuration">
                   <IconButton color="inherit" size="small">
                     <FiHeadphones />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Desktop modes">
-                  <IconButton color="inherit" size="small">
-                    <FiMonitor />
                   </IconButton>
                 </Tooltip>
 
