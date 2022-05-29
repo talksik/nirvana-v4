@@ -144,6 +144,10 @@ export const getUserById = async (userId: string): Promise<User | undefined> => 
 export const getConversationsQueryLIVE = (userId: string) =>
   query(db.conversations, where(`members.${userId}.isActive`, '==', true));
 
+// get content blocks for particular conversation
+export const getConversationContentQueryLIVE = (conversationId: string) =>
+  query(db.conversationContent(conversationId));
+
 /**
  *
  * @param otherUserId

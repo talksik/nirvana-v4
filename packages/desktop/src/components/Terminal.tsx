@@ -53,6 +53,7 @@ import Conversation, { ConversationMember } from '@nirvana/core/src/models/conve
 import useAuth from '../providers/AuthProvider';
 import {
   createOneOnOneConversation,
+  getConversationContentQueryLIVE,
   getConversationsQueryLIVE,
   getUserById,
   joinConversation,
@@ -62,7 +63,7 @@ import {
 } from '../firebase/firestore';
 import { useImmer } from 'use-immer';
 import { User } from '@nirvana/core/src/models/user.model';
-import { onSnapshot } from 'firebase/firestore';
+import { onSnapshot, Unsubscribe } from 'firebase/firestore';
 
 import NirvanaAvatar from './NirvanaAvatar';
 import { useDebounce, useEffectOnce, useKeyPressEvent } from 'react-use';
@@ -175,10 +176,58 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     return () => unsub();
   }, [user, updateConversationMap, enqueueSnackbar]);
 
-  // cached listeners for a
-  // useEffect(() => {
+  const [contentListeners, setContentListeners] = useImmer<{
+    [conversationId: string]: Unsubscribe;
+  }>({});
+  // cached listeners for all content blocks of specific conversations?
+  useEffect(() => {
+    // go through all conversations
+    Object.keys(conversationMap).forEach((conversationId) => {
+      setContentListeners((draftListeners) => {
+        // if we have a listener for conversation already, then just move on
+        if (draftListeners[conversationId]) return;
 
-  // }, [])
+        // if we don't, then create one for this conversation
+        const contentListener = onSnapshot(
+          getConversationContentQueryLIVE(conversationId),
+          (querySnapshot) => {
+            querySnapshot.docChanges().forEach((docChange) => {
+              const currentContentBlock = docChange.doc.data();
+
+              if (docChange.type === 'added') {
+                // TODO: add to audio queue from here if there was an addition?
+                enqueueSnackbar('new content received!', { variant: 'default' });
+                updatecontentMap((draftContent) => {
+                  if (draftContent[conversationId]) {
+                    draftContent[conversationId].push(currentContentBlock);
+                  } else {
+                    draftContent[conversationId] = [currentContentBlock];
+                  }
+                });
+              }
+              if (docChange.type === 'modified') {
+                //
+              }
+              if (docChange.type === 'removed') {
+                //
+              }
+            });
+          },
+        );
+
+        //add to map of listeners
+
+        draftListeners[conversationId] = contentListener;
+      });
+    });
+
+    // ?optimization
+    // ? only start listening to conversation content where it is in my priority box?
+    // ? all other conversations, just fetch periodically?
+
+    // TODO: future work/optimization
+    // if we removed a conversation, unsubscribe from content listener as well
+  }, [conversationMap, updatecontentMap, enqueueSnackbar, setContentListeners]);
 
   // cache of selected conversation
   const selectedConversation: Conversation | undefined = useMemo(() => {
