@@ -329,7 +329,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   //  when user wants to talk,
   //  unmute them and send clip for everyone to hear in the distance
   const handleBroadcast = useCallback(() => {
-    if (!selectedConversationId) {
+    if (!selectedConversation) {
       enqueueSnackbar('You must select a conversation first!!!', { variant: 'warning' });
       return;
     }
@@ -350,7 +350,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     mediaRecorder.start();
     setIsUserSpeaking(true);
   }, [
-    selectedConversationId,
+    selectedConversation,
     setIsUserSpeaking,
     userAudioStream,
     mediaRecorder,
@@ -925,7 +925,8 @@ function ConversationDetails() {
 }
 
 function ConversationHistory() {
-  const { isCloudDoingMagic } = useTerminal();
+  const { isCloudDoingMagic, selectedConversation } = useTerminal();
+
   return (
     <Container maxWidth="xs">
       <Stack
@@ -988,46 +989,12 @@ function ConversationHistory() {
             </Box>
           </Stack>
         </Paper>
-      </Stack>
 
-      {isCloudDoingMagic && (
-        <IconButton color="secondary">
-          <FiCloudRain />
-        </IconButton>
-      )}
-
-      <Stack
-        justifyContent={'flex-start'}
-        alignItems={'center'}
-        sx={{
-          pt: 2,
-        }}
-      >
-        <Typography variant="caption">right now</Typography>
-
-        <Paper elevation={24} sx={{ p: 1, width: '100%' }}>
-          <Stack direction={'row'} alignItems="center">
-            <Stack spacing={2} direction={'row'} alignItems={'center'}>
-              <Avatar
-                alt={'Arjun Patel'}
-                src="https://lh3.googleusercontent.com/ogw/ADea4I6TRqnIptWNP25-iXdusoAHafj-cUPYkO53xKT2_H0=s64-c-mo"
-              />
-
-              <Typography color={'GrayText'} variant="overline">
-                {'Arjun Patel'}
-              </Typography>
-            </Stack>
-
-            <Box
-              sx={{
-                ml: 'auto',
-                color: 'GrayText',
-              }}
-            >
-              <FiPlay />
-            </Box>
-          </Stack>
-        </Paper>
+        {isCloudDoingMagic && (
+          <IconButton size="small" color="secondary">
+            <FiCloudRain />
+          </IconButton>
+        )}
       </Stack>
     </Container>
   );
