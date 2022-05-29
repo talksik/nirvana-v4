@@ -738,7 +738,7 @@ function ListPeople({ people }: { people: User[] }) {
               <Avatar alt={person.displayName} src={person.photoUrl} />
             </ListItemAvatar>
 
-            <ListItemText primary={person.displayName} />
+            <ListItemText primary={person.displayName} secondary={person.email} />
 
             <ListItemSecondaryAction sx={{ color: 'GrayText' }}>
               <FiCoffee />
