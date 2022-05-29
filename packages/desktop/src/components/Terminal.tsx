@@ -712,6 +712,13 @@ function ConversationDetails() {
 
   const [conversationUsers, setConversationUsers] = useImmer<User[]>([]);
 
+  // join the room
+  useEffect(() => {
+    if (selectedConversation.membersInRoom?.length > 0) {
+      // join the audio room
+    }
+  }, [selectedConversation.membersInRoom]);
+
   useEffect(() => {
     (async () => {
       const userPromises = selectedConversation.memberIdsList
@@ -759,7 +766,7 @@ function ConversationDetails() {
               sx={{
                 width: 30,
                 height: 30,
-                opacity: selectedConversation.membersInRoom.includes(conversationUser.uid)
+                opacity: selectedConversation.membersInRoom?.includes(conversationUser.uid)
                   ? '100%'
                   : '20%',
               }}
