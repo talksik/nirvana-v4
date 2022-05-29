@@ -38,13 +38,15 @@ export default function MainPanel() {
             alignItems: 'center',
             gap: 2,
             flex: 1,
-            background: blueGrey[50],
+            background: 'white',
           }}
         >
           <Typography variant="h6">{`Hi ${
             user.displayName?.split(' ')[0] ?? 'there'
           }!`}</Typography>
-          <Typography variant="caption">Take a deep breath in.</Typography>
+          <Typography variant="caption" align="center">
+            Start a conversation with one tap <br /> or just take a breather.
+          </Typography>
         </Container>
       )}
     </Grid>
