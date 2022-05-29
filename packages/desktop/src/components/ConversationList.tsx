@@ -21,7 +21,7 @@ import {
   AvatarGroup,
 } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
-import { FiActivity, FiInbox, FiSearch, FiUsers, FiCoffee, FiCircle } from 'react-icons/fi';
+import { FiActivity, FiInbox, FiSearch, FiUsers, FiCoffee, FiCircle, FiSun } from 'react-icons/fi';
 import NirvanaAvatar from './NirvanaAvatar';
 import { useDebounce, useKey, useRendersCount } from 'react-use';
 import { useSnackbar } from 'notistack';
@@ -119,11 +119,17 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
         selected={selectedConversation?.id === conversation.id}
         onClick={() => selectConversation(conversation.id)}
       >
-        <Box sx={{ color: 'GrayText', fontSize: 10, mr: 2 }}>
-          <FiCircle />
-        </Box>
+        {conversation.membersInRoom?.length > 0 ? (
+          <IconButton color="primary" size="small">
+            <FiSun />
+          </IconButton>
+        ) : (
+          <IconButton color="default" size="small">
+            <FiCircle />
+          </IconButton>
+        )}
 
-        <Box sx={{ mr: 'auto', color: 'GrayText' }}>
+        <Box sx={{ ml: 1, mr: 'auto', color: 'GrayText' }}>
           <ConversationLabel users={conversationUsers} conversationName={conversation.name} />
         </Box>
 
