@@ -260,7 +260,12 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const [searchUsersResults, setSearchUsersResults] = useState<User[]>([]);
   const [searching, setSearching] = useState<boolean>(false);
 
+  const handleEscape = useCallback(() => {
+    setSelectedConversationId(undefined);
+  }, [setSelectedConversationId]);
+
   useKeyPressEvent('Shift', onSearchFocus);
+  useKeyPressEvent('Escape', handleEscape);
 
   const [isUserSpeaking, setIsUserSpeaking] = useState<boolean>(false);
 
