@@ -49,7 +49,7 @@ import { useSnackbar } from 'notistack';
 
 import NirvanaLogo from './NirvanaLogo';
 
-import Conversation from '@nirvana/core/src/models/conversation.model';
+import Conversation, { ConversationMember } from '@nirvana/core/src/models/conversation.model';
 import useAuth from '../providers/AuthProvider';
 import {
   createOneOnOneConversation,
@@ -747,7 +747,7 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
   useEffect(() => {
     (async () => {
       const userPromises = conversation.memberIdsList
-        .filter((memberId) => memberId !== user.uid)
+        // .filter((memberId) => memberId !== user.uid)
         .map(async (memberId) => await getUser(memberId));
 
       const userSettled = await Promise.all(userPromises);
@@ -851,19 +851,22 @@ function ConversationDetails() {
   // update my last active date in this conversation
   // put me in the membersInRoom
   useEffect(() => {
-    setLastActiveDate((prevLastActiveForCurrentSession) => {
-      if (prevLastActiveForCurrentSession) return prevLastActiveForCurrentSession;
-
-      return selectedConversation.members[user.uid].lastActiveDate?.toDate();
-    });
-
-    if (!selectedConversation.memberIdsList.includes(user.uid))
+    // if not already joined, will join so others have presence
+    if (!selectedConversation.membersInRoom.includes(user.uid))
       joinConversation(selectedConversation.id, user.uid);
 
     return () => {
       leaveConversation(selectedConversation.id, user.uid);
     };
-  }, [selectedConversation.members, user.uid, setLastActiveDate, selectedConversation.id]);
+  }, [selectedConversation.id, selectedConversation.membersInRoom, user.uid]);
+
+  useEffect(() => {
+    setLastActiveDate((prevLastActiveForCurrentSession) => {
+      if (prevLastActiveForCurrentSession) return prevLastActiveForCurrentSession;
+
+      return selectedConversation.members[user.uid].lastActiveDate?.toDate();
+    });
+  }, [selectedConversation.members, user.uid, setLastActiveDate]);
 
   // TODO: uncheck priority or not
   // soft max of 10...not going to enforce by counting all in database, but relying on client side list of convos
@@ -871,7 +874,7 @@ function ConversationDetails() {
   useEffect(() => {
     (async () => {
       const userPromises = selectedConversation.memberIdsList
-        .filter((memberId) => memberId !== user.uid)
+        // .filter((memberId) => memberId !== user.uid)
         .map(async (memberId) => await getUser(memberId));
 
       const userSettled = await Promise.all(userPromises);
