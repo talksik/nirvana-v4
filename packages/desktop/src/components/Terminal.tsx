@@ -86,6 +86,7 @@ type ConversationContentMap = {
 
 interface ITerminalContext {
   conversationMap: ConversationMap;
+  conversationContentMap: ConversationContentMap;
 
   selectedConversation?: Conversation;
   selectConversation?: (conversationId: string) => void;
@@ -100,6 +101,7 @@ interface ITerminalContext {
 
 const TerminalContext = React.createContext<ITerminalContext>({
   conversationMap: {},
+  conversationContentMap: {},
 
   isUserSpeaking: false,
   isCloudDoingMagic: false,
@@ -142,7 +144,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
   const [conversationMap, updateConversationMap] = useImmer<ConversationMap>({});
   const [userMap, updateUserMap] = useImmer<UserMap>({});
-  const [contentMap, updatecontentMap] = useImmer<ConversationContentMap>({});
+  const [conversationContentMap, updateContentMap] = useImmer<ConversationContentMap>({});
 
   // fetch conversations
   useEffect(() => {
@@ -197,7 +199,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               if (docChange.type === 'added') {
                 // TODO: add to audio queue from here if there was an addition?
                 enqueueSnackbar('new content received!', { variant: 'default' });
-                updatecontentMap((draftContent) => {
+                updateContentMap((draftContent) => {
                   if (draftContent[conversationId]) {
                     draftContent[conversationId].push(currentContentBlock);
                   } else {
@@ -231,7 +233,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     return () => {
       Object.values(contentListeners).forEach((unsub) => unsub());
     };
-  }, [conversationMap, updatecontentMap, enqueueSnackbar, setContentListeners, contentListeners]);
+  }, [conversationMap, updateContentMap, enqueueSnackbar, setContentListeners, contentListeners]);
 
   // cache of selected conversation
   const selectedConversation: Conversation | undefined = useMemo(() => {
@@ -493,6 +495,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         handleQuickDial,
         selectConversation,
         isCloudDoingMagic,
+        conversationContentMap,
       }}
     >
       <Grid container spacing={0}>
@@ -1034,7 +1037,9 @@ function ConversationDetails() {
 }
 
 function ConversationHistory() {
-  const { isCloudDoingMagic, selectedConversation } = useTerminal();
+  const { isCloudDoingMagic, selectedConversation, conversationContentMap } = useTerminal();
+
+  const contentBlocks = conversationContentMap[selectedConversation?.id] ?? [];
 
   return (
     <Container maxWidth="xs">
@@ -1077,27 +1082,28 @@ function ConversationHistory() {
         }}
       >
         <Typography variant="caption">today</Typography>
+        {contentBlocks.map((contentBlock) => (
+          <Paper key={contentBlock.id} elevation={8} sx={{ p: 1, width: '100%' }}>
+            <Stack direction={'row'} alignItems="center">
+              {/* <Stack spacing={2} direction={'row'} alignItems={'center'}>
+                <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
 
-        <Paper elevation={8} sx={{ p: 1, width: '100%' }}>
-          <Stack direction={'row'} alignItems="center">
-            <Stack spacing={2} direction={'row'} alignItems={'center'}>
-              <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
+                <Typography color={'GrayText'} variant="overline">
+                  {'Viet Phan'}
+                </Typography>
+              </Stack> */}
 
-              <Typography color={'GrayText'} variant="overline">
-                {'Viet Phan'}
-              </Typography>
+              <Box
+                sx={{
+                  ml: 'auto',
+                  color: 'GrayText',
+                }}
+              >
+                <FiPlay />
+              </Box>
             </Stack>
-
-            <Box
-              sx={{
-                ml: 'auto',
-                color: 'GrayText',
-              }}
-            >
-              <FiPlay />
-            </Box>
-          </Stack>
-        </Paper>
+          </Paper>
+        ))}
 
         {isCloudDoingMagic && (
           <IconButton size="small" color="secondary">
