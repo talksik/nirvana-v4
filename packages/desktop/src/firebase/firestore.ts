@@ -42,6 +42,8 @@ interface Document {
 /**
  * UTILS
  */
+// TODO: strong type checking so that string queries are actually querying fields that are in our models
+
 const converter = <T extends Document>() => ({
   toFirestore: (data: T) => ({ ...data }),
   fromFirestore: (snap: QueryDocumentSnapshot) => {
@@ -106,16 +108,21 @@ export const searchUsers = async (searchQuery: string): Promise<User[] | undefin
       limit(5),
     );
 
+    const nameManipulatedQuery =
+      searchQuery[0].toUpperCase() + searchQuery.slice(1).toLocaleLowerCase();
     const nameSearchQuery = query(
       db.users,
       orderBy('displayName'),
-      startAt(searchQuery.toLocaleUpperCase()),
-      endAt(searchQuery.toLocaleUpperCase() + '\uf8ff'),
+      startAt(nameManipulatedQuery),
+      endAt(nameManipulatedQuery + '\uf8ff'),
       limit(5),
     );
 
     const emailquerySnap = await getDocs(emaildocSearchQuery);
     const namequerySnap = await getDocs(nameSearchQuery);
+
+    console.log(nameManipulatedQuery);
+    console.log(namequerySnap);
 
     return [
       ...emailquerySnap.docs.map((doc) => doc.data()),
