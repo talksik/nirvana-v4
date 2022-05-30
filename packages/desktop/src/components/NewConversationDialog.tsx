@@ -202,8 +202,15 @@ export default function NewConversationDialog({
             )}
 
             <Stack justifyContent={'flex-end'} direction={'row'} spacing={2}>
-              <Button variant={'text'}>Cancel</Button>
-              <Button disabled={selectedUsers.length === 0} variant={'contained'} color="primary">
+              <Button onClick={handleClose} variant={'text'}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleSubmitLocal}
+                disabled={selectedUsers.length === 0}
+                variant={'contained'}
+                color="primary"
+              >
                 Connect
               </Button>
             </Stack>
