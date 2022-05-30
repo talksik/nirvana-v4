@@ -121,9 +121,16 @@ export const searchUsers = async (searchQuery: string): Promise<User[] | undefin
     const emailquerySnap = await getDocs(emaildocSearchQuery);
     const namequerySnap = await getDocs(nameSearchQuery);
 
+    const nameQueryResults = namequerySnap.docs.map((doc) => doc.data());
+    const emailQueryResults = emailquerySnap.docs.map((doc) => doc.data());
+
+    // remove duplicates
     return [
-      ...emailquerySnap.docs.map((doc) => doc.data()),
-      ...namequerySnap.docs.map((doc) => doc.data()),
+      ...nameQueryResults,
+      ...emailQueryResults.filter(
+        (userResult) =>
+          !nameQueryResults.find((userFromNameQuery) => userResult.id === userFromNameQuery.id),
+      ),
     ];
   } catch (e) {
     console.error('Error: ', e);
