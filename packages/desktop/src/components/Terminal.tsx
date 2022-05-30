@@ -293,12 +293,10 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then((localUserMedia: MediaStream) => {
-        if (!localUserMedia.active) {
-          enqueueSnackbar('Make sure your microphone is enabled!', { variant: 'error' });
-          return;
-        }
+        console.log('not active', localUserMedia);
 
-        localUserMedia.getTracks().forEach((track) => track.stop());
+        // !remove and try workarounds as provided by tushar from 100ms
+        // localUserMedia.getTracks().forEach((track) => track.stop());
 
         setUserAudioStream(localUserMedia);
 
@@ -309,8 +307,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         userMediaRecoder.onstart = handleOnStartRecording;
 
         enqueueSnackbar('got mic');
-
-        console.log(localUserMedia);
       })
       .catch((error) => {
         enqueueSnackbar('Check your audio mic permissions in preferences!!', { variant: 'error' });
@@ -477,7 +473,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const handleEscape = useCallback(() => {
     setCreateConversationMode(false);
     setSelectedConversationId(undefined);
-  }, [setSelectedConversationId, setCreateConversationMode]);
+    setSearchVal('');
+  }, [setSelectedConversationId, setCreateConversationMode, setSearchVal]);
 
   useKeyPressEvent('Escape', handleEscape);
 
