@@ -73,7 +73,7 @@ export function ConversationList({ lookingForSomeone = false }: { lookingForSome
         ))}
       </List>
 
-      <Divider />
+      {/* <Divider /> */}
 
       {/* <List
         sx={{
@@ -124,7 +124,7 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
             <FiSun />
           </IconButton>
         ) : (
-          <Box sx={{ color: 'GrayText', fontSize: 10, ml: 1 }}>
+          <Box sx={{ color: 'GrayText', fontSize: 10, ml: 0 }}>
             <FiCircle />
           </Box>
         )}
