@@ -94,7 +94,7 @@ export function ConversationList({ lookingForSomeone = false }: { lookingForSome
   );
 }
 
-function ConversationRow({ conversation }: { conversation: Conversation }) {
+export function ConversationRow({ conversation }: { conversation: Conversation }) {
   const { user } = useAuth();
   const { getUser, selectedConversation, selectConversation } = useTerminal();
 

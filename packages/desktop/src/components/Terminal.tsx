@@ -24,6 +24,8 @@ import {
   Typography,
 } from '@mui/material';
 import { ContentBlock, ContentType } from '@nirvana/core/src/models/content.model';
+import { ConversationContentMap, ConversationMap, UserMap } from '../util/types';
+import { ConversationList, ConversationRow } from './ConversationList';
 import { FiHeadphones, FiLogOut, FiMonitor, FiSun, FiZap } from 'react-icons/fi';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Unsubscribe, onSnapshot } from 'firebase/firestore';
@@ -39,7 +41,6 @@ import { useDebounce, useKeyPressEvent, useRendersCount, useUnmount } from 'reac
 
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import ConversationLabel from '../subcomponents/ConversationLabel';
-import { ConversationList } from './ConversationList';
 import FooterControls from './FooterControls';
 import MainPanel from './MainPanel';
 import Navbar from './Navbar';
@@ -50,19 +51,8 @@ import { createGroupConversation } from '../firebase/firestore';
 import { uploadAudioClip } from '../firebase/firebaseStorage';
 import useAuth from '../providers/AuthProvider';
 import { useImmer } from 'use-immer';
+import { useSearchConversations } from '../util/clientSearch';
 import { useSnackbar } from 'notistack';
-
-type ConversationMap = {
-  [conversationId: string]: Conversation;
-};
-
-type UserMap = {
-  [userId: string]: User;
-};
-
-type ConversationContentMap = {
-  [conversationId: string]: ContentBlock[];
-};
 
 interface ITerminalContext {
   conversationMap: ConversationMap;
@@ -116,6 +106,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const [conversationMap, updateConversationMap] = useImmer<ConversationMap>({});
   const [userMap, updateUserMap] = useImmer<UserMap>({});
   const [conversationContentMap, updateContentMap] = useImmer<ConversationContentMap>({});
+
+  const { searchRelevantConversations } = useSearchConversations(conversationMap);
 
   const [contentListeners, setContentListeners] = useImmer<{
     [conversationId: string]: Unsubscribe;
@@ -413,8 +405,10 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
   const [searchVal, setSearchVal] = useState<string>('');
   const [searchUsersResults, setSearchUsersResults] = useState<User[]>([]);
+  const [searchConversationsResults, setSearchConversationsResults] = useState<Conversation[]>([]);
   const [searching, setSearching] = useState<boolean>(false);
 
+  // debounce user search
   const [, cancel] = useDebounce(
     async () => {
       if (searchVal) {
@@ -432,15 +426,22 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   );
 
   const handleOmniSearch = useCallback(
-    (searchQuery: string) => {
+    async (searchQuery: string) => {
+      searchQuery = searchQuery.replace('/', '');
+      setSearchVal(searchQuery);
+
       if (!searchQuery) {
         return;
       }
 
+      // user search
       setSearching(true);
-      setSearchVal(searchQuery.replace('/', ''));
+
+      // client side conversation search
+      const relevantConversations = await searchRelevantConversations(searchQuery);
+      setSearchConversationsResults(relevantConversations);
     },
-    [setSearching, setSearchVal],
+    [setSearching, setSearchVal, setSearchConversationsResults, searchRelevantConversations],
   );
 
   const handleChangeSearchInput = useCallback(
@@ -546,7 +547,10 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
             <Box sx={{ p: 2 }}>
               {searchVal ? (
-                <ListPeople people={searchUsersResults} />
+                <SearchResults
+                  people={searchUsersResults}
+                  conversations={searchConversationsResults}
+                />
               ) : (
                 <ConversationList
                   lookingForSomeone={selectedConversationId && !selectedConversation}
@@ -577,58 +581,101 @@ export default function useTerminal() {
   return useContext(TerminalContext);
 }
 
-function ListPeople({ people }: { people: User[] }) {
-  const { handleQuickDial } = useTerminal();
+function SearchResults({
+  people,
+  conversations,
+}: {
+  people: User[];
+  conversations: Conversation[];
+}) {
+  const { handleQuickDial, selectConversation } = useTerminal();
 
   return (
-    <List
-      sx={{
-        pt: 2,
-      }}
-      subheader={
-        <ListSubheader
+    <>
+      <List
+        sx={{
+          pt: 2,
+        }}
+        subheader={
+          <ListSubheader
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography align={'center'} variant="subtitle2">
+              People
+            </Typography>
+          </ListSubheader>
+        }
+      >
+        <ListItem
           sx={{
             display: 'flex',
             justifyContent: 'center',
           }}
         >
-          <Typography align={'center'} variant="subtitle2">
-            Search Results
-          </Typography>
-        </ListSubheader>
-      }
-    >
-      <ListItem
+          {people.length === 0 && (
+            <Typography align="center" variant="caption">
+              {`Can't find someone? Invite them!`}
+            </Typography>
+          )}
+        </ListItem>
+
+        {people.map((person) => (
+          <Tooltip key={`${person.uid}-searchUsers`} title={'quick dial'}>
+            <ListItem>
+              <ListItemButton onClick={() => handleQuickDial(person)}>
+                <ListItemAvatar>
+                  <Avatar alt={person.displayName} src={person.photoUrl} />
+                </ListItemAvatar>
+                <ListItemText primary={person.displayName} secondary={person.email} />
+
+                <ListItemSecondaryAction sx={{ color: 'GrayText' }}>
+                  <FiZap />
+                </ListItemSecondaryAction>
+              </ListItemButton>
+            </ListItem>
+          </Tooltip>
+        ))}
+      </List>
+
+      <List
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
+          pt: 2,
         }}
+        subheader={
+          <ListSubheader
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            <Typography align={'center'} variant="subtitle2">
+              Conversations
+            </Typography>
+          </ListSubheader>
+        }
       >
-        {people.length === 0 && (
-          <Typography align="center" variant="caption">
-            {`Can't find someone? Invite them!`}
-          </Typography>
-        )}
-      </ListItem>
+        <ListItem
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          {conversations.length === 0 && (
+            <Typography align="center" variant="caption">
+              {`Can't find a conversation? Just create one!`}
+            </Typography>
+          )}
+        </ListItem>
 
-      {people.map((person) => (
-        <Tooltip key={`${person.uid}-searchUsers`} title={'quick dial'}>
-          <ListItem>
-            <ListItemButton onClick={() => handleQuickDial(person)}>
-              <ListItemAvatar>
-                <Avatar alt={person.displayName} src={person.photoUrl} />
-              </ListItemAvatar>
-              <ListItemText primary={person.displayName} secondary={person.email} />
-
-              <ListItemSecondaryAction sx={{ color: 'GrayText' }}>
-                <FiZap />
-              </ListItemSecondaryAction>
-            </ListItemButton>
-          </ListItem>
-        </Tooltip>
-      ))}
-    </List>
+        {conversations.map((conversation) => (
+          <Tooltip key={`${conversation.id}-searchConversations`} title={'continue conversation'}>
+            <ConversationRow conversation={conversation} />
+          </Tooltip>
+        ))}
+      </List>
+    </>
   );
 }
-
-const maxPriorityConvos = 5;

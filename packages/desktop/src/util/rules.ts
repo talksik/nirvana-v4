@@ -2,4 +2,6 @@
 
 export const NirvanaRules = {
   maxMembersPerConversation: 8,
+
+  maxPriorityConvos: 5,
 };
