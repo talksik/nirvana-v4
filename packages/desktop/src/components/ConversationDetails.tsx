@@ -71,55 +71,6 @@ export default function ConversationDetails() {
 
   return (
     <>
-      <Stack
-        direction={'row'}
-        sx={{
-          py: 2,
-          px: 2,
-          borderBottom: '1px solid',
-          borderBottomColor: blueGrey[100],
-          WebkitAppRegion: 'drag',
-          cursor: 'pointer',
-        }}
-        alignItems={'center'}
-        justifyContent={'flex-start'}
-      >
-        <IconButton color="primary" size="small">
-          <FiSun />
-        </IconButton>
-
-        <Box sx={{ mr: 'auto', color: 'GrayText' }}>
-          <ConversationLabel
-            users={selectedConversation.userCache ?? []}
-            conversationName={selectedConversation.name}
-            isSelected={true}
-          />
-        </Box>
-
-        <AvatarGroup variant={'rounded'} sx={{ ml: 'auto' }}>
-          {selectedConversation.userCache?.map((conversationUser, index) => (
-            <Avatar
-              key={`${selectedConversation.id}-${conversationUser.uid}-convoIcon`}
-              alt={conversationUser?.displayName}
-              src={conversationUser?.photoUrl}
-              sx={{
-                width: 30,
-                height: 30,
-                opacity: selectedConversation.membersInRoom?.includes(conversationUser.uid)
-                  ? '100%'
-                  : '20%',
-              }}
-            />
-          ))}
-        </AvatarGroup>
-
-        <Box>
-          <IconButton size="small">
-            <FiMoreVertical />
-          </IconButton>
-        </Box>
-      </Stack>
-
       <Container maxWidth={false} sx={{ position: 'relative', flex: 1, overflow: 'auto' }}>
         <ConversationHistory />
 
