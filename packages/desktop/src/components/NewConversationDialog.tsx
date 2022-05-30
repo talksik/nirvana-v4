@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { Container, Dialog, IconButton } from '@mui/material';
 import { FiX } from 'react-icons/fi';
+import { blueGrey } from '@mui/material/colors';
 
 export default function NewConversationDialog({
   open,
@@ -11,12 +12,13 @@ export default function NewConversationDialog({
 }) {
   const handleSubmit = useCallback(() => {
     try {
+      //
     } catch (error) {
       //
     }
 
     handleClose();
-  }, []);
+  }, [handleClose]);
 
   return (
     <Dialog fullScreen open={open} onClose={handleClose}>
@@ -29,7 +31,7 @@ export default function NewConversationDialog({
           alignItems: 'center',
           gap: 2,
           flex: 1,
-          background: 'white',
+          background: blueGrey[100],
           position: 'relative',
         }}
       >

@@ -402,7 +402,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
   // on load, try getting microphone access
   useEffect(() => {
-    handleAskForMicrophonePermissions();
+    // handleAskForMicrophonePermissions();
   }, [handleAskForMicrophonePermissions]);
 
   //  when user wants to talk,
