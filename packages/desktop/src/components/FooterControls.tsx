@@ -131,8 +131,6 @@ export default function FooterControls() {
                   alt={conversationUser?.displayName}
                   src={conversationUser?.photoUrl}
                   sx={{
-                    width: 30,
-                    height: 30,
                     opacity: selectedConversation.membersInRoom?.includes(conversationUser.uid)
                       ? '100%'
                       : '20%',
