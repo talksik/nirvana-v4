@@ -1,37 +1,23 @@
 import {
   Avatar,
   AvatarGroup,
-  Badge,
   Box,
   CircularProgress,
-  Divider,
   IconButton,
-  Input,
   List,
   ListItem,
   ListItemAvatar,
   ListItemButton,
-  ListItemSecondaryAction,
-  ListItemText,
   ListSubheader,
-  Stack,
-  Tooltip,
   Typography,
 } from '@mui/material';
-import { FiActivity, FiCircle, FiCoffee, FiInbox, FiSearch, FiSun, FiUsers } from 'react-icons/fi';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useDebounce, useKey, useRendersCount } from 'react-use';
+import { FiActivity, FiCircle, FiSun } from 'react-icons/fi';
 
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import ConversationLabel from '../subcomponents/ConversationLabel';
-import KeyboardShortcutLabel from './KeyboardShortcutLabel';
-import NirvanaAvatar from './NirvanaAvatar';
-import { User } from '@nirvana/core/src/models/user.model';
-import { blueGrey } from '@mui/material/colors';
-import { searchUsers } from '../firebase/firestore';
+import React from 'react';
 import useAuth from '../providers/AuthProvider';
-import { useImmer } from 'use-immer';
-import { useSnackbar } from 'notistack';
+import { useRendersCount } from 'react-use';
 import useTerminal from './Terminal';
 
 // sort conversations based on the different data sources: type, conversations, audio clips, etc.
