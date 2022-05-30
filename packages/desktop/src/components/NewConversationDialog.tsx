@@ -1,4 +1,3 @@
-import React, { HTMLAttributes, useCallback, useState, useEffect } from 'react';
 import {
   Autocomplete,
   AutocompleteChangeReason,
@@ -13,20 +12,22 @@ import {
   ListItem,
   Select,
   Stack,
-  styled,
   TextField,
   Typography,
+  styled,
 } from '@mui/material';
-import { FiX } from 'react-icons/fi';
-import { blueGrey } from '@mui/material/colors';
-import { useSnackbar } from 'notistack';
+import React, { HTMLAttributes, useCallback, useEffect, useState } from 'react';
 import { useDebounce, useKeyPressEvent, useToggle } from 'react-use';
-import { searchUsers } from '../firebase/firestore';
-import { User } from '@nirvana/core/src/models/user.model';
-import useAuth from '../providers/AuthProvider';
-import UserDetailRow from '../subcomponents/UserDetailRow';
+
 import CircularProgress from '@mui/material/CircularProgress';
+import { FiX } from 'react-icons/fi';
 import { NirvanaRules } from '../util/rules';
+import { User } from '@nirvana/core/src/models/user.model';
+import UserDetailRow from '../subcomponents/UserDetailRow';
+import { blueGrey } from '@mui/material/colors';
+import { searchUsers } from '../firebase/firestore';
+import useAuth from '../providers/AuthProvider';
+import { useSnackbar } from 'notistack';
 
 export default function NewConversationDialog({
   open,
@@ -56,8 +57,6 @@ export default function NewConversationDialog({
   const [, cancel] = useDebounce(
     async () => {
       if (searchVal) {
-        enqueueSnackbar('searching...', { variant: 'info' });
-
         let results = await searchUsers(searchVal);
         results = results.filter((userResult) => userResult.id !== user.uid);
         setSearchUsersResults(results);
