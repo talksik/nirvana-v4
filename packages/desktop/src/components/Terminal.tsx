@@ -335,8 +335,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
   const [isUserSpeaking, setIsUserSpeaking] = useState<boolean>(false);
 
-  const [userAudioStream, setUserAudioStream] = useState<MediaStream>(null);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder>(null);
+  const [userAudioStream, setUserAudioStream] = useState<MediaStream | null>(null);
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
 
   // from the time of starting to speak to finally sent to everyone out there
   // feeling to user that everyone is listening right now even though it's only recording
@@ -414,7 +414,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
       return;
     }
 
-    if (!userAudioStream) {
+    if (!userAudioStream || !mediaRecorder) {
       enqueueSnackbar('Check your audio mic permissions in preferences!!', { variant: 'error' });
 
       handleAskForMicrophonePermissions();

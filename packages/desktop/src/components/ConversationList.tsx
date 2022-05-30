@@ -94,24 +94,8 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
   const { user } = useAuth();
   const { getUser, selectedConversation, selectConversation } = useTerminal();
 
-  const [conversationUsers, setConversationUsers] = useImmer<User[]>([]);
-
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | CONVERSATION LIST ROW | ', rendersCount);
-
-  useEffect(() => {
-    (async () => {
-      const userPromises = conversation.memberIdsList
-        // .filter((memberId) => memberId !== user.uid)
-        .map(async (memberId) => await getUser(memberId));
-
-      const userSettled = await Promise.all(userPromises);
-
-      setConversationUsers(userSettled);
-    })();
-
-    return;
-  }, [conversation.memberIdsList, getUser, user, setConversationUsers]);
 
   return (
     <ListItem key={`${conversation.id}-priorityConvoList`}>
@@ -129,13 +113,16 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
           </Box>
         )}
 
-        <Box sx={{ ml: 1, mr: 'auto', color: 'GrayText' }}>
-          <ConversationLabel users={conversationUsers} conversationName={conversation.name} />
+        <Box sx={{ ml: 2, mr: 'auto', color: 'GrayText' }}>
+          <ConversationLabel
+            users={conversation.userCache ?? []}
+            conversationName={conversation.name}
+          />
         </Box>
 
         <ListItemAvatar>
           <AvatarGroup variant={'rounded'}>
-            {conversationUsers.map((conversationUser, index) => (
+            {conversation.userCache?.map((conversationUser, index) => (
               <Avatar
                 key={`${conversation.id}-${conversationUser.uid}-convoIcon`}
                 alt={conversationUser?.displayName}
