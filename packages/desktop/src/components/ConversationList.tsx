@@ -129,7 +129,7 @@ export function ConversationRow({
   useKeyPressEvent(`${keyboardShortcut?.toString()}`, handleSelectConversation);
 
   return (
-    <ListItem key={`${conversation.id}-priorityConvoList`}>
+    <ListItem>
       <ListItemButton
         selected={selectedConversation?.id === conversation.id}
         onClick={handleSelectConversation}
