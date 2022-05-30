@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Container, Dialog, IconButton } from '@mui/material';
 import { FiX } from 'react-icons/fi';
 
@@ -9,6 +9,15 @@ export default function NewConversationDialog({
   open: boolean;
   handleClose: () => void;
 }) {
+  const handleSubmit = useCallback(() => {
+    try {
+    } catch (error) {
+      //
+    }
+
+    handleClose();
+  }, []);
+
   return (
     <Dialog fullScreen open={open} onClose={handleClose}>
       <Container
@@ -24,7 +33,7 @@ export default function NewConversationDialog({
           position: 'relative',
         }}
       >
-        <IconButton sx={{ position: 'absolute', top: 10, right: 10 }}>
+        <IconButton sx={{ position: 'absolute', top: 10, right: 10 }} onClick={handleClose}>
           <FiX />
         </IconButton>
       </Container>

@@ -16,9 +16,9 @@
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended"
   ],
+  "parser": "@typescript-eslint/parser",
   "rules": {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn"
-  },
-  "parser": "@typescript-eslint/parser"
+  }
 }
