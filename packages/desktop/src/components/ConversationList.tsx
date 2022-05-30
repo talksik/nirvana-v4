@@ -2,20 +2,24 @@ import {
   Avatar,
   AvatarGroup,
   Box,
+  Button,
   CircularProgress,
+  Divider,
   IconButton,
   List,
   ListItem,
   ListItemAvatar,
   ListItemButton,
   ListSubheader,
+  Stack,
   Typography,
 } from '@mui/material';
 import { FiActivity, FiCircle, FiSun } from 'react-icons/fi';
+import React, { useCallback } from 'react';
 
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import ConversationLabel from '../subcomponents/ConversationLabel';
-import React from 'react';
+import { SUPPORT_DISPLAY_NAME } from '../util/support';
 import useAuth from '../providers/AuthProvider';
 import { useRendersCount } from 'react-use';
 import useTerminal from './Terminal';
@@ -28,16 +32,28 @@ import useTerminal from './Terminal';
  * @returns
  */
 export function ConversationList({ lookingForSomeone = false }: { lookingForSomeone: boolean }) {
-  const { conversationMap } = useTerminal();
+  const { conversationMap, handleOmniSearch } = useTerminal();
 
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | CONVERSATION LIST | ', rendersCount);
 
+  const handleQuickDialSupport = useCallback(() => {
+    handleOmniSearch(SUPPORT_DISPLAY_NAME);
+  }, [handleOmniSearch]);
+
   if (Object.keys(conversationMap).length === 0) {
     return (
-      <Typography align="center" variant="caption">
-        Look for someone by name or email to start a conversation!
-      </Typography>
+      <Stack direction={'column'} alignItems="center">
+        <Typography align="center" variant="caption">
+          Look for someone by name or email to start a conversation!
+        </Typography>
+
+        <Divider />
+
+        <Button onClick={handleQuickDialSupport} variant={'text'}>
+          Click here to say hi to our team!
+        </Button>
+      </Stack>
     );
   }
 

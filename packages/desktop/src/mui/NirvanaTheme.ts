@@ -1,4 +1,5 @@
 import { createTheme, experimental_sx as sx } from '@mui/material';
+
 import { blueGrey } from '@mui/material/colors';
 
 export const NirvanaTheme = createTheme({
@@ -9,6 +10,9 @@ export const NirvanaTheme = createTheme({
     },
     caption: {
       color: blueGrey[200],
+    },
+    button: {
+      textTransform: 'none',
     },
   },
   palette: {
