@@ -2,6 +2,7 @@ import React, { HTMLAttributes, useCallback, useState } from 'react';
 import {
   Autocomplete,
   AutocompleteRenderOptionState,
+  Button,
   Container,
   Dialog,
   FormControl,
@@ -10,6 +11,7 @@ import {
   InputLabel,
   ListItem,
   Select,
+  Stack,
   styled,
   TextField,
   Typography,
@@ -106,7 +108,14 @@ export default function NewConversationDialog({
           <FiX />
         </IconButton>
 
-        <Container maxWidth="sm">
+        <Container
+          maxWidth="sm"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+          }}
+        >
           <Autocomplete
             multiple
             loading={searching}
@@ -118,18 +127,31 @@ export default function NewConversationDialog({
             renderOption={renderOption}
             getOptionLabel={(option) => (typeof option === 'string' ? option : option.displayName)}
             value={selectedUsers}
-            onChange={handleSelectUser}
             filterSelectedOptions
+            filterOptions={(options) => options}
             inputValue={searchVal}
             renderInput={(params) => (
               <TextField
                 fullWidth
-                label="Search by name or email"
+                label="People"
                 {...params}
-                placeholder="Favorites"
+                placeholder="Search by name or email"
               />
             )}
           />
+
+          <TextField
+            fullWidth
+            label="Name (optional)"
+            placeholder="Channel, subject line, whatever..."
+          />
+
+          <Stack justifyContent={'flex-end'} direction={'row'} spacing={2}>
+            <Button variant={'text'}>Cancel</Button>
+            <Button variant={'contained'} color="primary">
+              Connect
+            </Button>
+          </Stack>
         </Container>
       </Container>
     </Dialog>
