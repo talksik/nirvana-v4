@@ -497,7 +497,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     setAnchorEl(null);
   };
 
-  const [createConversationMode, setCreateConversationMode] = useState<boolean>(true);
+  const [createConversationMode, setCreateConversationMode] = useState<boolean>(false);
 
   const handleStartConversation = useCallback(
     async (selectedUsers: User[], conversationName?: string) => {
