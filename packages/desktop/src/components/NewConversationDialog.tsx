@@ -102,7 +102,7 @@ export default function NewConversationDialog({
     [setConversationName],
   );
 
-  const [isSubmitting, toggleIsSubmitting] = useToggle(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const handleSubmitLocal = useCallback(async () => {
     if (selectedUsers.length === 0) {
@@ -110,7 +110,7 @@ export default function NewConversationDialog({
       return;
     }
 
-    toggleIsSubmitting();
+    setIsSubmitting(true);
 
     handleSubmit(selectedUsers, conversationName);
 
@@ -118,7 +118,7 @@ export default function NewConversationDialog({
     setSelectedUsers([]);
     setConversationName('');
 
-    toggleIsSubmitting();
+    setIsSubmitting(false);
   }, [
     selectedUsers,
     setConversationName,
@@ -126,7 +126,7 @@ export default function NewConversationDialog({
     enqueueSnackbar,
     handleSubmit,
     setSelectedUsers,
-    toggleIsSubmitting,
+    setIsSubmitting,
   ]);
 
   return (

@@ -22,6 +22,7 @@ import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { useSnackbar } from 'notistack';
 import { useKeyPressEvent, useRendersCount } from 'react-use';
 import useTerminal from './Terminal';
+import { KeyboardShortcuts } from '../util/keyboard';
 
 const Navbar = ({
   handleChangeSearchInput,
@@ -42,7 +43,7 @@ const Navbar = ({
     if (searchRef?.current) searchRef.current.focus();
   }, [enqueueSnackbar, searchRef]);
 
-  useKeyPressEvent('Shift', onSearchFocus);
+  useKeyPressEvent(KeyboardShortcuts.search, onSearchFocus);
 
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | NAVBAR | ', rendersCount);
@@ -88,7 +89,7 @@ const Navbar = ({
 
         {isSearching && <CircularProgress size={20} />}
 
-        <KeyboardShortcutLabel label="Shift" />
+        <KeyboardShortcutLabel label={KeyboardShortcuts.search} />
       </Stack>
 
       <Tooltip title={'Group conversation'}>

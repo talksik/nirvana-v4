@@ -1,1 +1,3 @@
-const searchShortcut = 'Shift';
+export enum KeyboardShortcuts {
+  search = 'shift',
+}
