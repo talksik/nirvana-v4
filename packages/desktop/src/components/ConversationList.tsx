@@ -114,13 +114,19 @@ export function ConversationRow({
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | CONVERSATION LIST ROW | ', rendersCount);
 
-  const keyboardShortcut = useMemo(() => index + 1, [index]);
+  const keyboardShortcut = useMemo(() => {
+    if (index < 9) {
+      return index + 1;
+    }
 
-  const handleSelectConversation = useCallback(
-    () => selectConversation(conversation.id),
-    [conversation.id, selectConversation],
-  );
-  useKeyPressEvent(`${keyboardShortcut.toString()}`, handleSelectConversation);
+    return undefined;
+  }, [index]);
+
+  const handleSelectConversation = useCallback(() => {
+    selectConversation(conversation.id);
+  }, [conversation.id, selectConversation]);
+
+  useKeyPressEvent(`${keyboardShortcut?.toString()}`, handleSelectConversation);
 
   return (
     <ListItem key={`${conversation.id}-priorityConvoList`}>
@@ -139,7 +145,7 @@ export function ConversationRow({
         )}
 
         <Stack direction={'row'} spacing={1} sx={{ ml: 2, mr: 'auto', color: 'GrayText' }}>
-          <KeyboardShortcutLabel label={keyboardShortcut.toString()} />
+          {keyboardShortcut && <KeyboardShortcutLabel label={keyboardShortcut.toString()} />}
           <ConversationLabel
             users={conversation.userCache ?? []}
             conversationName={conversation.name}
