@@ -109,6 +109,13 @@ function ConversationHistory() {
     return conversationContentMap[selectedConversation.id] ?? [];
   }, [conversationContentMap, selectedConversation.id]);
 
+  if (contentBlocks.length === 0)
+    return (
+      <Stack justifyContent={'center'} alignItems={'center'}>
+        <Typography variant="caption">Get the party started!</Typography>
+      </Stack>
+    );
+
   return (
     <Container maxWidth="xs">
       <Stack
@@ -119,6 +126,7 @@ function ConversationHistory() {
         }}
       >
         <Typography variant="caption">today</Typography>
+
         {contentBlocks.map((contentBlock) => (
           <Paper key={contentBlock.id} elevation={8} sx={{ p: 1, width: '100%' }}>
             <Stack direction={'row'} alignItems="center">
