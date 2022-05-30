@@ -8,6 +8,7 @@ import {
   IconButton,
   InputBase,
   InputLabel,
+  ListItem,
   Select,
   styled,
   TextField,
@@ -79,7 +80,9 @@ export default function NewConversationDialog({
 
   const renderOption = useCallback(
     (props: HTMLAttributes<HTMLLIElement>, option: User, state: AutocompleteRenderOptionState) => (
-      <Typography>{option.email}</Typography>
+      <ListItem {...props}>
+        <Typography>{option.email}</Typography>
+      </ListItem>
     ),
     [],
   );
@@ -112,7 +115,7 @@ export default function NewConversationDialog({
             autoHighlight
             onInputChange={handleChangeSearchInput}
             options={searchUsersResults}
-            // renderOption={renderOption}
+            renderOption={renderOption}
             getOptionLabel={(option) => (typeof option === 'string' ? option : option.displayName)}
             value={selectedUsers}
             onChange={handleSelectUser}
