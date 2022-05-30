@@ -18,6 +18,7 @@ import { FiHeadphones, FiHelpCircle, FiLogOut, FiSun } from 'react-icons/fi';
 import React, { useCallback } from 'react';
 
 import ConversationLabel from '../subcomponents/ConversationLabel';
+import { SUPPORT_DISPLAY_NAME } from '../util/support';
 import { blueGrey } from '@mui/material/colors';
 import useAuth from '../providers/AuthProvider';
 import useTerminal from './Terminal';
@@ -36,7 +37,7 @@ export default function FooterControls() {
   };
 
   const handleQuickDialSupport = useCallback(() => {
-    handleOmniSearch('Nirvana Support');
+    handleOmniSearch(SUPPORT_DISPLAY_NAME);
   }, [handleOmniSearch]);
 
   return (
