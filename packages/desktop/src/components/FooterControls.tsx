@@ -91,28 +91,32 @@ export default function FooterControls() {
         </Stack>
 
         {selectedConversation && (
-          <Stack
-            direction={'row'}
-            sx={{
-              flex: 1,
-              mx: 'auto',
-              WebkitAppRegion: 'drag',
-              cursor: 'pointer',
-            }}
-            alignItems={'center'}
-            justifyContent={'flex-start'}
-          >
-            <IconButton color="primary" size="small">
-              <FiSun />
-            </IconButton>
+          <>
+            <Stack
+              direction={'row'}
+              sx={{
+                flex: 1,
+                mx: 'auto',
 
-            <Box sx={{ color: 'GrayText' }}>
-              <ConversationLabel
-                users={selectedConversation.userCache ?? []}
-                conversationName={selectedConversation.name}
-                isSelected={true}
-              />
-            </Box>
+                WebkitAppRegion: 'drag',
+                cursor: 'pointer',
+              }}
+              alignItems={'center'}
+              justifyContent={'center'}
+              spacing={1}
+            >
+              <IconButton color="primary" size="small">
+                <FiSun />
+              </IconButton>
+
+              <Box sx={{ color: 'GrayText' }}>
+                <ConversationLabel
+                  users={selectedConversation.userCache ?? []}
+                  conversationName={selectedConversation.name}
+                  isSelected={true}
+                />
+              </Box>
+            </Stack>
 
             <AvatarGroup variant={'rounded'}>
               {selectedConversation.userCache?.map((conversationUser, index) => (
@@ -130,7 +134,7 @@ export default function FooterControls() {
                 />
               ))}
             </AvatarGroup>
-          </Stack>
+          </>
         )}
 
         {/* todo: add a third mode which is when toggle broadcasting */}
