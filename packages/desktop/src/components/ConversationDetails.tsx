@@ -24,7 +24,6 @@ import { useRendersCount } from 'react-use';
 export default function ConversationDetails() {
   const { user } = useAuth();
   const { getUser, selectedConversation, selectConversation, isCloudDoingMagic } = useTerminal();
-  const [conversationUsers, setConversationUsers] = useImmer<User[]>([]);
 
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | CONVERSATION DETAILS | ', rendersCount);
@@ -70,20 +69,6 @@ export default function ConversationDetails() {
   // TODO: uncheck priority or not
   // soft max of 10...not going to enforce by counting all in database, but relying on client side list of convos
 
-  useEffect(() => {
-    (async () => {
-      const userPromises = selectedConversation.memberIdsList
-        // .filter((memberId) => memberId !== user.uid)
-        .map(async (memberId) => await getUser(memberId));
-
-      const userSettled = await Promise.all(userPromises);
-
-      setConversationUsers(userSettled);
-    })();
-
-    return;
-  }, [selectedConversation.memberIdsList, getUser, user, setConversationUsers]);
-
   return (
     <>
       <Stack
@@ -105,13 +90,13 @@ export default function ConversationDetails() {
 
         <Box sx={{ mr: 'auto', color: 'GrayText' }}>
           <ConversationLabel
-            users={conversationUsers}
+            users={selectedConversation.userCache ?? []}
             conversationName={selectedConversation.name}
           />
         </Box>
 
         <AvatarGroup variant={'rounded'} sx={{ ml: 'auto' }}>
-          {conversationUsers.map((conversationUser, index) => (
+          {selectedConversation.userCache?.map((conversationUser, index) => (
             <Avatar
               key={`${selectedConversation.id}-${conversationUser.uid}-convoIcon`}
               alt={conversationUser?.displayName}
