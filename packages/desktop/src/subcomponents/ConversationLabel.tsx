@@ -23,7 +23,11 @@ export default function ConversationLabel({ conversationName, users }: IConversa
   const { user } = useAuth();
 
   if (conversationName) {
-    return <Typography variant="overline">{conversationName}</Typography>;
+    return (
+      <Typography noWrap variant="overline">
+        {conversationName}
+      </Typography>
+    );
   }
 
   const filteredUsers = users.filter((convoUser) => convoUser.id !== user.uid);
@@ -31,7 +35,11 @@ export default function ConversationLabel({ conversationName, users }: IConversa
   if (filteredUsers.length === 1) {
     const firstName = filteredUsers[0].displayName.split(' ')[0];
 
-    return <Typography variant="overline">{firstName}</Typography>;
+    return (
+      <Typography noWrap variant="overline">
+        {firstName}
+      </Typography>
+    );
   }
 
   if (filteredUsers.length > 1) {
@@ -39,7 +47,11 @@ export default function ConversationLabel({ conversationName, users }: IConversa
 
     const formattedFirstnames = firstNames.slice(0, -1).join(',') + ' and ' + firstNames.slice(-1);
 
-    return <Typography variant="overline">{formattedFirstnames}</Typography>;
+    return (
+      <Typography noWrap variant="overline">
+        {formattedFirstnames}
+      </Typography>
+    );
   }
 
   return;
