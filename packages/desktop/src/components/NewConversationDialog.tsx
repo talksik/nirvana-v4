@@ -34,7 +34,7 @@ export default function NewConversationDialog({
 }: {
   open: boolean;
   handleClose: () => void;
-  handleSubmit: (selectedUsers: User[], conversationName?: string) => void;
+  handleSubmit: (selectedUsers: User[], conversationName?: string) => Promise<void>;
 }) {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useAuth();
@@ -112,7 +112,7 @@ export default function NewConversationDialog({
 
     setIsSubmitting(true);
 
-    handleSubmit(selectedUsers, conversationName);
+    await handleSubmit(selectedUsers, conversationName);
 
     // clear form for next time
     setSelectedUsers([]);
@@ -148,74 +148,68 @@ export default function NewConversationDialog({
           <FiX />
         </IconButton>
 
-        {isSubmitting ? (
-          <CircularProgress />
-        ) : (
-          <Container
-            maxWidth="sm"
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 5,
-            }}
-          >
-            <Typography variant="h4">Start a Conversation</Typography>
+        <Container
+          maxWidth="sm"
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 5,
+          }}
+        >
+          <Typography variant="h4">Start a Conversation</Typography>
 
-            <Autocomplete
-              multiple
-              loading={searching}
-              includeInputInList
-              id="tags-outlined"
-              autoHighlight
-              onInputChange={handleChangeSearchInput}
-              options={searchUsersResults}
-              renderOption={renderOption}
-              getOptionLabel={(option) =>
-                typeof option === 'string' ? option : option.displayName
-              }
-              value={selectedUsers}
-              onChange={handleChangeSelections}
-              filterSelectedOptions
-              isOptionEqualToValue={(optionUser, valueUser) => optionUser.id === valueUser.id}
-              filterOptions={(options) => options}
-              inputValue={searchVal}
-              renderInput={(params) => (
-                <TextField
-                  // eslint-disable-next-line jsx-a11y/no-autofocus
-                  autoFocus
-                  fullWidth
-                  label="People"
-                  {...params}
-                  placeholder="Search by name or email"
-                />
-              )}
-            />
-
-            {selectedUsers.length > 1 && (
+          <Autocomplete
+            multiple
+            loading={searching}
+            includeInputInList
+            id="tags-outlined"
+            autoHighlight
+            onInputChange={handleChangeSearchInput}
+            options={searchUsersResults}
+            renderOption={renderOption}
+            getOptionLabel={(option) => (typeof option === 'string' ? option : option.displayName)}
+            value={selectedUsers}
+            onChange={handleChangeSelections}
+            filterSelectedOptions
+            isOptionEqualToValue={(optionUser, valueUser) => optionUser.id === valueUser.id}
+            filterOptions={(options) => options}
+            inputValue={searchVal}
+            renderInput={(params) => (
               <TextField
-                value={conversationName}
-                onChange={handleChangeName}
+                // eslint-disable-next-line jsx-a11y/no-autofocus
+                autoFocus
                 fullWidth
-                label="Name (optional)"
-                placeholder="Channel, subject line, whatever..."
+                label="People"
+                {...params}
+                placeholder="Search by name or email"
               />
             )}
+          />
 
-            <Stack justifyContent={'flex-end'} direction={'row'} spacing={2}>
-              <Button onClick={handleClose} variant={'text'}>
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSubmitLocal}
-                disabled={selectedUsers.length === 0}
-                variant={'contained'}
-                color="primary"
-              >
-                Connect
-              </Button>
-            </Stack>
-          </Container>
-        )}
+          {selectedUsers.length > 1 && (
+            <TextField
+              value={conversationName}
+              onChange={handleChangeName}
+              fullWidth
+              label="Name (optional)"
+              placeholder="Channel, subject line, whatever..."
+            />
+          )}
+
+          <Stack justifyContent={'flex-end'} direction={'row'} spacing={2}>
+            <Button onClick={handleClose} variant={'text'}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSubmitLocal}
+              disabled={selectedUsers.length === 0 || isSubmitting}
+              variant={'contained'}
+              color="primary"
+            >
+              {isSubmitting ? <CircularProgress /> : 'Connect'}
+            </Button>
+          </Stack>
+        </Container>
       </Container>
     </Dialog>
   );

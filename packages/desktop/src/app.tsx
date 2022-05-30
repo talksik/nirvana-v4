@@ -21,7 +21,7 @@ root.render(
       maxSnack={3}
       anchorOrigin={{
         vertical: 'top',
-        horizontal: 'right',
+        horizontal: 'left',
       }}
     >
       <ErrorParent>
