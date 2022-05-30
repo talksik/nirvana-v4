@@ -1,5 +1,3 @@
-import React, { useRef, useCallback } from 'react';
-
 import {
   Avatar,
   CircularProgress,
@@ -12,17 +10,18 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import NirvanaLogo from './NirvanaLogo';
 import { FiHeadphones, FiLogOut, FiMonitor, FiSearch, FiUsers, FiWind } from 'react-icons/fi';
-
-import MenuItem from '@mui/material/MenuItem';
-import useAuth from '../providers/AuthProvider';
-import { blueGrey } from '@mui/material/colors';
-import KeyboardShortcutLabel from './KeyboardShortcutLabel';
-import { useSnackbar } from 'notistack';
+import React, { useCallback, useRef } from 'react';
 import { useKeyPressEvent, useRendersCount } from 'react-use';
-import useTerminal from './Terminal';
+
+import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { KeyboardShortcuts } from '../util/keyboard';
+import MenuItem from '@mui/material/MenuItem';
+import NirvanaLogo from './NirvanaLogo';
+import { blueGrey } from '@mui/material/colors';
+import useAuth from '../providers/AuthProvider';
+import { useSnackbar } from 'notistack';
+import useTerminal from './Terminal';
 
 const Navbar = ({
   handleChangeSearchInput,
@@ -39,9 +38,8 @@ const Navbar = ({
 
   const searchRef = useRef<HTMLInputElement>(null);
   const onSearchFocus = useCallback(() => {
-    enqueueSnackbar('search focused');
     if (searchRef?.current) searchRef.current.focus();
-  }, [enqueueSnackbar, searchRef]);
+  }, [searchRef]);
 
   useKeyPressEvent(KeyboardShortcuts.search, onSearchFocus);
 

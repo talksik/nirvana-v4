@@ -424,8 +424,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const [, cancel] = useDebounce(
     async () => {
       if (searchVal) {
-        enqueueSnackbar('searching...', { variant: 'info' });
-
         let results = await searchUsers(searchVal);
         results = results.filter((userResult) => userResult.id !== user.uid);
         setSearchUsersResults(results);
@@ -436,7 +434,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
       setSearching(false);
     },
     1000,
-    [searchVal, enqueueSnackbar, setSearchUsersResults, user],
+    [searchVal, setSearchUsersResults, user],
   );
 
   const handleOmniSearch = useCallback(
