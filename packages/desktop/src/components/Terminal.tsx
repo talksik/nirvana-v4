@@ -28,6 +28,7 @@ import useAuth from '../providers/AuthProvider';
 import { useImmer } from 'use-immer';
 import { useSearchConversations } from '../util/clientSearch';
 import { useSnackbar } from 'notistack';
+import useStreamHandler from '../hooks/useStreamHandler';
 
 interface ITerminalContext {
   conversationMap: ConversationMap;
@@ -191,6 +192,9 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
     // return undefined;
   }, [selectedConversationId, conversationMap, enqueueSnackbar]);
+
+  // handles stream and device stuff
+  useStreamHandler(selectedConversation);
 
   // handle create or open existing conversation
   // not 100% consistent to the second, but still works...don't need atomicity
