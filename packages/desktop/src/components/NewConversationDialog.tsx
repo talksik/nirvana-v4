@@ -44,19 +44,7 @@ export default function NewConversationDialog({
 
   const handleChangeSelections = useCallback(
     (e: React.SyntheticEvent<Element, Event>, value: User[], reason: AutocompleteChangeReason) => {
-      const newUsers: User[] = [];
-
-      value.forEach((val) => {
-        if (typeof val !== 'string') return;
-
-        newUsers.push(val);
-      });
-
-      console.log(value);
-
-      console.log(newUsers);
-
-      setSelectedUsers(newUsers);
+      setSelectedUsers(value);
     },
     [],
   );
@@ -146,6 +134,7 @@ export default function NewConversationDialog({
             value={selectedUsers}
             onChange={handleChangeSelections}
             filterSelectedOptions
+            isOptionEqualToValue={(optionUser, valueUser) => optionUser.id === valueUser.id}
             filterOptions={(options) => options}
             inputValue={searchVal}
             renderInput={(params) => (
