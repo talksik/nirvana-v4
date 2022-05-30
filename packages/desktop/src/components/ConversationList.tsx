@@ -135,9 +135,9 @@ export function ConversationRow({
         onClick={handleSelectConversation}
       >
         {conversation.membersInRoom?.length > 0 ? (
-          <IconButton color="primary" size="small">
+          <Box sx={{ color: 'primary.main', fontSize: 15, ml: 0 }}>
             <FiSun />
-          </IconButton>
+          </Box>
         ) : (
           <Box sx={{ color: 'GrayText', fontSize: 10, ml: 0 }}>
             <FiCircle />
