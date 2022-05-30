@@ -16,6 +16,7 @@ import { useDebounce, useKeyPressEvent, useRendersCount, useUnmount } from 'reac
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import { ConversationList } from './ConversationList';
 import FooterControls from './FooterControls';
+import { KeyboardShortcuts } from '../util/keyboard';
 import MainPanel from './MainPanel';
 import Navbar from './Navbar';
 import NewConversationDialog from './NewConversationDialog';
@@ -476,7 +477,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     setSearchVal('');
   }, [setSelectedConversationId, setCreateConversationMode, setSearchVal]);
 
-  useKeyPressEvent('Escape', handleEscape);
+  useKeyPressEvent(KeyboardShortcuts.escape.shortcutKey, handleEscape);
 
   return (
     <TerminalContext.Provider

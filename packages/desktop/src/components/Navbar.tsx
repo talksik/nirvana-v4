@@ -87,7 +87,11 @@ const Navbar = ({
 
         {isSearching && <CircularProgress size={20} />}
 
-        <KeyboardShortcutLabel label={KeyboardShortcuts.search.label} />
+        {searchVal ? (
+          <KeyboardShortcutLabel label={KeyboardShortcuts.escape.label} />
+        ) : (
+          <KeyboardShortcutLabel label={KeyboardShortcuts.search.label} />
+        )}
       </Stack>
 
       <Tooltip title={'Group conversation'}>
