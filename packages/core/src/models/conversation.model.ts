@@ -1,4 +1,5 @@
 import { FieldValue, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { User } from './user.model';
 export default class Conversation {
   id: string;
 
@@ -8,6 +9,8 @@ export default class Conversation {
     public memberIdsList: string[],
 
     public members: MemberMap,
+
+    public userCache: User[],
 
     public name: string | null = null,
 
@@ -20,8 +23,8 @@ export default class Conversation {
 }
 
 export type MemberMap = {
-  [memberId: string]: ConversationMember
-}
+  [memberId: string]: ConversationMember;
+};
 
 export class ConversationMember {
   constructor(

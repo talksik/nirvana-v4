@@ -50,6 +50,7 @@ import Navbar from './Navbar';
 import MainPanel from './MainPanel';
 import { ConversationList } from './ConversationList';
 import NewConversationDialog from './NewConversationDialog';
+import { createGroupConversation } from '../firebase/firestore';
 type ConversationMap = {
   [conversationId: string]: Conversation;
 };
@@ -69,7 +70,7 @@ interface ITerminalContext {
   selectedConversation?: Conversation;
   selectConversation?: (conversationId: string) => void;
 
-  handleQuickDial?: (otherUserId: string) => void;
+  handleQuickDial?: (otherUser: User) => void;
 
   getUser?: (userId: string) => Promise<User | undefined>;
 
@@ -159,7 +160,7 @@ const handleOnStartRecording = (e: BlobEvent) => {
 // todo: extract each use effect to custom hook and will be clean
 export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const { enqueueSnackbar } = useSnackbar();
-  const { user, logout } = useAuth();
+  const { user, logout, nirvanaUser } = useAuth();
 
   const [selectedConversationId, setSelectedConversationId] = useState<string>(undefined);
 
@@ -282,7 +283,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   // handle create or open existing conversation
   // not 100% consistent to the second, but still works...don't need atomicity
   const handleQuickDial = useCallback(
-    async (otherUserId: string) => {
+    async (otherUser: User) => {
       setSearchVal('');
 
       try {
@@ -292,8 +293,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         const findExistingConversation = Object.values(conversationMap).find((convo) => {
           if (
             convo.memberIdsList?.length === 2 &&
-            convo.memberIdsList.includes(user.uid) &&
-            convo.memberIdsList.includes(otherUserId)
+            convo.memberIdsList.includes(nirvanaUser.id) &&
+            convo.memberIdsList.includes(otherUser.id)
           ) {
             return true;
           }
@@ -307,14 +308,14 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         }
 
         // create conversation in this case
-        const newConversationId = await createOneOnOneConversation(otherUserId, user.uid);
+        const newConversationId = await createOneOnOneConversation(otherUser, nirvanaUser);
         enqueueSnackbar('started conversation!', { variant: 'success' });
         setSelectedConversationId(newConversationId);
       } catch (error) {
         enqueueSnackbar('Something went wrong, please try again', { variant: 'error' });
       }
     },
-    [conversationMap, enqueueSnackbar, user],
+    [conversationMap, enqueueSnackbar, nirvanaUser],
   );
 
   const getUser = useCallback(
@@ -496,11 +497,41 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     setAnchorEl(null);
   };
 
-  // const handleCreateConversation = useCallback(() => {
-
-  // }, [])
-
   const [createConversationMode, setCreateConversationMode] = useState<boolean>(true);
+
+  const handleStartConversation = useCallback(
+    async (selectedUsers: User[], conversationName?: string) => {
+      if (selectedUsers.length === 0) {
+        enqueueSnackbar('Must select more than one person');
+        return;
+      }
+
+      try {
+        // one on one, handle quick dial to prevent another conversation
+        if (selectedUsers.length === 1) {
+          await handleQuickDial(selectedUsers[0]);
+
+          setCreateConversationMode(false);
+          return;
+        }
+
+        // create group chat
+        // create conversation in this case
+        const newConversationId = await createGroupConversation(
+          selectedUsers,
+          nirvanaUser,
+          conversationName ?? null,
+        );
+        enqueueSnackbar('started group conversation!', { variant: 'success' });
+        setSelectedConversationId(newConversationId);
+
+        setCreateConversationMode(false);
+      } catch (error) {
+        enqueueSnackbar('Something went wrong, please try again', { variant: 'error' });
+      }
+    },
+    [nirvanaUser, handleQuickDial, enqueueSnackbar, setCreateConversationMode],
+  );
 
   const handleShowCreateConvoForm = useCallback(() => {
     setSelectedConversationId(undefined);
@@ -693,7 +724,11 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
       {children}
 
       {/* create chat dialog */}
-      <NewConversationDialog open={createConversationMode} handleClose={handleEscape} />
+      <NewConversationDialog
+        open={createConversationMode}
+        handleSubmit={handleStartConversation}
+        handleClose={handleEscape}
+      />
     </TerminalContext.Provider>
   );
 }
@@ -739,7 +774,7 @@ function ListPeople({ people }: { people: User[] }) {
       {people.map((person) => (
         <Tooltip key={`${person.uid}-searchUsers`} title={'quick dial'}>
           <ListItem>
-            <ListItemButton onClick={() => handleQuickDial(person.uid)}>
+            <ListItemButton onClick={() => handleQuickDial(person)}>
               <ListItemAvatar>
                 <Avatar alt={person.displayName} src={person.photoUrl} />
               </ListItemAvatar>

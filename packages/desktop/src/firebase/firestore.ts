@@ -160,19 +160,23 @@ export const getConversationContentQueryLIVE = (conversationId: string) =>
  * @returns id of new conversation
  */
 export const createOneOnOneConversation = async (
-  otherUserId: string,
-  myUserId: string,
-): Promise<string | undefined> => {
-  const myMember = new ConversationMember(myUserId, MemberRole.admin, MemberState.inbox);
-  const otherMember = new ConversationMember(otherUserId, MemberRole.regular, MemberState.inbox);
-
-  const newMemberMap: MemberMap = {
-    [myUserId]: { ...myMember },
-    [otherUserId]: { ...otherMember },
-  };
-  const newConversation = new Conversation(myUserId, [myUserId, otherUserId], newMemberMap);
-
+  otherUser: User,
+  currentUser: User,
+): Promise<string> => {
   try {
+    const myMember = new ConversationMember(currentUser.id, MemberRole.admin, MemberState.inbox);
+    const otherMember = new ConversationMember(otherUser.id, MemberRole.regular, MemberState.inbox);
+
+    const newMemberMap: MemberMap = {
+      [currentUser.id]: { ...myMember },
+      [otherUser.id]: { ...otherMember },
+    };
+
+    const userCache: User[] = [{ ...currentUser }, { ...otherUser }];
+    const membersList = [currentUser.id, otherUser.id];
+
+    const newConversation = new Conversation(currentUser.id, membersList, newMemberMap, userCache);
+
     const newDoc = await addDoc(db.conversations, newConversation);
     return newDoc.id;
   } catch (e) {
@@ -183,28 +187,42 @@ export const createOneOnOneConversation = async (
 };
 
 export const createGroupConversation = async (
-  otherUserIds: string[],
-  myUserId: string,
-): Promise<void> => {
-  const myMember = new ConversationMember(myUserId, MemberRole.admin, MemberState.inbox);
-
-  const newMemberMap: MemberMap = {
-    [myUserId]: { ...myMember },
-  };
-
-  otherUserIds.forEach((otherMemberId) => {
-    const otherMember = new ConversationMember(
-      otherMemberId,
-      MemberRole.regular,
-      MemberState.inbox,
-    );
-    newMemberMap[otherMemberId] = { ...otherMember };
-  });
-
-  const newConversation = new Conversation(myUserId, [myUserId, ...otherUserIds], newMemberMap);
-
+  otherUsers: User[],
+  adminUser: User,
+  conversationName: string | null,
+): Promise<string> => {
   try {
-    await addDoc(db.conversations, newConversation);
+    const userCache = [{ ...adminUser }];
+
+    const myMember = new ConversationMember(adminUser.id, MemberRole.admin, MemberState.inbox);
+
+    const newMemberMap: MemberMap = {
+      [adminUser.id]: { ...myMember },
+    };
+
+    otherUsers.forEach((otherUser) => {
+      const otherMember = new ConversationMember(
+        otherUser.id,
+        MemberRole.regular,
+        MemberState.inbox,
+      );
+
+      newMemberMap[otherUser.id] = { ...otherMember };
+
+      userCache.push({ ...otherUser });
+    });
+
+    const membersList = [adminUser.id, ...otherUsers.map((otherUser) => otherUser.id)];
+    const newConversation = new Conversation(
+      adminUser.id,
+      membersList,
+      newMemberMap,
+      userCache,
+      conversationName,
+    );
+
+    const newConversationDoc = await addDoc(db.conversations, newConversation);
+    return newConversationDoc.id;
   } catch (e) {
     console.error('Error : ', e);
 

@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, useCallback, useState } from 'react';
+import React, { HTMLAttributes, useCallback, useState, useEffect } from 'react';
 import {
   Autocomplete,
   AutocompleteChangeReason,
@@ -20,18 +20,21 @@ import {
 import { FiX } from 'react-icons/fi';
 import { blueGrey } from '@mui/material/colors';
 import { useSnackbar } from 'notistack';
-import { useDebounce } from 'react-use';
+import { useDebounce, useKeyPressEvent, useToggle } from 'react-use';
 import { searchUsers } from '../firebase/firestore';
 import { User } from '@nirvana/core/src/models/user.model';
 import useAuth from '../providers/AuthProvider';
 import UserDetailRow from '../subcomponents/UserDetailRow';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function NewConversationDialog({
   open,
   handleClose,
+  handleSubmit,
 }: {
   open: boolean;
   handleClose: () => void;
+  handleSubmit: (selectedUsers: User[], conversationName?: string) => void;
 }) {
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useAuth();
@@ -75,16 +78,6 @@ export default function NewConversationDialog({
     [setSearching, setSearchVal],
   );
 
-  const handleSubmit = useCallback(() => {
-    try {
-      //
-    } catch (error) {
-      //
-    }
-
-    handleClose();
-  }, [handleClose]);
-
   const renderOption = useCallback(
     (props: HTMLAttributes<HTMLLIElement>, option: User, state: AutocompleteRenderOptionState) => (
       <ListItem {...props}>
@@ -93,6 +86,48 @@ export default function NewConversationDialog({
     ),
     [],
   );
+
+  const [conversationName, setConversationName] = useState<string>('');
+
+  useEffect(() => {
+    if (selectedUsers.length < 2) {
+      setConversationName('');
+    }
+  }, [selectedUsers, setConversationName]);
+
+  const handleChangeName = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setConversationName(e.target.value);
+    },
+    [setConversationName],
+  );
+
+  const [isSubmitting, toggleIsSubmitting] = useToggle(false);
+
+  const handleSubmitLocal = useCallback(async () => {
+    if (selectedUsers.length === 0) {
+      enqueueSnackbar('Must a person!', { variant: 'error' });
+      return;
+    }
+
+    toggleIsSubmitting();
+
+    handleSubmit(selectedUsers, conversationName);
+
+    // clear form for next time
+    setSelectedUsers([]);
+    setConversationName('');
+
+    toggleIsSubmitting();
+  }, [
+    selectedUsers,
+    setConversationName,
+    conversationName,
+    enqueueSnackbar,
+    handleSubmit,
+    setSelectedUsers,
+    toggleIsSubmitting,
+  ]);
 
   return (
     <Dialog fullScreen open={open} onClose={handleClose}>
@@ -113,53 +148,67 @@ export default function NewConversationDialog({
           <FiX />
         </IconButton>
 
-        <Container
-          maxWidth="sm"
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-          }}
-        >
-          <Autocomplete
-            multiple
-            loading={searching}
-            includeInputInList
-            id="tags-outlined"
-            autoHighlight
-            onInputChange={handleChangeSearchInput}
-            options={searchUsersResults}
-            renderOption={renderOption}
-            getOptionLabel={(option) => (typeof option === 'string' ? option : option.displayName)}
-            value={selectedUsers}
-            onChange={handleChangeSelections}
-            filterSelectedOptions
-            isOptionEqualToValue={(optionUser, valueUser) => optionUser.id === valueUser.id}
-            filterOptions={(options) => options}
-            inputValue={searchVal}
-            renderInput={(params) => (
+        {isSubmitting ? (
+          <CircularProgress />
+        ) : (
+          <Container
+            maxWidth="sm"
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 5,
+            }}
+          >
+            <Typography variant="h4">Start a Conversation</Typography>
+
+            <Autocomplete
+              multiple
+              loading={searching}
+              includeInputInList
+              id="tags-outlined"
+              autoHighlight
+              onInputChange={handleChangeSearchInput}
+              options={searchUsersResults}
+              renderOption={renderOption}
+              getOptionLabel={(option) =>
+                typeof option === 'string' ? option : option.displayName
+              }
+              value={selectedUsers}
+              onChange={handleChangeSelections}
+              filterSelectedOptions
+              isOptionEqualToValue={(optionUser, valueUser) => optionUser.id === valueUser.id}
+              filterOptions={(options) => options}
+              inputValue={searchVal}
+              renderInput={(params) => (
+                <TextField
+                  // eslint-disable-next-line jsx-a11y/no-autofocus
+                  autoFocus
+                  fullWidth
+                  label="People"
+                  {...params}
+                  placeholder="Search by name or email"
+                />
+              )}
+            />
+
+            {selectedUsers.length > 1 && (
               <TextField
+                value={conversationName}
+                onChange={handleChangeName}
                 fullWidth
-                label="People"
-                {...params}
-                placeholder="Search by name or email"
+                label="Name (optional)"
+                placeholder="Channel, subject line, whatever..."
               />
             )}
-          />
 
-          <TextField
-            fullWidth
-            label="Name (optional)"
-            placeholder="Channel, subject line, whatever..."
-          />
-
-          <Stack justifyContent={'flex-end'} direction={'row'} spacing={2}>
-            <Button variant={'text'}>Cancel</Button>
-            <Button variant={'contained'} color="primary">
-              Connect
-            </Button>
-          </Stack>
-        </Container>
+            <Stack justifyContent={'flex-end'} direction={'row'} spacing={2}>
+              <Button variant={'text'}>Cancel</Button>
+              <Button disabled={selectedUsers.length === 0} variant={'contained'} color="primary">
+                Connect
+              </Button>
+            </Stack>
+          </Container>
+        )}
       </Container>
     </Dialog>
   );
