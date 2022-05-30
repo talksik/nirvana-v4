@@ -1,9 +1,14 @@
 import { Box, Paper, Typography } from '@mui/material';
 
+import { KeyboardShortcuts } from '../util/keyboard';
 import React from 'react';
 import { blueGrey } from '@mui/material/colors';
 
-export default function KeyboardShortcutLabel({ label }: { label: string }) {
+export default function KeyboardShortcutLabel({
+  label,
+}: {
+  label: keyof typeof KeyboardShortcuts;
+}) {
   return (
     <Paper
       elevation={0}

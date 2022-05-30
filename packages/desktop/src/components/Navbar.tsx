@@ -41,7 +41,7 @@ const Navbar = ({
     if (searchRef?.current) searchRef.current.focus();
   }, [searchRef]);
 
-  useKeyPressEvent(KeyboardShortcuts.search, onSearchFocus);
+  useKeyPressEvent(KeyboardShortcuts.search.shortcutKey, onSearchFocus);
 
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | NAVBAR | ', rendersCount);
@@ -87,7 +87,7 @@ const Navbar = ({
 
         {isSearching && <CircularProgress size={20} />}
 
-        <KeyboardShortcutLabel label={KeyboardShortcuts.search} />
+        <KeyboardShortcutLabel label={KeyboardShortcuts.search.label} />
       </Stack>
 
       <Tooltip title={'Group conversation'}>
