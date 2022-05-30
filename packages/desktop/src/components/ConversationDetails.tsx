@@ -116,37 +116,6 @@ function ConversationHistory() {
           pt: 2,
         }}
       >
-        <Typography variant="caption">yesterday</Typography>
-
-        <Paper elevation={1} sx={{ p: 1, width: '100%' }}>
-          <Stack direction={'row'} alignItems="center">
-            <Stack spacing={2} direction={'row'} alignItems={'center'}>
-              <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
-
-              <Typography color={'GrayText'} variant="overline">
-                {'Viet Phan'}
-              </Typography>
-            </Stack>
-
-            <Box
-              sx={{
-                ml: 'auto',
-                color: 'GrayText',
-              }}
-            >
-              <FiPlay />
-            </Box>
-          </Stack>
-        </Paper>
-      </Stack>
-
-      <Stack
-        justifyContent={'flex-start'}
-        alignItems={'center'}
-        sx={{
-          pt: 2,
-        }}
-      >
         <Typography variant="caption">today</Typography>
         {contentBlocks.map((contentBlock) => (
           <Paper key={contentBlock.id} elevation={8} sx={{ p: 1, width: '100%' }}>
