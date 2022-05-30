@@ -9,7 +9,7 @@ import { useRendersCount } from 'react-use';
 
 export default function MainPanel() {
   const { user } = useAuth();
-  const { selectedConversation, createConversationMode } = useTerminal();
+  const { selectedConversation } = useTerminal();
 
   // if selected conversation, show details
   // do all fetching necessary to paint things here
@@ -22,24 +22,6 @@ export default function MainPanel() {
 
   const pageContent = useMemo(() => {
     if (selectedConversation) return <ConversationDetails />;
-
-    if (createConversationMode)
-      return (
-        <Container
-          maxWidth={false}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 2,
-            flex: 1,
-            background: 'white',
-          }}
-        >
-          creating group conversation
-        </Container>
-      );
 
     return (
       <Container
@@ -60,7 +42,7 @@ export default function MainPanel() {
         </Typography>
       </Container>
     );
-  }, [createConversationMode, selectedConversation, user]);
+  }, [selectedConversation, user]);
 
   return (
     <Grid

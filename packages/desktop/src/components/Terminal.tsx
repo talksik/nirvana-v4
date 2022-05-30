@@ -22,6 +22,7 @@ import {
   ListItemIcon,
   Fab,
   Switch,
+  Dialog,
 } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
 import { FiZap, FiHeadphones, FiLogOut, FiMonitor, FiSun } from 'react-icons/fi';
@@ -48,6 +49,7 @@ import { ContentBlock, ContentType } from '@nirvana/core/src/models/content.mode
 import Navbar from './Navbar';
 import MainPanel from './MainPanel';
 import { ConversationList } from './ConversationList';
+import NewConversationDialog from './NewConversationDialog';
 type ConversationMap = {
   [conversationId: string]: Conversation;
 };
@@ -378,6 +380,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then((localUserMedia: MediaStream) => {
+        localUserMedia.getTracks().forEach((track) => track.stop());
+
         setUserAudioStream(localUserMedia);
 
         const userMediaRecoder = new MediaRecorder(localUserMedia);
@@ -496,7 +500,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
   // }, [])
 
-  const [createConversationMode, setCreateConversationMode] = useState<boolean>(false);
+  const [createConversationMode, setCreateConversationMode] = useState<boolean>(true);
 
   const handleShowCreateConvoForm = useCallback(() => {
     setSelectedConversationId(undefined);
@@ -687,6 +691,9 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
       </Grid>
 
       {children}
+
+      {/* create chat dialog */}
+      <NewConversationDialog open={createConversationMode} handleClose={handleEscape} />
     </TerminalContext.Provider>
   );
 }
