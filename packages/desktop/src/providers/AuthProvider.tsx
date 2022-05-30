@@ -1,27 +1,26 @@
-import { Credentials } from 'google-auth-library/build/src/auth/credentials';
 import { Button, Container } from '@mui/material';
-import React, { useContext, useEffect, useCallback, useState } from 'react';
-
-import { FcGoogle } from 'react-icons/fc';
-import { blueGrey } from '@mui/material/colors';
-import Channels from '../electron/constants';
-import { firebaseAuth } from '../firebase/connect';
 import {
-  GoogleAuthProvider,
-  signInWithCredential,
-  setPersistence,
-  browserLocalPersistence,
   User as FirebaseUser,
-  onAuthStateChanged,
-  updateCurrentUser,
+  GoogleAuthProvider,
+  browserLocalPersistence,
   getAuth,
+  onAuthStateChanged,
+  setPersistence,
+  signInWithCredential,
+  updateCurrentUser,
 } from 'firebase/auth';
-import { useSnackbar } from 'notistack';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { createUser, getUserById } from '../firebase/firestore';
 
+import Channels from '../electron/constants';
 import CircularProgress from '@mui/material/CircularProgress';
+import { Credentials } from 'google-auth-library/build/src/auth/credentials';
+import { FcGoogle } from 'react-icons/fc';
 import NirvanaLogo from '../components/NirvanaLogo';
 import { User } from '@nirvana/core/src/models/user.model';
+import { blueGrey } from '@mui/material/colors';
+import { firebaseAuth } from '../firebase/connect';
+import { useSnackbar } from 'notistack';
 
 interface IAuthContext {
   user?: FirebaseUser;
@@ -93,7 +92,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               const user = result.user;
               console.log(user);
               updateCurrentUser(firebaseAuth, user);
-              enqueueSnackbar('Signed in! All set!', { variant: 'success' });
             });
           })
           .catch((error: any) => {

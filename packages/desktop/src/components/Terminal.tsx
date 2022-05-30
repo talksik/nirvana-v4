@@ -251,14 +251,12 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         });
 
         if (findExistingConversation) {
-          enqueueSnackbar('quick dialed someone!', { variant: 'success' });
           setSelectedConversationId(findExistingConversation.id);
           return;
         }
 
         // create conversation in this case
         const newConversationId = await createOneOnOneConversation(otherUser, nirvanaUser);
-        enqueueSnackbar('started conversation!', { variant: 'success' });
         setSelectedConversationId(newConversationId);
       } catch (error) {
         enqueueSnackbar('Something went wrong, please try again', { variant: 'error' });
@@ -313,8 +311,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         audioChunks[0].type,
       );
       await sendContentBlockToConversation(contentBlock, selectedConversation.id);
-
-      enqueueSnackbar('clip sent!', { variant: 'success' });
     } catch (error) {
       console.error(error);
       enqueueSnackbar('Problem in recording clip', { variant: 'error' });
@@ -383,7 +379,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     }
 
     try {
-      enqueueSnackbar('started recording');
       setIsCloudDoingMagic(true);
       mediaRecorder.start();
       setIsUserSpeaking(true);
@@ -406,14 +401,13 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const handleStopBroadcast = useCallback(() => {
     if (isUserSpeaking) {
       setIsUserSpeaking(false);
-      enqueueSnackbar('stopped...', { variant: 'info' });
 
       // actually stop talking after 2 seconds to capture everything
       setTimeout(() => {
         mediaRecorder.stop();
       }, 200);
     }
-  }, [setIsUserSpeaking, isUserSpeaking, mediaRecorder, enqueueSnackbar]);
+  }, [setIsUserSpeaking, isUserSpeaking, mediaRecorder]);
 
   useKeyPressEvent('`', handleBroadcast, handleStopBroadcast);
 
@@ -486,7 +480,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
           nirvanaUser,
           conversationName ?? null,
         );
-        enqueueSnackbar('started group conversation!', { variant: 'success' });
         setSelectedConversationId(newConversationId);
 
         setCreateConversationMode(false);

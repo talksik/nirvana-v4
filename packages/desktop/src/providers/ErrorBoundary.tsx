@@ -1,6 +1,5 @@
-import React from 'react';
-
 import { ErrorBoundary } from 'react-error-boundary';
+import React from 'react';
 import { useSnackbar } from 'notistack';
 
 function MyFallbackComponent({
