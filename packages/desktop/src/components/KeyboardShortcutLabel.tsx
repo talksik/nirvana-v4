@@ -1,5 +1,6 @@
-import React from 'react';
 import { Box, Paper, Typography } from '@mui/material';
+
+import React from 'react';
 import { blueGrey } from '@mui/material/colors';
 
 export default function KeyboardShortcutLabel({ label }: { label: string }) {
@@ -10,7 +11,6 @@ export default function KeyboardShortcutLabel({ label }: { label: string }) {
       sx={{
         px: 1,
         py: 0.25,
-        border: `1px solid`,
         bgcolor: blueGrey[50],
         color: blueGrey[300],
       }}

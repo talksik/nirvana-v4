@@ -15,13 +15,14 @@ import {
   Typography,
 } from '@mui/material';
 import { FiActivity, FiCircle, FiSun } from 'react-icons/fi';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
+import { useKeyPressEvent, useRendersCount } from 'react-use';
 
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import ConversationLabel from '../subcomponents/ConversationLabel';
+import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { SUPPORT_DISPLAY_NAME } from '../util/support';
 import useAuth from '../providers/AuthProvider';
-import { useRendersCount } from 'react-use';
 import useTerminal from './Terminal';
 
 // sort conversations based on the different data sources: type, conversations, audio clips, etc.
@@ -69,10 +70,11 @@ export function ConversationList({ lookingForSomeone = false }: { lookingForSome
       >
         {lookingForSomeone && <CircularProgress />}
 
-        {Object.values(conversationMap).map((currentConversation) => (
+        {Object.values(conversationMap).map((currentConversation, index) => (
           <ConversationRow
             key={`${currentConversation.id}-priorityConvoList`}
             conversation={currentConversation}
+            index={index}
           />
         ))}
       </List>
@@ -94,18 +96,37 @@ export function ConversationList({ lookingForSomeone = false }: { lookingForSome
   );
 }
 
-export function ConversationRow({ conversation }: { conversation: Conversation }) {
+/**
+ *
+ * @param index is used for keyboard shortcut if this convo row is in a list
+ * @returns
+ */
+export function ConversationRow({
+  conversation,
+  index,
+}: {
+  conversation: Conversation;
+  index?: number;
+}) {
   const { user } = useAuth();
   const { getUser, selectedConversation, selectConversation } = useTerminal();
 
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | CONVERSATION LIST ROW | ', rendersCount);
 
+  const keyboardShortcut = useMemo(() => index + 1, [index]);
+
+  const handleSelectConversation = useCallback(
+    () => selectConversation(conversation.id),
+    [conversation.id, selectConversation],
+  );
+  useKeyPressEvent(`${keyboardShortcut.toString()}`, handleSelectConversation);
+
   return (
     <ListItem key={`${conversation.id}-priorityConvoList`}>
       <ListItemButton
         selected={selectedConversation?.id === conversation.id}
-        onClick={() => selectConversation(conversation.id)}
+        onClick={handleSelectConversation}
       >
         {conversation.membersInRoom?.length > 0 ? (
           <IconButton color="primary" size="small">
@@ -117,13 +138,14 @@ export function ConversationRow({ conversation }: { conversation: Conversation }
           </Box>
         )}
 
-        <Box sx={{ ml: 2, mr: 'auto', color: 'GrayText' }}>
+        <Stack direction={'row'} spacing={1} sx={{ ml: 2, mr: 'auto', color: 'GrayText' }}>
+          <KeyboardShortcutLabel label={keyboardShortcut.toString()} />
           <ConversationLabel
             users={conversation.userCache ?? []}
             conversationName={conversation.name}
             isSelected={selectedConversation?.id === conversation.id}
           />
-        </Box>
+        </Stack>
 
         <ListItemAvatar>
           <AvatarGroup variant={'rounded'}>
