@@ -1,36 +1,32 @@
-import React, { useContext, useState, useCallback, useMemo, useEffect } from 'react';
-
 import {
   Avatar,
+  AvatarGroup,
   Box,
+  Button,
+  Dialog,
+  Divider,
+  Fab,
   Grid,
   IconButton,
-  Tooltip,
-  Stack,
-  Divider,
   List,
   ListItem,
   ListItemAvatar,
-  Button,
   ListItemButton,
+  ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
   ListSubheader,
-  Typography,
   Menu,
   MenuItem,
-  ListItemIcon,
-  Fab,
+  Stack,
   Switch,
-  Dialog,
-  AvatarGroup,
+  Tooltip,
+  Typography,
 } from '@mui/material';
-import { blueGrey } from '@mui/material/colors';
-import { FiZap, FiHeadphones, FiLogOut, FiMonitor, FiSun } from 'react-icons/fi';
-import { useSnackbar } from 'notistack';
-
-import Conversation from '@nirvana/core/src/models/conversation.model';
-import useAuth from '../providers/AuthProvider';
+import { ContentBlock, ContentType } from '@nirvana/core/src/models/content.model';
+import { FiHeadphones, FiLogOut, FiMonitor, FiSun, FiZap } from 'react-icons/fi';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Unsubscribe, onSnapshot } from 'firebase/firestore';
 import {
   createOneOnOneConversation,
   getConversationContentQueryLIVE,
@@ -39,21 +35,23 @@ import {
   searchUsers,
   sendContentBlockToConversation,
 } from '../firebase/firestore';
-import { useImmer } from 'use-immer';
-import { User } from '@nirvana/core/src/models/user.model';
-import { onSnapshot, Unsubscribe } from 'firebase/firestore';
-
 import { useDebounce, useKeyPressEvent, useRendersCount, useUnmount } from 'react-use';
 
-import { uploadAudioClip } from '../firebase/firebaseStorage';
-import { ContentBlock, ContentType } from '@nirvana/core/src/models/content.model';
-import Navbar from './Navbar';
-import MainPanel from './MainPanel';
-import { ConversationList } from './ConversationList';
-import NewConversationDialog from './NewConversationDialog';
-import { createGroupConversation } from '../firebase/firestore';
+import Conversation from '@nirvana/core/src/models/conversation.model';
 import ConversationLabel from '../subcomponents/ConversationLabel';
+import { ConversationList } from './ConversationList';
 import FooterControls from './FooterControls';
+import MainPanel from './MainPanel';
+import Navbar from './Navbar';
+import NewConversationDialog from './NewConversationDialog';
+import { User } from '@nirvana/core/src/models/user.model';
+import { blueGrey } from '@mui/material/colors';
+import { createGroupConversation } from '../firebase/firestore';
+import { uploadAudioClip } from '../firebase/firebaseStorage';
+import useAuth from '../providers/AuthProvider';
+import { useImmer } from 'use-immer';
+import { useSnackbar } from 'notistack';
+
 type ConversationMap = {
   [conversationId: string]: Conversation;
 };
@@ -84,6 +82,8 @@ interface ITerminalContext {
   handleShowCreateConvoForm?: () => void;
 
   handleEscape?: () => void;
+
+  handleOmniSearch?: (searchQuery: string) => void; // handle searching for anything globally
 }
 
 const TerminalContext = React.createContext<ITerminalContext>({
@@ -105,60 +105,6 @@ const handleMediaRecorderData = (e: BlobEvent) => {
 const handleOnStartRecording = (e: BlobEvent) => {
   audioChunks = [];
 };
-
-// TODOS
-// fetch all conversations that I am part of
-
-// create a convo
-// 1. search
-// 2. click on person
-// 3. search database if there is already a convo for this
-//   - if yes: select this one
-//   - if no: create one
-// 4. show the conversation details page show on right
-// 5. connect live if other person there
-// 6. send first clip
-// 7. display all blocks/clips for convo simple and separate
-
-// if no conversations, show stale state + create one with nirvana
-
-// 1. create group conversation page
-//   you know what to do...simple row of selected users...dropdown options should show searched user list
-//   use material selects for this dropdown to avoid all the work...and hide select-like things
-// 2. auto select that conversation and have it show up
-// 3. allow adding name when creating convo
-// 4.
-// 5. convo settings: add people (simple add method with firestore), change name | max 8 people
-
-/**
- * Streaming stuff:
- * - join a stream room if 2 or more in the list
- * - leave on unmount
- * - timer to unselect a conversation after 30 minutes...no fancy checking if user is there/active
- * - show little control to see if
- */
-
-/**
- *
- * media stuff:
- * - paste image + view in history + with modal nice and big
- * - paste a link + see in a content block
- * - paste link of image and have it save as image
- */
-
-/**
- *
- * tech debt: now go back and make convo line and side panel name and icons and all legit
- */
-
-/**
- * nice convo history
- * - chunk has max of 1 minute
- * - put current clip in next chunk if previous clip was more than 4 hours ago
- * - put current clip in next chunk if it's after my last active date here
- */
-
-// sort based on the different data sources: conversations, audio clips, etc.
 
 // todo: extract each use effect to custom hook and will be clean
 export function TerminalProvider({ children }: { children?: React.ReactNode }) {
@@ -493,12 +439,23 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     [searchVal, enqueueSnackbar, setSearchUsersResults, user],
   );
 
-  const handleChangeSearchInput = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOmniSearch = useCallback(
+    (searchQuery: string) => {
+      if (!searchQuery) {
+        return;
+      }
+
       setSearching(true);
-      setSearchVal(e.target.value.replace('/', ''));
+      setSearchVal(searchQuery.replace('/', ''));
     },
     [setSearching, setSearchVal],
+  );
+
+  const handleChangeSearchInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleOmniSearch(e.target.value);
+    },
+    [handleOmniSearch],
   );
 
   const selectConversation = useCallback(
@@ -571,6 +528,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         createConversationMode,
         handleShowCreateConvoForm,
         handleEscape,
+        handleOmniSearch,
       }}
     >
       <Stack direction={'column'} sx={{ flex: 1 }}>

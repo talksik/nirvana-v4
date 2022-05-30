@@ -1,25 +1,33 @@
-/* eslint-disable jsx-a11y/media-has-caption */
-import { blueGrey } from '@mui/material/colors';
-import React, { useState, useEffect, useMemo } from 'react';
-import { joinConversation, leaveConversation } from '../firebase/firestore';
-import useAuth from '../providers/AuthProvider';
-import { useImmer } from 'use-immer';
-import useTerminal from './Terminal';
-import { User } from '@nirvana/core/src/models/user.model';
 import {
-  Stack,
-  IconButton,
-  Typography,
-  AvatarGroup,
   Avatar,
+  AvatarGroup,
   Box,
   Container,
   Fab,
+  IconButton,
   Paper,
+  Stack,
+  Typography,
 } from '@mui/material';
-import { FiSun, FiMoreVertical, FiPlay, FiCloudRain } from 'react-icons/fi';
+import { FiCloudRain, FiMoreVertical, FiPlay, FiSun } from 'react-icons/fi';
+import React, { useEffect, useMemo, useState } from 'react';
+import { joinConversation, leaveConversation } from '../firebase/firestore';
+
 import ConversationLabel from '../subcomponents/ConversationLabel';
+import { User } from '@nirvana/core/src/models/user.model';
+/* eslint-disable jsx-a11y/media-has-caption */
+import { blueGrey } from '@mui/material/colors';
+import useAuth from '../providers/AuthProvider';
+import { useImmer } from 'use-immer';
 import { useRendersCount } from 'react-use';
+import useTerminal from './Terminal';
+
+/**
+ * nice convo history
+ * - chunk has max of 1 minute
+ * - put current clip in next chunk if previous clip was more than 4 hours ago
+ * - put current clip in next chunk if it's after my last active date here
+ */
 
 export default function ConversationDetails() {
   const { user } = useAuth();

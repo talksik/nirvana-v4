@@ -1,38 +1,40 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-
 import {
   Avatar,
+  AvatarGroup,
   Badge,
+  Box,
+  CircularProgress,
   Divider,
+  IconButton,
+  Input,
   List,
   ListItem,
   ListItemAvatar,
   ListItemButton,
+  ListItemSecondaryAction,
   ListItemText,
   ListSubheader,
   Stack,
-  Typography,
-  Input,
-  CircularProgress,
-  IconButton,
-  Box,
   Tooltip,
-  ListItemSecondaryAction,
-  AvatarGroup,
+  Typography,
 } from '@mui/material';
-import { blueGrey } from '@mui/material/colors';
-import { FiActivity, FiInbox, FiSearch, FiUsers, FiCoffee, FiCircle, FiSun } from 'react-icons/fi';
-import NirvanaAvatar from './NirvanaAvatar';
+import { FiActivity, FiCircle, FiCoffee, FiInbox, FiSearch, FiSun, FiUsers } from 'react-icons/fi';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useDebounce, useKey, useRendersCount } from 'react-use';
-import { useSnackbar } from 'notistack';
-import KeyboardShortcutLabel from './KeyboardShortcutLabel';
-import { searchUsers } from '../firebase/firestore';
-import { User } from '@nirvana/core/src/models/user.model';
-import useTerminal from './Terminal';
+
 import Conversation from '@nirvana/core/src/models/conversation.model';
+import ConversationLabel from '../subcomponents/ConversationLabel';
+import KeyboardShortcutLabel from './KeyboardShortcutLabel';
+import NirvanaAvatar from './NirvanaAvatar';
+import { User } from '@nirvana/core/src/models/user.model';
+import { blueGrey } from '@mui/material/colors';
+import { searchUsers } from '../firebase/firestore';
 import useAuth from '../providers/AuthProvider';
 import { useImmer } from 'use-immer';
-import ConversationLabel from '../subcomponents/ConversationLabel';
+import { useSnackbar } from 'notistack';
+import useTerminal from './Terminal';
+
+// sort conversations based on the different data sources: type, conversations, audio clips, etc.
 
 /**
  *

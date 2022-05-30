@@ -1,39 +1,40 @@
 //TODO: move all of this to core or common and separate out files
 
-import {
-  setDoc,
-  getFirestore,
-  doc,
-  collection,
-  QueryDocumentSnapshot,
-  Timestamp,
-  FieldValue,
-  getDoc,
-  query,
-  where,
-  getDocs,
-  orderBy,
-  limit,
-  startAt,
-  endAt,
-  addDoc,
-  arrayUnion,
-  updateDoc,
-  arrayRemove,
-  serverTimestamp,
-} from 'firebase/firestore';
-
-import { User as FirebaseUser } from 'firebase/auth';
-import { firestoreDb } from './connect';
-import { User } from '@nirvana/core/src/models/user.model';
 import Conversation, {
   ConversationMember,
   MemberMap,
   MemberRole,
   MemberState,
 } from '@nirvana/core/src/models/conversation.model';
-import useAuth from '../providers/AuthProvider';
+import {
+  FieldValue,
+  QueryDocumentSnapshot,
+  Timestamp,
+  addDoc,
+  arrayRemove,
+  arrayUnion,
+  collection,
+  doc,
+  endAt,
+  getDoc,
+  getDocs,
+  getFirestore,
+  limit,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+  startAt,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+
 import { ContentBlock } from '@nirvana/core/src/models/content.model';
+import { User as FirebaseUser } from 'firebase/auth';
+import { User } from '@nirvana/core/src/models/user.model';
+import { firestoreDb } from './connect';
+import { toTitleCase } from '../util/text';
+import useAuth from '../providers/AuthProvider';
 
 interface Document {
   id: string;
@@ -108,8 +109,7 @@ export const searchUsers = async (searchQuery: string): Promise<User[] | undefin
       limit(5),
     );
 
-    const nameManipulatedQuery =
-      searchQuery[0].toUpperCase() + searchQuery.slice(1).toLocaleLowerCase();
+    const nameManipulatedQuery = toTitleCase(searchQuery);
     const nameSearchQuery = query(
       db.users,
       orderBy('displayName'),
