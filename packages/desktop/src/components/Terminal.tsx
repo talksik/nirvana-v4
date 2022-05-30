@@ -1,32 +1,6 @@
-import {
-  Avatar,
-  AvatarGroup,
-  Box,
-  Button,
-  Dialog,
-  Divider,
-  Fab,
-  Grid,
-  IconButton,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemButton,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText,
-  ListSubheader,
-  Menu,
-  MenuItem,
-  Stack,
-  Switch,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Box, Grid, Stack } from '@mui/material';
 import { ContentBlock, ContentType } from '@nirvana/core/src/models/content.model';
 import { ConversationContentMap, ConversationMap, UserMap } from '../util/types';
-import { ConversationList, ConversationRow } from './ConversationList';
-import { FiHeadphones, FiLogOut, FiMonitor, FiSun, FiZap } from 'react-icons/fi';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Unsubscribe, onSnapshot } from 'firebase/firestore';
 import {
@@ -40,7 +14,7 @@ import {
 import { useDebounce, useKeyPressEvent, useRendersCount, useUnmount } from 'react-use';
 
 import Conversation from '@nirvana/core/src/models/conversation.model';
-import ConversationLabel from '../subcomponents/ConversationLabel';
+import { ConversationList } from './ConversationList';
 import FooterControls from './FooterControls';
 import MainPanel from './MainPanel';
 import Navbar from './Navbar';

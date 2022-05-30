@@ -53,8 +53,10 @@ export default function ConversationDetails() {
   useEffect(() => {
     joinConversation(selectedConversation.id, user.uid);
 
-    const handleCloseWindow = (event: BeforeUnloadEvent) => {
+    const handleCloseWindow = (event: BeforeUnloadEvent): Promise<void> => {
       leaveConversation(selectedConversation.id, user.uid);
+
+      return;
     };
 
     window.addEventListener('beforeunload', handleCloseWindow);
