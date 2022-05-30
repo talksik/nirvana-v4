@@ -166,10 +166,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   // duplicate data for better reads
   useEffect(() => {
     const unsub = onSnapshot(getConversationsQueryLIVE(user.uid), (querySnapshot) => {
-      const conversations = querySnapshot.docs.map((doc) => doc.data());
-
-      console.log('got new or updated conversations', conversations);
-
       updateConversationMap((draft) => {
         querySnapshot.docChanges().forEach((docChange) => {
           const currentConversation = docChange.doc.data();
