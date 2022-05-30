@@ -1,6 +1,7 @@
 import React, { HTMLAttributes, useCallback, useState } from 'react';
 import {
   Autocomplete,
+  AutocompleteChangeReason,
   AutocompleteRenderOptionState,
   Button,
   Container,
@@ -23,6 +24,7 @@ import { useDebounce } from 'react-use';
 import { searchUsers } from '../firebase/firestore';
 import { User } from '@nirvana/core/src/models/user.model';
 import useAuth from '../providers/AuthProvider';
+import UserDetailRow from '../subcomponents/UserDetailRow';
 
 export default function NewConversationDialog({
   open,
@@ -40,9 +42,24 @@ export default function NewConversationDialog({
 
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
-  const handleSelectUser = useCallback((event, newValue: User[]) => {
-    setSelectedUsers(newValue);
-  }, []);
+  const handleChangeSelections = useCallback(
+    (e: React.SyntheticEvent<Element, Event>, value: User[], reason: AutocompleteChangeReason) => {
+      const newUsers: User[] = [];
+
+      value.forEach((val) => {
+        if (typeof val !== 'string') return;
+
+        newUsers.push(val);
+      });
+
+      console.log(value);
+
+      console.log(newUsers);
+
+      setSelectedUsers(newUsers);
+    },
+    [],
+  );
 
   const [, cancel] = useDebounce(
     async () => {
@@ -83,7 +100,7 @@ export default function NewConversationDialog({
   const renderOption = useCallback(
     (props: HTMLAttributes<HTMLLIElement>, option: User, state: AutocompleteRenderOptionState) => (
       <ListItem {...props}>
-        <Typography>{option.email}</Typography>
+        <UserDetailRow user={option} />
       </ListItem>
     ),
     [],
@@ -127,6 +144,7 @@ export default function NewConversationDialog({
             renderOption={renderOption}
             getOptionLabel={(option) => (typeof option === 'string' ? option : option.displayName)}
             value={selectedUsers}
+            onChange={handleChangeSelections}
             filterSelectedOptions
             filterOptions={(options) => options}
             inputValue={searchVal}
