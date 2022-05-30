@@ -478,7 +478,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const handleChangeSearchInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearching(true);
-      setSearchVal(e.target.value);
+      setSearchVal(e.target.value.replace('/', ''));
     },
     [setSearching, setSearchVal],
   );
