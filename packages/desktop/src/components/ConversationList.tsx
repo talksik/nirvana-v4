@@ -117,6 +117,7 @@ function ConversationRow({ conversation }: { conversation: Conversation }) {
           <ConversationLabel
             users={conversation.userCache ?? []}
             conversationName={conversation.name}
+            isSelected={selectedConversation?.id === conversation.id}
           />
         </Box>
 

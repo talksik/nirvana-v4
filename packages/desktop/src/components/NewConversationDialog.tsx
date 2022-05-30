@@ -26,6 +26,7 @@ import { User } from '@nirvana/core/src/models/user.model';
 import useAuth from '../providers/AuthProvider';
 import UserDetailRow from '../subcomponents/UserDetailRow';
 import CircularProgress from '@mui/material/CircularProgress';
+import { NirvanaRules } from '../util/rules';
 
 export default function NewConversationDialog({
   open,
@@ -106,7 +107,12 @@ export default function NewConversationDialog({
 
   const handleSubmitLocal = useCallback(async () => {
     if (selectedUsers.length === 0) {
-      enqueueSnackbar('Must a person!', { variant: 'error' });
+      enqueueSnackbar('Must select a person!', { variant: 'error' });
+      return;
+    }
+
+    if (selectedUsers.length + 1 >= NirvanaRules.maxMembersPerConversation) {
+      enqueueSnackbar('A group can only have 8 people including you!', { variant: 'error' });
       return;
     }
 

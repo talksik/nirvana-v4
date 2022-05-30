@@ -92,6 +92,7 @@ export default function ConversationDetails() {
           <ConversationLabel
             users={selectedConversation.userCache ?? []}
             conversationName={selectedConversation.name}
+            isSelected={true}
           />
         </Box>
 
