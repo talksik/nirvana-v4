@@ -31,7 +31,13 @@ import useTerminal from './Terminal';
 
 export default function ConversationDetails() {
   const { user } = useAuth();
-  const { getUser, selectedConversation, selectConversation, isCloudDoingMagic } = useTerminal();
+  const {
+    getUser,
+    selectedConversation,
+    conversationContentMap,
+    selectConversation,
+    isCloudDoingMagic,
+  } = useTerminal();
 
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | CONVERSATION DETAILS | ', rendersCount);
@@ -79,58 +85,47 @@ export default function ConversationDetails() {
   // TODO: uncheck priority or not
   // soft max of 10...not going to enforce by counting all in database, but relying on client side list of convos
 
-  return (
-    <>
-      <Container maxWidth={false} sx={{ position: 'relative', flex: 1, overflow: 'auto' }}>
-        <ConversationHistory />
-
-        {/* <Box
-          sx={{
-            position: 'absolute',
-            zIndex: 10,
-            bottom: 0,
-            right: 0,
-            padding: 3,
-          }}
-        >
-          <Fab color="primary" aria-label="add" size="medium">
-            <FiSun />
-          </Fab>
-        </Box> */}
-      </Container>
-    </>
-  );
-}
-
-function ConversationHistory() {
-  const { isCloudDoingMagic, selectedConversation, conversationContentMap } = useTerminal();
-
   const contentBlocks = useMemo(() => {
     return conversationContentMap[selectedConversation.id] ?? [];
   }, [conversationContentMap, selectedConversation.id]);
 
-  if (contentBlocks.length === 0)
+  if (contentBlocks.length === 0) {
     return (
-      <Stack justifyContent={'center'} alignItems={'center'}>
-        <Typography variant="caption">Get the party started!</Typography>
-      </Stack>
-    );
-
-  return (
-    <Container maxWidth="xs">
-      <Stack
-        justifyContent={'flex-start'}
-        alignItems={'center'}
+      <Container
+        maxWidth={false}
         sx={{
-          pt: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 2,
+          flex: 1,
+          background: 'white',
         }}
       >
-        <Typography variant="caption">today</Typography>
+        <Typography variant="h6">{`Ready?!`}</Typography>
+        <Typography variant="caption">Get the party started!</Typography>
+        <Typography variant="caption">Look at the controls at the bottom right!</Typography>
+      </Container>
+    );
+  }
 
-        {contentBlocks.map((contentBlock) => (
-          <Paper key={contentBlock.id} elevation={8} sx={{ p: 1, width: '100%' }}>
-            <Stack direction={'row'} alignItems="center">
-              {/* <Stack spacing={2} direction={'row'} alignItems={'center'}>
+  return (
+    <Container maxWidth={false} sx={{ position: 'relative', flex: 1, overflow: 'auto' }}>
+      <Container maxWidth="xs">
+        <Stack
+          justifyContent={'flex-start'}
+          alignItems={'center'}
+          sx={{
+            pt: 2,
+          }}
+        >
+          <Typography variant="caption">today</Typography>
+
+          {contentBlocks.map((contentBlock) => (
+            <Paper key={contentBlock.id} elevation={8} sx={{ p: 1, width: '100%' }}>
+              <Stack direction={'row'} alignItems="center">
+                {/* <Stack spacing={2} direction={'row'} alignItems={'center'}>
                   <Avatar alt={'Arjun Patel'} src="https://mui.com/static/images/avatar/2.jpg" />
   
                   <Typography color={'GrayText'} variant="overline">
@@ -138,26 +133,27 @@ function ConversationHistory() {
                   </Typography>
                 </Stack> */}
 
-              <audio controls src={contentBlock.contentUrl} />
+                <audio controls src={contentBlock.contentUrl} />
 
-              <Box
-                sx={{
-                  ml: 'auto',
-                  color: 'GrayText',
-                }}
-              >
-                <FiPlay />
-              </Box>
-            </Stack>
-          </Paper>
-        ))}
+                <Box
+                  sx={{
+                    ml: 'auto',
+                    color: 'GrayText',
+                  }}
+                >
+                  <FiPlay />
+                </Box>
+              </Stack>
+            </Paper>
+          ))}
 
-        {isCloudDoingMagic && (
-          <IconButton size="small" color="secondary">
-            <FiCloudRain />
-          </IconButton>
-        )}
-      </Stack>
+          {isCloudDoingMagic && (
+            <IconButton size="small" color="secondary">
+              <FiCloudRain />
+            </IconButton>
+          )}
+        </Stack>
+      </Container>
     </Container>
   );
 }
