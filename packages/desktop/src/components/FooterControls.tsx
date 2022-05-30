@@ -78,7 +78,7 @@ export default function FooterControls() {
           <Switch color="secondary" size="small" />
         </Tooltip>
 
-        <Stack direction={'row'} alignItems={'center'} component="div" sx={{ flex: 1 }}>
+        <Stack direction={'row'} alignItems={'center'} component="div">
           <Tooltip title="Sound configuration">
             <IconButton color="inherit" size="small">
               <FiHeadphones />
@@ -91,50 +91,46 @@ export default function FooterControls() {
         </Stack>
 
         {selectedConversation && (
-          <Box sx={{ mx: 'auto' }}>
-            <Stack
-              direction={'row'}
-              sx={{
-                py: 2,
-                px: 2,
-                borderBottom: '1px solid',
-                borderBottomColor: blueGrey[100],
-                WebkitAppRegion: 'drag',
-                cursor: 'pointer',
-              }}
-              alignItems={'center'}
-              justifyContent={'flex-start'}
-            >
-              <IconButton color="primary" size="small">
-                <FiSun />
-              </IconButton>
+          <Stack
+            direction={'row'}
+            sx={{
+              flex: 1,
+              mx: 'auto',
+              WebkitAppRegion: 'drag',
+              cursor: 'pointer',
+            }}
+            alignItems={'center'}
+            justifyContent={'flex-start'}
+          >
+            <IconButton color="primary" size="small">
+              <FiSun />
+            </IconButton>
 
-              <Box sx={{ color: 'GrayText' }}>
-                <ConversationLabel
-                  users={selectedConversation.userCache ?? []}
-                  conversationName={selectedConversation.name}
-                  isSelected={true}
+            <Box sx={{ color: 'GrayText' }}>
+              <ConversationLabel
+                users={selectedConversation.userCache ?? []}
+                conversationName={selectedConversation.name}
+                isSelected={true}
+              />
+            </Box>
+
+            <AvatarGroup variant={'rounded'}>
+              {selectedConversation.userCache?.map((conversationUser, index) => (
+                <Avatar
+                  key={`${selectedConversation.id}-${conversationUser.uid}-convoIcon`}
+                  alt={conversationUser?.displayName}
+                  src={conversationUser?.photoUrl}
+                  sx={{
+                    width: 30,
+                    height: 30,
+                    opacity: selectedConversation.membersInRoom?.includes(conversationUser.uid)
+                      ? '100%'
+                      : '20%',
+                  }}
                 />
-              </Box>
-
-              <AvatarGroup variant={'rounded'}>
-                {selectedConversation.userCache?.map((conversationUser, index) => (
-                  <Avatar
-                    key={`${selectedConversation.id}-${conversationUser.uid}-convoIcon`}
-                    alt={conversationUser?.displayName}
-                    src={conversationUser?.photoUrl}
-                    sx={{
-                      width: 30,
-                      height: 30,
-                      opacity: selectedConversation.membersInRoom?.includes(conversationUser.uid)
-                        ? '100%'
-                        : '20%',
-                    }}
-                  />
-                ))}
-              </AvatarGroup>
-            </Stack>
-          </Box>
+              ))}
+            </AvatarGroup>
+          </Stack>
         )}
 
         {/* todo: add a third mode which is when toggle broadcasting */}
