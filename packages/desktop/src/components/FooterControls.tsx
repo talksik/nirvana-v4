@@ -15,7 +15,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
-import { FiHeadphones, FiHelpCircle, FiLogOut, FiSun } from 'react-icons/fi';
+import { FiHeadphones, FiHelpCircle, FiLink, FiLogOut, FiSun } from 'react-icons/fi';
 import React, { useCallback } from 'react';
 
 import ConversationLabel from '../subcomponents/ConversationLabel';
@@ -52,17 +52,15 @@ export default function FooterControls() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        gap: 2,
         width: '100%',
 
         zIndex: 10,
         boxShadow: 10,
 
-        bgcolor: blueGrey[200],
+        bgcolor: blueGrey[800],
       }}
     >
       <Stack
-        spacing={1}
         direction={'row'}
         alignItems={'center'}
         justifyContent={'flex-start'}
@@ -83,21 +81,23 @@ export default function FooterControls() {
           <Avatar alt={user.displayName} src={user.photoURL} />
         </IconButton>
 
+        <Tooltip title="Sound configuration">
+          <IconButton
+            sx={{
+              color: 'white',
+            }}
+            size="small"
+          >
+            <FiHeadphones />
+          </IconButton>
+        </Tooltip>
         <Tooltip title={'overlay mode'}>
           <Switch color="secondary" size="small" />
         </Tooltip>
 
-        <Stack direction={'row'} alignItems={'center'} component="div">
-          <Tooltip title="Sound configuration">
-            <IconButton color="inherit" size="small">
-              <FiHeadphones />
-            </IconButton>
-          </Tooltip>
-
-          <Button size={'small'} color={'secondary'} variant="text">
-            flow
-          </Button>
-        </Stack>
+        <Button size={'small'} color={'secondary'} variant="text">
+          flow
+        </Button>
 
         {selectedConversation && (
           <>
@@ -150,20 +150,38 @@ export default function FooterControls() {
           </>
         )}
 
-        {/* todo: add a third mode which is when toggle broadcasting */}
-        {selectedConversation ? (
-          <Tooltip title="Speak or toggle by clicking here!">
-            <Fab color="primary" aria-label="add" size="medium">
-              <FiSun />
-            </Fab>
-          </Tooltip>
-        ) : (
+        <Stack sx={{ ml: 'auto' }} direction={'row'} spacing={1}>
           <Tooltip title="No conversation selected!">
-            <IconButton color="inherit" size="small">
-              <FiSun />
+            <IconButton
+              sx={{
+                color: 'white',
+              }}
+              size="small"
+            >
+              <FiLink />
             </IconButton>
           </Tooltip>
-        )}
+
+          {/* todo: add a third mode which is when toggle broadcasting with lock on top right badge */}
+          {selectedConversation ? (
+            <Tooltip title="Speak or toggle by clicking here!">
+              <Fab color="primary" aria-label="add" size="medium">
+                <FiSun />
+              </Fab>
+            </Tooltip>
+          ) : (
+            <Tooltip title="No conversation selected!">
+              <IconButton
+                sx={{
+                  color: 'white',
+                }}
+                size="small"
+              >
+                <FiSun />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Stack>
       </Stack>
 
       <Menu
