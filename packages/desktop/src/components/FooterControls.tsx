@@ -70,34 +70,37 @@ export default function FooterControls() {
           flex: 1,
         }}
       >
-        <IconButton
-          onClick={handleClickProfileMenu}
-          size="small"
-          sx={{ borderRadius: 1 }}
-          aria-controls={open ? 'account-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-        >
-          <Avatar alt={user.displayName} src={user.photoURL} />
-        </IconButton>
-
-        <Tooltip title="Sound configuration">
+        <Stack spacing={1} direction={'row'} alignItems={'center'}>
           <IconButton
-            sx={{
-              color: 'white',
-            }}
+            onClick={handleClickProfileMenu}
             size="small"
+            sx={{ borderRadius: 1 }}
+            aria-controls={open ? 'account-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
           >
-            <FiHeadphones />
+            <Avatar alt={user.displayName} src={user.photoURL} />
           </IconButton>
-        </Tooltip>
-        <Tooltip title={'overlay mode'}>
-          <Switch color="secondary" size="small" />
-        </Tooltip>
 
-        <Button size={'small'} color={'secondary'} variant="text">
-          flow
-        </Button>
+          <Tooltip title="Sound configuration">
+            <IconButton
+              sx={{
+                color: 'white',
+              }}
+              size="small"
+            >
+              <FiHeadphones />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title={'overlay mode'}>
+            <Switch color="secondary" size="small" />
+          </Tooltip>
+
+          <Button size={'small'} color={'secondary'} variant="text">
+            flow
+          </Button>
+        </Stack>
 
         {selectedConversation && (
           <>
@@ -133,55 +136,47 @@ export default function FooterControls() {
               </Container>
             </Stack>
 
-            <AvatarGroup variant={'rounded'}>
-              {selectedConversation.userCache?.map((conversationUser, index) => (
-                <Avatar
-                  key={`${selectedConversation.id}-${conversationUser.uid}-convoIcon`}
-                  alt={conversationUser?.displayName}
-                  src={conversationUser?.photoUrl}
+            <Stack sx={{ ml: 'auto' }} direction={'row'} spacing={1}>
+              <AvatarGroup variant={'rounded'}>
+                {selectedConversation.userCache?.map((conversationUser, index) => (
+                  <Avatar
+                    key={`${selectedConversation.id}-${conversationUser.uid}-convoIcon`}
+                    alt={conversationUser?.displayName}
+                    src={conversationUser?.photoUrl}
+                    sx={{
+                      opacity: selectedConversation.membersInRoom?.includes(conversationUser.uid)
+                        ? '100%'
+                        : '20%',
+                    }}
+                  />
+                ))}
+              </AvatarGroup>
+
+              <Tooltip title="No conversation selected!">
+                <IconButton
                   sx={{
-                    opacity: selectedConversation.membersInRoom?.includes(conversationUser.uid)
-                      ? '100%'
-                      : '20%',
+                    color: 'white',
                   }}
-                />
-              ))}
-            </AvatarGroup>
+                  size="small"
+                >
+                  <FiLink />
+                </IconButton>
+              </Tooltip>
+
+              {/* todo: not speaking mode, speaking mode, locked in mode */}
+              <Tooltip title="Speak or toggle by clicking here!">
+                <IconButton
+                  sx={{
+                    color: 'white',
+                  }}
+                  size="small"
+                >
+                  <FiSun />
+                </IconButton>
+              </Tooltip>
+            </Stack>
           </>
         )}
-
-        <Stack sx={{ ml: 'auto' }} direction={'row'} spacing={1}>
-          <Tooltip title="No conversation selected!">
-            <IconButton
-              sx={{
-                color: 'white',
-              }}
-              size="small"
-            >
-              <FiLink />
-            </IconButton>
-          </Tooltip>
-
-          {/* todo: add a third mode which is when toggle broadcasting with lock on top right badge */}
-          {selectedConversation ? (
-            <Tooltip title="Speak or toggle by clicking here!">
-              <Fab color="primary" aria-label="add" size="medium">
-                <FiSun />
-              </Fab>
-            </Tooltip>
-          ) : (
-            <Tooltip title="No conversation selected!">
-              <IconButton
-                sx={{
-                  color: 'white',
-                }}
-                size="small"
-              >
-                <FiSun />
-              </IconButton>
-            </Tooltip>
-          )}
-        </Stack>
       </Stack>
 
       <Menu
