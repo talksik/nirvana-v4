@@ -1,15 +1,14 @@
-import { ThemeProvider } from '@mui/material';
 import * as React from 'react';
 
-import ReactDOM from 'react-dom/client';
-import { TerminalProvider } from './components/Terminal';
-
-import { SnackbarProvider } from 'notistack';
-import { NirvanaTheme } from './mui/NirvanaTheme';
-import { ElectronProvider } from './providers/ElectronProvider';
 import { AuthProvider } from './providers/AuthProvider';
-
+import { ElectronProvider } from './providers/ElectronProvider';
 import ErrorParent from './providers/ErrorBoundary';
+import { NirvanaTheme } from './mui/NirvanaTheme';
+import ReactDOM from 'react-dom/client';
+import { SnackbarProvider } from 'notistack';
+import { TerminalProvider } from './components/Terminal';
+import { ThemeProvider } from '@mui/material';
+import { ZenProvider } from './providers/ZenProvider';
 import { connectCore } from '@nirvana/core/src/index';
 
 connectCore();
@@ -27,9 +26,11 @@ root.render(
       <ErrorParent>
         <ElectronProvider>
           <AuthProvider>
-            <TerminalProvider>
-              <></>
-            </TerminalProvider>
+            <ZenProvider>
+              <TerminalProvider>
+                <></>
+              </TerminalProvider>
+            </ZenProvider>
           </AuthProvider>
         </ElectronProvider>
       </ErrorParent>

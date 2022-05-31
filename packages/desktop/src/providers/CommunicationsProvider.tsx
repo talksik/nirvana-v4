@@ -1,0 +1,3 @@
+interface CommunicationsProvider {
+  userLocalStream?: MediaStream;
+}
