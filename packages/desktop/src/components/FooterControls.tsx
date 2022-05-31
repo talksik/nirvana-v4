@@ -112,11 +112,17 @@ export default function FooterControls() {
               justifyContent={'center'}
               spacing={1}
             >
-              <IconButton color="primary" size="small">
-                <FiSun />
-              </IconButton>
+              <Container
+                maxWidth={'sm'}
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                }}
+              >
+                <IconButton color="primary" size="small">
+                  <FiSun />
+                </IconButton>
 
-              <Container maxWidth={'md'}>
                 <ConversationLabel
                   users={selectedConversation.userCache ?? []}
                   conversationName={selectedConversation.name}
