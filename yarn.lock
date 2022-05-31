@@ -2,38 +2,6 @@
 # yarn lockfile v1
 
 
-"@100mslive/hms-video-store@0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@100mslive/hms-video-store/-/hms-video-store-0.3.0.tgz#8f586d5b318d690ebdd99ea20ed380a944470e5d"
-  integrity sha512-c14K0/QqVVe46afSR0oKpDCSw6PXNdyCaeqmi5IhQuCAO7LuqBOX0gnP9XlPUjHZJYvXKLIDGRn+scAzje8B0A==
-  dependencies:
-    "@100mslive/hms-video" "0.2.0"
-    eventemitter2 "^6.4.5"
-    immer "^9.0.6"
-    reselect "4.0.0"
-    zustand "3.5.7"
-
-"@100mslive/hms-video@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@100mslive/hms-video/-/hms-video-0.2.0.tgz#defbb00c0a766adf9a1a61eb1ac64be11ef77dc9"
-  integrity sha512-YlDuquSY5qh6Lff/ff3hWPe4VtByCXoNH1sGberlAZWOkj6cynHuOYfzzmFH0xtdg/JGxrdL/TdLZoGe1kdSRQ==
-  dependencies:
-    eventemitter2 "^6.4.5"
-    sdp-transform "^2.14.1"
-    ua-parser-js "^1.0.1"
-    uuid "^8.3.2"
-    webrtc-adapter "^8.0.0"
-
-"@100mslive/react-sdk@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@100mslive/react-sdk/-/react-sdk-0.1.0.tgz#ffef682bb689430465529b1ee2095e8fede6b791"
-  integrity sha512-zBTdgSvvdhfd3RCT0SnIUrUSWbS3fTNvMqMxZEUxqhlvPAwTzL8+IBXZYmv1gxszdyNFxze8Fa0/vnE05RX1mw==
-  dependencies:
-    "@100mslive/hms-video-store" "0.3.0"
-    react-intersection-observer "^8.33.1"
-    react-resize-detector "^7.0.0"
-    zustand "^3.6.2"
-
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.8.3":
   version "7.16.7"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.16.7.tgz#44416b6bd7624b998f5b1af5d470856c40138789"
@@ -3446,11 +3414,6 @@ event-target-shim@^5.0.0:
   resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-5.0.1.tgz#5d4d3ebdf9583d63a5333ce2deb7480ab2b05789"
   integrity sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==
 
-eventemitter2@^6.4.5:
-  version "6.4.5"
-  resolved "https://registry.yarnpkg.com/eventemitter2/-/eventemitter2-6.4.5.tgz#97380f758ae24ac15df8353e0cc27f8b95644655"
-  integrity sha512-bXE7Dyc1i6oQElDG0jMRZJrRAn9QR2xyyFGmBdZleNmyQX0FqGYmhZIrIrpPfm/w//LTo4tVQGOGQcGCb5q9uw==
-
 eventemitter3@^4.0.0:
   version "4.0.7"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.7.tgz#2de9b68f6528d5644ef5c59526a1b4a07306169f"
@@ -4510,7 +4473,7 @@ immediate@~3.0.5:
   resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.0.6.tgz#9db1dbd0faf8de6fbe0f5dd5e56bb606280de69b"
   integrity sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=
 
-immer@^9.0.14, immer@^9.0.6:
+immer@^9.0.14:
   version "9.0.14"
   resolved "https://registry.yarnpkg.com/immer/-/immer-9.0.14.tgz#e05b83b63999d26382bb71676c9d827831248a48"
   integrity sha512-ubBeqQutOSLIFCUBN03jGeOS6a3DoYlSYwYJTa+gSKEZKU5redJIqkIdZ3JVv/4RZpfcXdAWH5zCNLWPRv2WDw==
@@ -6332,11 +6295,6 @@ react-icons@^4.3.1:
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.3.1.tgz#2fa92aebbbc71f43d2db2ed1aed07361124e91ca"
   integrity sha512-cB10MXLTs3gVuXimblAdI71jrJx8njrJZmNMEMC+sQu5B/BIOmlsAjskdqpn81y8UBVEGuHODd7/ci5DvoSzTQ==
 
-react-intersection-observer@^8.33.1:
-  version "8.34.0"
-  resolved "https://registry.yarnpkg.com/react-intersection-observer/-/react-intersection-observer-8.34.0.tgz#6f6e67831c52e6233f6b6cc7eb55814820137c42"
-  integrity sha512-TYKh52Zc0Uptp5/b4N91XydfSGKubEhgZRtcg1rhTKABXijc4Sdr1uTp5lJ8TN27jwUsdXxjHXtHa0kPj704sw==
-
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
@@ -6346,13 +6304,6 @@ react-is@^17.0.2:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
-
-react-resize-detector@^7.0.0:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/react-resize-detector/-/react-resize-detector-7.1.1.tgz#18d5b84909d5ab13abe0a68ddf0fb8e80c553dfc"
-  integrity sha512-rU54VTstNzFLZAmMNHqt8xINjDWP7SQR05A2HUW0OGvl4vcrXzgaxrrqAY5tZMfkLkoYm5u0i0qGqCjdc2jyAA==
-  dependencies:
-    lodash "^4.17.21"
 
 react-transition-group@^4.4.2:
   version "4.4.2"
@@ -6532,11 +6483,6 @@ requires-port@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/requires-port/-/requires-port-1.0.0.tgz#925d2601d39ac485e091cf0da5c6e694dc3dcaff"
   integrity sha1-kl0mAdOaxIXgkc8NpcbmlNw9yv8=
-
-reselect@4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/reselect/-/reselect-4.0.0.tgz#f2529830e5d3d0e021408b246a206ef4ea4437f7"
-  integrity sha512-qUgANli03jjAyGlnbYVAV5vvnOmJnODyABz51RdBN7M4WaVu8mecZWgyQNkG8Yqe3KRGRt0l4K4B3XVEULC4CA==
 
 resize-observer-polyfill@^1.5.1:
   version "1.5.1"
@@ -6735,16 +6681,6 @@ screenfull@^5.1.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/screenfull/-/screenfull-5.2.0.tgz#6533d524d30621fc1283b9692146f3f13a93d1ba"
   integrity sha512-9BakfsO2aUQN2K9Fdbj87RJIEZ82Q9IGim7FqM5OsebfoFC6ZHXgDq/KvniuLTPdeM8wY2o6Dj3WQ7KeQCj3cA==
-
-sdp-transform@^2.14.1:
-  version "2.14.1"
-  resolved "https://registry.yarnpkg.com/sdp-transform/-/sdp-transform-2.14.1.tgz#2bb443583d478dee217df4caa284c46b870d5827"
-  integrity sha512-RjZyX3nVwJyCuTo5tGPx+PZWkDMCg7oOLpSlhjDdZfwUoNqG1mM8nyj31IGHyaPWXhjbP7cdK3qZ2bmkJ1GzRw==
-
-sdp@^3.0.2:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/sdp/-/sdp-3.0.3.tgz#669958d54663ea9f4a46cc66518c9d980c52c61e"
-  integrity sha512-8EkfckS+XZQaPLyChu4ey7PghrdcraCVNpJe2Gfdi2ON1ylQ7OasuKX+b37R9slnRChwIAiQgt+oj8xXGD8x+A==
 
 select-hose@^2.0.0:
   version "2.0.0"
@@ -7564,11 +7500,6 @@ typescript@~4.5.4:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.5.5.tgz#d8c953832d28924a9e3d37c73d729c846c5896f3"
   integrity sha512-TCTIul70LyWe6IJWT8QSYeA54WQe8EjQFU4wY52Fasj5UKx88LNYKCgBEHcOMOrFF1rKGbD8v/xcNWVUq9SymA==
 
-ua-parser-js@^1.0.1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-1.0.2.tgz#e2976c34dbfb30b15d2c300b2a53eac87c57a775"
-  integrity sha512-00y/AXhx0/SsnI51fTc0rLRmafiGOM4/O+ny10Ps7f+j/b8p/ZY11ytMgznXkOVo4GQ+KwQG5UQLkLGirsACRg==
-
 unbox-primitive@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/unbox-primitive/-/unbox-primitive-1.0.2.tgz#29032021057d5e6cdbd08c5129c226dff8ed6f9e"
@@ -7806,13 +7737,6 @@ webpack@^5.37.0:
     terser-webpack-plugin "^5.1.3"
     watchpack "^2.3.1"
     webpack-sources "^3.2.3"
-
-webrtc-adapter@^8.0.0:
-  version "8.1.1"
-  resolved "https://registry.yarnpkg.com/webrtc-adapter/-/webrtc-adapter-8.1.1.tgz#e4a4dfd1b5085d119da40c4efc0147f7d0961cba"
-  integrity sha512-1yXevP7TeZGmklEXkvQVrZp3fOSJlLeXNGCA7NovQokxgP3/e2T3EVGL0eKU87S9vKppWjvRWqnJeSANEspOBg==
-  dependencies:
-    sdp "^3.0.2"
 
 websocket-driver@>=0.5.1, websocket-driver@^0.7.4:
   version "0.7.4"
@@ -8063,13 +7987,3 @@ yocto-queue@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
-
-zustand@3.5.7:
-  version "3.5.7"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.5.7.tgz#add5e8d0ba031ce6e0ddf9cb76ef15306efb665f"
-  integrity sha512-DlVFXJavIHyXTOGz6dB+8QHZsPyJcGJSEBtlp2Ivmd5SwtlCnhPo3L8LB6YRfAOJC2PbqzgoD8NMjk+y+vIF0g==
-
-zustand@^3.6.2:
-  version "3.7.2"
-  resolved "https://registry.yarnpkg.com/zustand/-/zustand-3.7.2.tgz#7b44c4f4a5bfd7a8296a3957b13e1c346f42514d"
-  integrity sha512-PIJDIZKtokhof+9+60cpockVOq05sJzHCriyvaLBmEJixseQ1a5Kdov6fWZfWOu5SK9c+FhH1jU0tntLxRJYMA==
