@@ -3,6 +3,7 @@ import {
   AvatarGroup,
   Box,
   Button,
+  Container,
   Divider,
   Fab,
   IconButton,
@@ -115,13 +116,13 @@ export default function FooterControls() {
                 <FiSun />
               </IconButton>
 
-              <Box sx={{ color: 'GrayText' }}>
+              <Container maxWidth={'md'}>
                 <ConversationLabel
                   users={selectedConversation.userCache ?? []}
                   conversationName={selectedConversation.name}
                   isSelected={true}
                 />
-              </Box>
+              </Container>
             </Stack>
 
             <AvatarGroup variant={'rounded'}>
