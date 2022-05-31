@@ -27,6 +27,7 @@ import UserDetailRow from '../subcomponents/UserDetailRow';
 import { blueGrey } from '@mui/material/colors';
 import { searchUsers } from '../firebase/firestore';
 import useAuth from '../providers/AuthProvider';
+import useSearch from '../providers/SearchProvider';
 import { useSnackbar } from 'notistack';
 
 export default function NewConversationDialog({
@@ -41,9 +42,7 @@ export default function NewConversationDialog({
   const { enqueueSnackbar } = useSnackbar();
   const { user } = useAuth();
 
-  const [searchVal, setSearchVal] = useState<string>('');
-  const [searchUsersResults, setSearchUsersResults] = useState<User[]>([]);
-  const [searching, setSearching] = useState<boolean>(false);
+  const { userResults, searchQuery, searchUsers, isSearching } = useSearch();
 
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
 
@@ -54,28 +53,11 @@ export default function NewConversationDialog({
     [],
   );
 
-  const [, cancel] = useDebounce(
-    async () => {
-      if (searchVal) {
-        let results = await searchUsers(searchVal);
-        results = results.filter((userResult) => userResult.id !== user.uid);
-        setSearchUsersResults(results);
-
-        console.warn('searched users', results);
-      }
-
-      setSearching(false);
-    },
-    1000,
-    [searchVal, enqueueSnackbar, setSearchUsersResults, user],
-  );
-
   const handleChangeSearchInput = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>, newValue: string) => {
-      setSearching(true);
-      setSearchVal(newValue);
+      searchUsers(newValue);
     },
-    [setSearching, setSearchVal],
+    [searchUsers],
   );
 
   const renderOption = useCallback(
@@ -165,12 +147,12 @@ export default function NewConversationDialog({
 
           <Autocomplete
             multiple
-            loading={searching}
+            loading={isSearching}
             includeInputInList
             id="tags-outlined"
             autoHighlight
             onInputChange={handleChangeSearchInput}
-            options={searchUsersResults}
+            options={userResults}
             renderOption={renderOption}
             getOptionLabel={(option) => (typeof option === 'string' ? option : option.displayName)}
             value={selectedUsers}
@@ -178,7 +160,7 @@ export default function NewConversationDialog({
             filterSelectedOptions
             isOptionEqualToValue={(optionUser, valueUser) => optionUser.id === valueUser.id}
             filterOptions={(options) => options}
-            inputValue={searchVal}
+            inputValue={searchQuery}
             renderInput={(params) => (
               <TextField
                 // eslint-disable-next-line jsx-a11y/no-autofocus
