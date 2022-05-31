@@ -20,6 +20,7 @@ import { useKeyPressEvent, useRendersCount } from 'react-use';
 
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import ConversationLabel from '../subcomponents/ConversationLabel';
+import { FaRocket } from 'react-icons/fa';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { SUPPORT_DISPLAY_NAME } from '../util/support';
 import useAuth from '../providers/AuthProvider';
@@ -63,7 +64,7 @@ export function ConversationList({ lookingForSomeone = false }: { lookingForSome
       <List
         subheader={
           <ListSubheader>
-            <FiActivity />
+            <FaRocket />
             <Typography variant="subtitle2"> Priority</Typography>
           </ListSubheader>
         }
@@ -144,7 +145,11 @@ export function ConversationRow({
           </Box>
         )}
 
-        <Stack direction={'row'} spacing={1} sx={{ ml: 2, mr: 'auto', color: 'GrayText' }}>
+        <Stack
+          direction={'row'}
+          spacing={1}
+          sx={{ ml: 2, mr: 'auto', color: 'GrayText', overflow: 'auto' }}
+        >
           {keyboardShortcut && <KeyboardShortcutLabel label={keyboardShortcut.toString()} />}
           <ConversationLabel
             users={conversation.userCache ?? []}

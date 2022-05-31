@@ -2,6 +2,7 @@ import {
   Avatar,
   AvatarGroup,
   Box,
+  Button,
   Container,
   Fab,
   IconButton,
@@ -103,9 +104,8 @@ export default function ConversationDetails() {
           background: 'white',
         }}
       >
-        <Typography variant="h6">{`Ready?!`}</Typography>
-        <Typography variant="caption">Get the party started!</Typography>
-        <Typography variant="caption">Look at the controls at the bottom right!</Typography>
+        <Typography variant="h6">{`Let's get started!`}</Typography>
+        <Button variant="text">Click here to learn the controls!</Button>
       </Container>
     );
   }
