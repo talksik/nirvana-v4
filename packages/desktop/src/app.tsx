@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { AuthProvider } from './providers/AuthProvider';
+import { CommunicationsProvider } from './providers/CommunicationsProvider';
 import { ConversationProvider } from './providers/ConversationProvider';
 import { ElectronProvider } from './providers/ElectronProvider';
 import ErrorParent from './providers/ErrorBoundary';
@@ -30,11 +31,13 @@ root.render(
           <AuthProvider>
             <ConversationProvider>
               <ZenProvider>
-                <SearchProvider>
-                  <TerminalProvider>
-                    <></>
-                  </TerminalProvider>
-                </SearchProvider>
+                <CommunicationsProvider>
+                  <SearchProvider>
+                    <TerminalProvider>
+                      <></>
+                    </TerminalProvider>
+                  </SearchProvider>
+                </CommunicationsProvider>
               </ZenProvider>
             </ConversationProvider>
           </AuthProvider>

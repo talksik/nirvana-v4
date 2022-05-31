@@ -19,9 +19,12 @@ export function CommunicationsProvider({ children }: { children: React.ReactNode
   // todo save the selected devices in localstorage
 
   useEffect(() => {
-    navigator.mediaDevices.getDisplayMedia().then((mediaStream) => {
-      console.log('selected stream', mediaStream);
-    });
+    navigator.mediaDevices
+      .getDisplayMedia()
+      .then((mediaStream) => {
+        console.log('selected stream', mediaStream);
+      })
+      .catch(console.error);
   }, []);
 
   return (
