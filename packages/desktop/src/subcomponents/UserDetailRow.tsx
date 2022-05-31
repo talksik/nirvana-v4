@@ -1,6 +1,6 @@
-import React from 'react';
-
 import { Avatar, Box, Stack, Typography } from '@mui/material';
+
+import React from 'react';
 import { User } from '@nirvana/core/src/models/user.model';
 
 export default function UserDetailRow({
@@ -22,7 +22,7 @@ export default function UserDetailRow({
       <Avatar src={user.photoUrl} alt={user.displayName} />
 
       <Stack>
-        <Typography variant="subtitle2" color="info">
+        <Typography variant="subtitle2" color="info" gutterBottom={false}>
           {user.displayName}
         </Typography>
         <Typography variant={'overline'}>{user.email}</Typography>

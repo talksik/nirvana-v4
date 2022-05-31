@@ -145,7 +145,7 @@ export default function NewConversationDialog({
           alignItems: 'center',
           gap: 2,
           flex: 1,
-          background: blueGrey[100],
+          background: blueGrey[50],
           position: 'relative',
         }}
       >

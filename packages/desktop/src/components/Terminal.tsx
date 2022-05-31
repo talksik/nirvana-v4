@@ -63,7 +63,6 @@ const handleOnStartRecording = (e: BlobEvent) => {
   audioChunks = [];
 };
 
-// todo: extract each use effect to custom hook and will be clean
 export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const { enqueueSnackbar } = useSnackbar();
   const { user, logout, nirvanaUser } = useAuth();

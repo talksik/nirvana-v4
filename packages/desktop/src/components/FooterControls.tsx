@@ -152,7 +152,7 @@ export default function FooterControls() {
                 ))}
               </AvatarGroup>
 
-              <Tooltip title="No conversation selected!">
+              <Tooltip title="Paste image or link!">
                 <IconButton
                   sx={{
                     color: 'white',
