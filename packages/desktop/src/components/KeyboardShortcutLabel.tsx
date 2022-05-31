@@ -18,6 +18,7 @@ export default function KeyboardShortcutLabel({
         py: 0.25,
         bgcolor: blueGrey[50],
         color: blueGrey[300],
+        border: 'none',
       }}
     >
       <Typography variant="caption">{label}</Typography>
