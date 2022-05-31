@@ -21,6 +21,7 @@ import { useKeyPressEvent, useRendersCount } from 'react-use';
 import Conversation from '@nirvana/core/src/models/conversation.model';
 import ConversationLabel from '../subcomponents/ConversationLabel';
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
+import { NirvanaRules } from '../util/rules';
 import { SUPPORT_DISPLAY_NAME } from '../util/support';
 import useAuth from '../providers/AuthProvider';
 import useTerminal from './Terminal';
@@ -115,7 +116,7 @@ export function ConversationRow({
   console.warn('RENDER COUNT | CONVERSATION LIST ROW | ', rendersCount);
 
   const keyboardShortcut = useMemo(() => {
-    if (index < 9) {
+    if (index < NirvanaRules.topXConversationsWithShortcuts) {
       return index + 1;
     }
 
@@ -150,6 +151,7 @@ export function ConversationRow({
           sx={{ ml: 2, mr: 'auto', color: 'GrayText', overflow: 'auto' }}
         >
           {keyboardShortcut && <KeyboardShortcutLabel label={keyboardShortcut.toString()} />}
+
           <ConversationLabel
             users={conversation.userCache ?? []}
             conversationName={conversation.name}
