@@ -1,40 +1,22 @@
-import {
-  Avatar,
-  CircularProgress,
-  Divider,
-  IconButton,
-  Input,
-  ListItemIcon,
-  Menu,
-  Stack,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import { FiHeadphones, FiLogOut, FiMonitor, FiSearch, FiUsers, FiWind } from 'react-icons/fi';
+import { CircularProgress, IconButton, Input, Stack, Tooltip } from '@mui/material';
+import { FiSearch, FiUsers } from 'react-icons/fi';
 import React, { useCallback, useRef } from 'react';
 import { useKeyPressEvent, useRendersCount } from 'react-use';
 
 import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { KeyboardShortcuts } from '../util/keyboard';
-import MenuItem from '@mui/material/MenuItem';
 import NirvanaLogo from './NirvanaLogo';
 import { blueGrey } from '@mui/material/colors';
-import useAuth from '../providers/AuthProvider';
+import useSearch from '../providers/SearchProvider';
 import { useSnackbar } from 'notistack';
 import useTerminal from './Terminal';
 
-const Navbar = ({
-  handleChangeSearchInput,
-  searchVal,
-  isSearching,
-}: {
-  handleChangeSearchInput: React.ChangeEventHandler;
-  searchVal: string;
-  isSearching: boolean;
-}) => {
+const Navbar = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const { handleShowCreateConvoForm } = useTerminal();
+
+  const { searchQuery, omniSearch, conversationResults, userResults, isSearching } = useSearch();
 
   const searchRef = useRef<HTMLInputElement>(null);
   const onSearchFocus = useCallback(() => {
@@ -45,6 +27,13 @@ const Navbar = ({
 
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | NAVBAR | ', rendersCount);
+
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      omniSearch(e.target.value);
+    },
+    [omniSearch],
+  );
 
   return (
     <Stack
@@ -79,15 +68,15 @@ const Navbar = ({
         <FiSearch style={{ color: blueGrey[500] }} />
 
         <Input
-          onChange={handleChangeSearchInput}
-          value={searchVal}
+          onChange={handleSearchChange}
+          value={searchQuery}
           placeholder={'Find or start a conversation'}
           inputRef={searchRef}
         />
 
         {isSearching && <CircularProgress size={20} />}
 
-        {searchVal ? (
+        {searchQuery ? (
           <KeyboardShortcutLabel label={KeyboardShortcuts.escape.label} />
         ) : (
           <KeyboardShortcutLabel label={KeyboardShortcuts.search.label} />

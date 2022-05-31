@@ -6,6 +6,7 @@ import { ElectronProvider } from './providers/ElectronProvider';
 import ErrorParent from './providers/ErrorBoundary';
 import { NirvanaTheme } from './mui/NirvanaTheme';
 import ReactDOM from 'react-dom/client';
+import { SearchProvider } from './providers/SearchProvider';
 import { SnackbarProvider } from 'notistack';
 import { TerminalProvider } from './components/Terminal';
 import { ThemeProvider } from '@mui/material';
@@ -29,9 +30,11 @@ root.render(
           <AuthProvider>
             <ConversationProvider>
               <ZenProvider>
-                <TerminalProvider>
-                  <></>
-                </TerminalProvider>
+                <SearchProvider>
+                  <TerminalProvider>
+                    <></>
+                  </TerminalProvider>
+                </SearchProvider>
               </ZenProvider>
             </ConversationProvider>
           </AuthProvider>

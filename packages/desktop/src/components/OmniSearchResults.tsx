@@ -17,17 +17,14 @@ import { FiZap } from 'react-icons/fi';
 import React from 'react';
 import { User } from '@nirvana/core/src/models/user.model';
 import useConversations from '../providers/ConversationProvider';
+import useSearch from '../providers/SearchProvider';
 import useTerminal from './Terminal';
 
-export default function OmniSearchResults({
-  people,
-  conversations,
-}: {
-  people: User[];
-  conversations: Conversation[];
-}) {
+export default function OmniSearchResults() {
   const { handleQuickDial } = useTerminal();
   const { selectConversation } = useConversations();
+
+  const { userResults: people, conversationResults: conversations } = useSearch();
 
   return (
     <>

@@ -1,19 +1,9 @@
 import { Box, Grid, Stack } from '@mui/material';
 import { ContentBlock, ContentType } from '@nirvana/core/src/models/content.model';
-import { ConversationContentMap, ConversationMap, UserMap } from '../util/types';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Unsubscribe, onSnapshot } from 'firebase/firestore';
-import {
-  createOneOnOneConversation,
-  getConversationContentQueryLIVE,
-  getConversationsQueryLIVE,
-  getUserById,
-  searchUsers,
-  sendContentBlockToConversation,
-} from '../firebase/firestore';
-import { useDebounce, useKeyPressEvent, useRendersCount, useUnmount } from 'react-use';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { createOneOnOneConversation, sendContentBlockToConversation } from '../firebase/firestore';
+import { useKeyPressEvent, useRendersCount } from 'react-use';
 
-import Conversation from '@nirvana/core/src/models/conversation.model';
 import { ConversationList } from './ConversationList';
 import FooterControls from './FooterControls';
 import { KeyboardShortcuts } from '../util/keyboard';
@@ -27,10 +17,8 @@ import { createGroupConversation } from '../firebase/firestore';
 import { uploadAudioClip } from '../firebase/firebaseStorage';
 import useAuth from '../providers/AuthProvider';
 import useConversations from '../providers/ConversationProvider';
-import { useImmer } from 'use-immer';
-import { useSearchConversations } from '../util/clientSearch';
+import useSearch from '../providers/SearchProvider';
 import { useSnackbar } from 'notistack';
-import useStreamHandler from '../hooks/useStreamHandler';
 
 interface ITerminalContext {
   handleQuickDial?: (otherUser: User) => void;
@@ -70,13 +58,13 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const { conversationMap, conversationContentMap, selectConversation, selectedConversation } =
     useConversations();
 
-  const { searchRelevantConversations } = useSearchConversations(conversationMap);
+  const { clearSearch, searchQuery } = useSearch();
 
   // handle create or open existing conversation
   // not 100% consistent to the second, but still works...don't need atomicity
   const handleQuickDial = useCallback(
     async (otherUser: User) => {
-      setSearchVal('');
+      clearSearch();
 
       try {
         // check all current conversations which should be live listened to
@@ -105,7 +93,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         enqueueSnackbar('Something went wrong, please try again', { variant: 'error' });
       }
     },
-    [conversationMap, enqueueSnackbar, nirvanaUser, selectConversation],
+    [conversationMap, enqueueSnackbar, nirvanaUser, selectConversation, clearSearch],
   );
 
   const [isUserSpeaking, setIsUserSpeaking] = useState<boolean>(false);
@@ -235,54 +223,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
 
   useKeyPressEvent('`', handleBroadcast, handleStopBroadcast);
 
-  const [searchVal, setSearchVal] = useState<string>('');
-  const [searchUsersResults, setSearchUsersResults] = useState<User[]>([]);
-  const [searchConversationsResults, setSearchConversationsResults] = useState<Conversation[]>([]);
-  const [searching, setSearching] = useState<boolean>(false);
-
-  // debounce user search
-  const [, cancel] = useDebounce(
-    async () => {
-      if (searchVal) {
-        let results = await searchUsers(searchVal);
-        results = results.filter((userResult) => userResult.id !== user.uid);
-        setSearchUsersResults(results);
-
-        console.warn('searched users', results);
-      }
-
-      setSearching(false);
-    },
-    1000,
-    [searchVal, setSearchUsersResults, user],
-  );
-
-  const handleOmniSearch = useCallback(
-    async (searchQuery: string) => {
-      searchQuery = searchQuery.replace('/', '');
-      setSearchVal(searchQuery);
-
-      if (!searchQuery) {
-        return;
-      }
-
-      // user search
-      setSearching(true);
-
-      // client side conversation search
-      const relevantConversations = await searchRelevantConversations(searchQuery);
-      setSearchConversationsResults(relevantConversations);
-    },
-    [setSearching, setSearchVal, setSearchConversationsResults, searchRelevantConversations],
-  );
-
-  const handleChangeSearchInput = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleOmniSearch(e.target.value);
-    },
-    [handleOmniSearch],
-  );
-
   const [createConversationMode, setCreateConversationMode] = useState<boolean>(false);
 
   const handleStartConversation = useCallback(
@@ -329,8 +269,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const handleEscape = useCallback(() => {
     setCreateConversationMode(false);
     selectConversation(undefined);
-    setSearchVal('');
-  }, [selectConversation, setCreateConversationMode, setSearchVal]);
+    clearSearch();
+  }, [selectConversation, setCreateConversationMode, clearSearch]);
 
   useKeyPressEvent(KeyboardShortcuts.escape.shortcutKey, handleEscape);
 
@@ -343,7 +283,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         createConversationMode,
         handleShowCreateConvoForm,
         handleEscape,
-        handleOmniSearch,
       }}
     >
       <Stack direction={'column'} sx={{ flex: 1 }}>
@@ -362,22 +301,9 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
               flexDirection: 'column',
             }}
           >
-            <Navbar
-              searchVal={searchVal}
-              isSearching={searching}
-              handleChangeSearchInput={handleChangeSearchInput}
-            />
+            <Navbar />
 
-            <Box sx={{ p: 2 }}>
-              {searchVal ? (
-                <OmniSearchResults
-                  people={searchUsersResults}
-                  conversations={searchConversationsResults}
-                />
-              ) : (
-                <ConversationList />
-              )}
-            </Box>
+            <Box sx={{ p: 2 }}>{searchQuery ? <OmniSearchResults /> : <ConversationList />}</Box>
           </Grid>
 
           <MainPanel />
