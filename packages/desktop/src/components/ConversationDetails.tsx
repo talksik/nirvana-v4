@@ -19,6 +19,7 @@ import { User } from '@nirvana/core/src/models/user.model';
 /* eslint-disable jsx-a11y/media-has-caption */
 import { blueGrey } from '@mui/material/colors';
 import useAuth from '../providers/AuthProvider';
+import useConversations from '../providers/ConversationProvider';
 import { useImmer } from 'use-immer';
 import { useRendersCount } from 'react-use';
 import useTerminal from './Terminal';
@@ -32,13 +33,8 @@ import useTerminal from './Terminal';
 
 export default function ConversationDetails() {
   const { user } = useAuth();
-  const {
-    getUser,
-    selectedConversation,
-    conversationContentMap,
-    selectConversation,
-    isCloudDoingMagic,
-  } = useTerminal();
+  const { isCloudDoingMagic } = useTerminal();
+  const { selectedConversation, conversationContentMap, selectConversation } = useConversations();
 
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | CONVERSATION DETAILS | ', rendersCount);

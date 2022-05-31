@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { AuthProvider } from './providers/AuthProvider';
+import { ConversationProvider } from './providers/ConversationProvider';
 import { ElectronProvider } from './providers/ElectronProvider';
 import ErrorParent from './providers/ErrorBoundary';
 import { NirvanaTheme } from './mui/NirvanaTheme';
@@ -26,11 +27,13 @@ root.render(
       <ErrorParent>
         <ElectronProvider>
           <AuthProvider>
-            <ZenProvider>
-              <TerminalProvider>
-                <></>
-              </TerminalProvider>
-            </ZenProvider>
+            <ConversationProvider>
+              <ZenProvider>
+                <TerminalProvider>
+                  <></>
+                </TerminalProvider>
+              </ZenProvider>
+            </ConversationProvider>
           </AuthProvider>
         </ElectronProvider>
       </ErrorParent>

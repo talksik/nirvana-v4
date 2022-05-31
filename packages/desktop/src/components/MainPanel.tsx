@@ -1,15 +1,17 @@
-import { Grid, Container, Typography } from '@mui/material';
-import { blueGrey } from '@mui/material/colors';
+import { Container, Grid, Typography } from '@mui/material';
 import React, { useMemo } from 'react';
-import useAuth from '../providers/AuthProvider';
-import ConversationDetails from './ConversationDetails';
-import useTerminal from './Terminal';
 
+import ConversationDetails from './ConversationDetails';
+import { blueGrey } from '@mui/material/colors';
+import useAuth from '../providers/AuthProvider';
+import useConversations from '../providers/ConversationProvider';
 import { useRendersCount } from 'react-use';
+import useTerminal from './Terminal';
 
 export default function MainPanel() {
   const { user } = useAuth();
-  const { selectedConversation } = useTerminal();
+
+  const { selectedConversation } = useConversations();
 
   // if selected conversation, show details
   // do all fetching necessary to paint things here

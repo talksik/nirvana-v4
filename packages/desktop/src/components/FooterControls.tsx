@@ -22,10 +22,12 @@ import ConversationLabel from '../subcomponents/ConversationLabel';
 import { SUPPORT_DISPLAY_NAME } from '../util/support';
 import { blueGrey } from '@mui/material/colors';
 import useAuth from '../providers/AuthProvider';
+import useConversations from '../providers/ConversationProvider';
 import useTerminal from './Terminal';
 
 export default function FooterControls() {
-  const { selectedConversation, handleOmniSearch } = useTerminal();
+  const { handleOmniSearch } = useTerminal();
+  const { selectedConversation } = useConversations();
   const { user, logout } = useAuth();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

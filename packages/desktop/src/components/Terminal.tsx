@@ -26,21 +26,14 @@ import { blueGrey } from '@mui/material/colors';
 import { createGroupConversation } from '../firebase/firestore';
 import { uploadAudioClip } from '../firebase/firebaseStorage';
 import useAuth from '../providers/AuthProvider';
+import useConversations from '../providers/ConversationProvider';
 import { useImmer } from 'use-immer';
 import { useSearchConversations } from '../util/clientSearch';
 import { useSnackbar } from 'notistack';
 import useStreamHandler from '../hooks/useStreamHandler';
 
 interface ITerminalContext {
-  conversationMap: ConversationMap;
-  conversationContentMap: ConversationContentMap;
-
-  selectedConversation?: Conversation;
-  selectConversation?: (conversationId: string) => void;
-
   handleQuickDial?: (otherUser: User) => void;
-
-  getUser?: (userId: string) => Promise<User | undefined>;
 
   isUserSpeaking: boolean;
   isCloudDoingMagic: boolean;
@@ -54,9 +47,6 @@ interface ITerminalContext {
 }
 
 const TerminalContext = React.createContext<ITerminalContext>({
-  conversationMap: {},
-  conversationContentMap: {},
-
   isUserSpeaking: false,
   isCloudDoingMagic: false,
 
@@ -78,124 +68,10 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
   const { enqueueSnackbar } = useSnackbar();
   const { user, logout, nirvanaUser } = useAuth();
 
-  const [selectedConversationId, setSelectedConversationId] = useState<string>(undefined);
-
-  const [conversationMap, updateConversationMap] = useImmer<ConversationMap>({});
-  const [userMap, updateUserMap] = useImmer<UserMap>({});
-  const [conversationContentMap, updateContentMap] = useImmer<ConversationContentMap>({});
+  const { conversationMap, conversationContentMap, selectConversation, selectedConversation } =
+    useConversations();
 
   const { searchRelevantConversations } = useSearchConversations(conversationMap);
-
-  const [contentListeners, setContentListeners] = useImmer<{
-    [conversationId: string]: Unsubscribe;
-  }>({});
-
-  // TODO: put in a custom hook to separate out logic
-  const addConversationContentListener = useCallback(
-    (conversationId: string) => {
-      // ?optimization
-      // ? only start listening to conversation content where it is in my priority box?
-      // ? all other conversations, just fetch periodically?
-
-      // TODO: future work/optimization
-      // if we removed a conversation, unsubscribe from content listener as well
-
-      setContentListeners((draftListeners) => {
-        // if we have a listener for conversation already, then just move on
-        if (draftListeners[conversationId]) return;
-
-        // if we don't, then create one for this conversation
-        const contentListener = onSnapshot(
-          getConversationContentQueryLIVE(conversationId),
-          (querySnapshot) => {
-            querySnapshot.docChanges().forEach((docChange) => {
-              const currentContentBlock = docChange.doc.data();
-
-              if (docChange.type === 'added') {
-                // TODO: add to audio queue from here if there was an addition?
-                updateContentMap((draftContent) => {
-                  if (draftContent[conversationId]) {
-                    draftContent[conversationId].push(currentContentBlock);
-                  } else {
-                    draftContent[conversationId] = [currentContentBlock];
-                  }
-                });
-              }
-              if (docChange.type === 'modified') {
-                //
-              }
-              if (docChange.type === 'removed') {
-                //
-              }
-            });
-          },
-        );
-
-        //add to map of listeners
-        draftListeners[conversationId] = contentListener;
-      });
-    },
-    [setContentListeners, updateContentMap],
-  );
-
-  // fetch conversations
-  // TODO: put members map in another collection to avoid all of the re-renders for all folks...
-  // duplicate data for better reads
-  useEffect(() => {
-    const unsub = onSnapshot(getConversationsQueryLIVE(user.uid), (querySnapshot) => {
-      updateConversationMap((draft) => {
-        querySnapshot.docChanges().forEach((docChange) => {
-          const currentConversation = docChange.doc.data();
-
-          if (docChange.type === 'added') {
-            console.log('New conversation: ', currentConversation);
-            draft[currentConversation.id] = currentConversation;
-
-            addConversationContentListener(currentConversation.id);
-          }
-          if (docChange.type === 'modified') {
-            console.log('Modified conversation: ', currentConversation);
-            draft[currentConversation.id] = currentConversation;
-          }
-          if (docChange.type === 'removed') {
-            console.log('Removed conversation: ', currentConversation);
-            delete draft[currentConversation.id];
-          }
-        });
-      });
-    });
-
-    return () => unsub();
-  }, [user, updateConversationMap, enqueueSnackbar, addConversationContentListener]);
-
-  // on unmount, get rid of all content listeners
-  useUnmount(() => {
-    Object.values(contentListeners).forEach((unsub) => unsub());
-  });
-
-  // cache of selected conversation
-  const selectedConversation: Conversation | undefined = useMemo(() => {
-    if (!selectedConversationId) return undefined;
-
-    // select if we do have it
-
-    const conversation = conversationMap[selectedConversationId];
-
-    if (!conversation) {
-      enqueueSnackbar('no conversation found', { variant: 'error' });
-      console.error('Should have found it... maybe retry once more');
-    }
-
-    return conversation;
-
-    // get conversation if not here
-    // const fetchedConversation = await getConversationById
-
-    // return undefined;
-  }, [selectedConversationId, conversationMap, enqueueSnackbar]);
-
-  // handles stream and device stuff
-  useStreamHandler(selectedConversation);
 
   // handle create or open existing conversation
   // not 100% consistent to the second, but still works...don't need atomicity
@@ -219,33 +95,18 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
         });
 
         if (findExistingConversation) {
-          setSelectedConversationId(findExistingConversation.id);
+          selectConversation(findExistingConversation.id);
           return;
         }
 
         // create conversation in this case
         const newConversationId = await createOneOnOneConversation(otherUser, nirvanaUser);
-        setSelectedConversationId(newConversationId);
+        selectConversation(newConversationId);
       } catch (error) {
         enqueueSnackbar('Something went wrong, please try again', { variant: 'error' });
       }
     },
-    [conversationMap, enqueueSnackbar, nirvanaUser],
-  );
-
-  const getUser = useCallback(
-    async (userId: string) => {
-      if (userMap[userId]) return userMap[userId];
-
-      const fetchedUser = await getUserById(userId);
-
-      updateUserMap((draft) => {
-        draft[userId] = fetchedUser;
-      });
-
-      return fetchedUser;
-    },
-    [userMap, updateUserMap],
+    [conversationMap, enqueueSnackbar, nirvanaUser, selectConversation],
   );
 
   const [isUserSpeaking, setIsUserSpeaking] = useState<boolean>(false);
@@ -423,11 +284,6 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     [handleOmniSearch],
   );
 
-  const selectConversation = useCallback(
-    (conversationId: string) => setSelectedConversationId(conversationId),
-    [setSelectedConversationId],
-  );
-
   const [createConversationMode, setCreateConversationMode] = useState<boolean>(false);
 
   const handleStartConversation = useCallback(
@@ -453,29 +309,29 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
           nirvanaUser,
           conversationName ?? null,
         );
-        setSelectedConversationId(newConversationId);
+        selectConversation(newConversationId);
 
         setCreateConversationMode(false);
       } catch (error) {
         enqueueSnackbar('Something went wrong, please try again', { variant: 'error' });
       }
     },
-    [nirvanaUser, handleQuickDial, enqueueSnackbar, setCreateConversationMode],
+    [nirvanaUser, handleQuickDial, enqueueSnackbar, setCreateConversationMode, selectConversation],
   );
 
   const handleShowCreateConvoForm = useCallback(() => {
-    setSelectedConversationId(undefined);
+    selectConversation(undefined);
     setCreateConversationMode(true);
-  }, [setCreateConversationMode, setSelectedConversationId]);
+  }, [setCreateConversationMode, selectConversation]);
 
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | TERMINAL | ', rendersCount);
 
   const handleEscape = useCallback(() => {
     setCreateConversationMode(false);
-    setSelectedConversationId(undefined);
+    selectConversation(undefined);
     setSearchVal('');
-  }, [setSelectedConversationId, setCreateConversationMode, setSearchVal]);
+  }, [selectConversation, setCreateConversationMode, setSearchVal]);
 
   useKeyPressEvent(KeyboardShortcuts.escape.shortcutKey, handleEscape);
 
@@ -483,13 +339,8 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
     <TerminalContext.Provider
       value={{
         isUserSpeaking,
-        selectedConversation,
-        conversationMap,
-        getUser,
         handleQuickDial,
-        selectConversation,
         isCloudDoingMagic,
-        conversationContentMap,
         createConversationMode,
         handleShowCreateConvoForm,
         handleEscape,
@@ -525,9 +376,7 @@ export function TerminalProvider({ children }: { children?: React.ReactNode }) {
                   conversations={searchConversationsResults}
                 />
               ) : (
-                <ConversationList
-                  lookingForSomeone={selectedConversationId && !selectedConversation}
-                />
+                <ConversationList />
               )}
             </Box>
           </Grid>

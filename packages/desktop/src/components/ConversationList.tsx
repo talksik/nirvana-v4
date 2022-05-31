@@ -24,6 +24,7 @@ import KeyboardShortcutLabel from './KeyboardShortcutLabel';
 import { NirvanaRules } from '../util/rules';
 import { SUPPORT_DISPLAY_NAME } from '../util/support';
 import useAuth from '../providers/AuthProvider';
+import useConversations from '../providers/ConversationProvider';
 import useTerminal from './Terminal';
 
 // sort conversations based on the different data sources: type, conversations, audio clips, etc.
@@ -33,8 +34,9 @@ import useTerminal from './Terminal';
  * @param lookingForSomeone: if a conversation id has been selected and we are looking for it
  * @returns
  */
-export function ConversationList({ lookingForSomeone = false }: { lookingForSomeone: boolean }) {
-  const { conversationMap, handleOmniSearch } = useTerminal();
+export function ConversationList() {
+  const { handleOmniSearch } = useTerminal();
+  const { conversationMap } = useConversations();
 
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | CONVERSATION LIST | ', rendersCount);
@@ -69,8 +71,6 @@ export function ConversationList({ lookingForSomeone = false }: { lookingForSome
           </ListSubheader>
         }
       >
-        {lookingForSomeone && <CircularProgress />}
-
         {Object.values(conversationMap).map((currentConversation, index) => (
           <ConversationRow
             key={`${currentConversation.id}-priorityConvoList`}
@@ -110,7 +110,8 @@ export function ConversationRow({
   index?: number;
 }) {
   const { user } = useAuth();
-  const { getUser, selectedConversation, selectConversation } = useTerminal();
+
+  const { selectedConversation, selectConversation } = useConversations();
 
   const rendersCount = useRendersCount();
   console.warn('RENDER COUNT | CONVERSATION LIST ROW | ', rendersCount);

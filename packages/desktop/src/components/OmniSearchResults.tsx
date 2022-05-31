@@ -16,6 +16,7 @@ import { ConversationRow } from './ConversationList';
 import { FiZap } from 'react-icons/fi';
 import React from 'react';
 import { User } from '@nirvana/core/src/models/user.model';
+import useConversations from '../providers/ConversationProvider';
 import useTerminal from './Terminal';
 
 export default function OmniSearchResults({
@@ -25,7 +26,8 @@ export default function OmniSearchResults({
   people: User[];
   conversations: Conversation[];
 }) {
-  const { handleQuickDial, selectConversation } = useTerminal();
+  const { handleQuickDial } = useTerminal();
+  const { selectConversation } = useConversations();
 
   return (
     <>
