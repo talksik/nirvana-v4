@@ -4,6 +4,8 @@
   "repository": "https://github.com/talksik/nirvana-v4.git",
   "author": "talksik <patel.arjun50@gmail.com>",
   "license": "MIT",
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/**"
+  ],
   "private": true
 }
