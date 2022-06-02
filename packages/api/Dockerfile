@@ -2,8 +2,8 @@ FROM node:12
 
 WORKDIR /app
 
-COPY package.json ./
-COPY ../core ./packages
+COPY packages/core packages/core
+COPY package.json .
 
 RUN yarn install
 
