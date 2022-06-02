@@ -1,6 +1,6 @@
-import { app, BrowserWindow, ipcMain, Display, screen, systemPreferences } from 'electron';
-
+import { BrowserWindow, Display, app, ipcMain, screen, systemPreferences } from 'electron';
 import Channels, { DEFAULT_APP_PRESET, DimensionChangeRequest } from './electron/constants';
+
 import { handleGoogleLogin } from './electron/handleLogin';
 import store from './electron/store';
 
