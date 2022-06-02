@@ -101,13 +101,7 @@ export function CommunicationsProvider({ children }: { children: React.ReactNode
 
   // useMount(getUserAudioDevices);
   useMount(() => {
-    fetch('https://ui-avatars.com/api/?name=John+Doe')
-      .then((result) => {
-        console.log(result);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    console.log(navigator.connection);
   });
 
   return (
