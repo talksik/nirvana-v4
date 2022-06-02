@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { useMediaDevices, useMount } from 'react-use';
 
+import { getTwilioAccessToken } from '../firebase/functions';
 import { useImmer } from 'use-immer';
 import { useSnackbar } from 'notistack';
 
@@ -63,11 +64,33 @@ export function CommunicationsProvider({ children }: { children: React.ReactNode
 
   const devices = useUserDevices();
 
+  const getAuthToken = useCallback(async () => {
+    try {
+      const result = await getTwilioAccessToken();
+      console.log(result);
+      enqueueSnackbar('got token data');
+    } catch (error) {
+      console.error(error);
+      enqueueSnackbar('something went wrong trying to set up calls', { variant: 'error' });
+    }
+  }, [enqueueSnackbar]);
+
+  useMount(getAuthToken);
+
   // const getUserAudioDevices = useMemo(() => {
   //   console.log(devices);
   // }, [devices]);
 
   // useMount(getUserAudioDevices);
+  useMount(() => {
+    fetch('https://ui-avatars.com/api/?name=John+Doe')
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  });
 
   return (
     <CommunicationsContext.Provider value={{ userDeviceSelections }}>
