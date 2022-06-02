@@ -1,20 +1,13 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 import { useMediaDevices, useMount } from 'react-use';
 
+import TwilioAccessToken from '@nirvana/core/src/functions/response/TwilioAccessToken.response';
 import { getTwilioAccessToken } from '../firebase/functions';
 import { useImmer } from 'use-immer';
 import { useSnackbar } from 'notistack';
 
 // device ids for different types of content
 type DeviceSelections = { audio?: string; video?: string };
-
-interface ICommunicationsContext {
-  userLocalStream?: MediaStream;
-
-  userDeviceSelections?: DeviceSelections;
-}
-
-const CommunicationsContext = React.createContext<ICommunicationsContext>({});
 
 function useUserDevices() {
   const devices = useMemo(() => {
@@ -57,6 +50,14 @@ function useUserDevices() {
   return { audioOutputDevices, audioInputDevices, videoInputDevices };
 }
 
+interface ICommunicationsContext {
+  userLocalStream?: MediaStream;
+
+  userDeviceSelections?: DeviceSelections;
+}
+
+const CommunicationsContext = React.createContext<ICommunicationsContext>({});
+
 // todo save the selected devices in localstorage
 export function CommunicationsProvider({ children }: { children: React.ReactNode }) {
   const { enqueueSnackbar } = useSnackbar();
@@ -67,15 +68,16 @@ export function CommunicationsProvider({ children }: { children: React.ReactNode
   const getAuthToken = useCallback(async () => {
     try {
       const result = await getTwilioAccessToken();
-      console.log(result);
+      const data = result.data as TwilioAccessToken;
+
       enqueueSnackbar('got token data');
+
+      return data.token;
     } catch (error) {
       console.error(error);
       enqueueSnackbar('something went wrong trying to set up calls', { variant: 'error' });
     }
   }, [enqueueSnackbar]);
-
-  useMount(getAuthToken);
 
   // const getUserAudioDevices = useMemo(() => {
   //   console.log(devices);
