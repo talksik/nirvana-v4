@@ -29,7 +29,7 @@ export const getStreamToken = functions.https.onCall((data, context) => {
       return;
     }
 
-    const identity = 'user';
+    const identity = context.auth?.uid ?? 'user';
 
     // Create Video Grant
     const videoGrant = new VideoGrant();
