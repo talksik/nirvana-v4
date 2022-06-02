@@ -37,7 +37,7 @@ export const getStreamToken = functions.https.onCall((data, context) => {
     // Create an access token which we will sign and return to the client,
     // containing the grant we just created
     const token = new AccessToken(twilioAccountSid, twilioApiKey, twilioApiSecret, {
-      identity: identity,
+      identity,
     });
 
     token.addGrant(videoGrant);
