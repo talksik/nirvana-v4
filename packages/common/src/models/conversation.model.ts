@@ -32,7 +32,7 @@ export class ConversationMember {
 
     public memberState: MemberState,
     public isActive: boolean = true,
-    public lastActiveDate: Date = null,
+    public lastActiveDate: Date,
     public joinedDate = Date,
   ) {}
 }

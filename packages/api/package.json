@@ -7,11 +7,10 @@
     "common": "rm -rf ./common && cp -r ../common/src ./common/",
     "dev": "NODE_ENV=development && yarn common && nodemon",
     "start:dev": "ts-node index.ts",
-    "start": "node dist/index.js",
     "lint": "eslint --ext .ts,.tsx .",
-    "build": "npm run common && npm run lint && tsc -p .",
-    "gcp-build": "npm run build",
-    "production": "NODE_ENV=production nodemon"
+    "build": "npm run lint && tsc -p .",
+    "start": "node dist/index.js",
+    "gcp-build": "npm run build"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
