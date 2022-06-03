@@ -19,7 +19,6 @@ RUN yarn install
 
 WORKDIR /app/packages/api
 RUN yarn install --production
-RUN yarn build
 
 CMD ["yarn", "start"]
 
