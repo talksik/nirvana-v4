@@ -106,8 +106,6 @@ export function CommunicationsProvider({ children }: { children: React.ReactNode
 
   return (
     <CommunicationsContext.Provider value={{ userDeviceSelections }}>
-      <audio autoPlay controls ref={localAudioRef} />
-
       {children}
     </CommunicationsContext.Provider>
   );

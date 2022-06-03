@@ -15,6 +15,7 @@
     "typescript": "^4.6.2"
   },
   "dependencies": {
+    "@nirvana/core": "*",
     "axios": "^0.26.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
