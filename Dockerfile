@@ -1,15 +1,16 @@
 # IMPORTANT: run from root of monolithic repo
-FROM ubuntu
+FROM node
 
 WORKDIR /app
 
 # The global package.json only contains build dependencies
 COPY ./package.json .
-COPY ./yarn.lock .
 
 # copy the source coded needed for all dependencies
-COPY ./packages/core packages/core
-COPY ./packages/api packages/api
+COPY packages/core packages/core
+COPY packages/api packages/api
+
+# RUN npm i -g yarn
 
 # run and compile the core package
 WORKDIR /app/packages/core
@@ -21,7 +22,6 @@ RUN yarn install --production
 RUN yarn build
 
 CMD ["yarn", "start"]
-
 
 # docker build -t talksik/nirvana-api:1.0
 # docker run -p 5000:8080 -d  
