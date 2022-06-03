@@ -5,6 +5,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "NODE_ENV=development nodemon",
+    "start": "node dist/index.js",
+    "gcp-build": "tsc -p .",
     "start:dev": "ts-node index.ts",
     "production": "NODE_ENV=production nodemon"
   },
