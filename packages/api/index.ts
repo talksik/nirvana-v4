@@ -4,6 +4,7 @@ import * as Tracing from '@sentry/tracing';
 /* eslint-disable @typescript-eslint/no-var-requires */
 import express, { Application, NextFunction, Request, Response } from 'express';
 
+import InitializeWs from './src/socket';
 import cors from 'cors';
 import morgan from 'morgan';
 
@@ -31,9 +32,11 @@ const server = app.listen(PORT, () =>
 // won't catch any errors here and we don't want it to
 console.log();
 
-require('socket.io')(server, {
+const io = require('socket.io')(server, {
   // todo: add authentication
   cors: {
     origin: '*',
   },
 });
+
+InitializeWs(io);
