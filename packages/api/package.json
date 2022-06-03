@@ -4,11 +4,11 @@
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
-    "core": "cp -r ../core ./core",
-    "dev": "NODE_ENV=development nodemon",
+    "common": "rm -rf ./common && cp -r ../common/src ./common/",
+    "dev": "NODE_ENV=development && yarn common && nodemon",
     "start:dev": "ts-node index.ts",
     "start": "node dist/index.js",
-    "gcp-build": "yarn core & tsc -p .",
+    "gcp-build": "npm run common && tsc -p .",
     "production": "NODE_ENV=production nodemon"
   },
   "devDependencies": {
@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "axios": "^0.26.1",
+    "firebase": "^9.8.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
