@@ -20,5 +20,5 @@ app.use('/api/status', (req: Request, res: Response) => {
   res.json({ message: 'wohoo, server is healthy' });
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 8080;
 const server = app.listen(PORT, () => console.log('express running'));

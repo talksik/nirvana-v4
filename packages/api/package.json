@@ -4,10 +4,11 @@
   "main": "index.ts",
   "license": "MIT",
   "scripts": {
+    "core": "cp -r ../core ./core",
     "dev": "NODE_ENV=development nodemon",
-    "start": "node dist/index.js",
-    "build": "tsc -p .",
     "start:dev": "ts-node index.ts",
+    "start": "node dist/index.js",
+    "gcp-build": "yarn core & tsc -p .",
     "production": "NODE_ENV=production nodemon"
   },
   "devDependencies": {
@@ -17,7 +18,6 @@
     "typescript": "^4.6.2"
   },
   "dependencies": {
-    "@nirvana/core": "*",
     "axios": "^0.26.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
