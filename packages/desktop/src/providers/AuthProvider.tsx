@@ -20,6 +20,7 @@ import NirvanaLogo from '../components/NirvanaLogo';
 import { User } from '@nirvana/core/src/models/user.model';
 import { blueGrey } from '@mui/material/colors';
 import { firebaseAuth } from '../firebase/connect';
+import { useMount } from 'react-use';
 import { useSnackbar } from 'notistack';
 
 interface IAuthContext {

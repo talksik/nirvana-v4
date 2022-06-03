@@ -1,6 +1,7 @@
 import { BrowserWindow, Display, app, ipcMain, screen, systemPreferences } from 'electron';
 import Channels, { DEFAULT_APP_PRESET, DimensionChangeRequest } from './electron/constants';
 
+import { environmentVariables } from './electron/config';
 import { handleGoogleLogin } from './electron/handleLogin';
 import store from './electron/store';
 
@@ -10,11 +11,15 @@ import store from './electron/store';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
-  // eslint-disable-line global-require
-  app.quit();
-}
+console.log(`is production ${app.isPackaged}`);
+console.log(`variables loaded`, environmentVariables);
+
+if (process.env.NODE_ENV)
+  if (require('electron-squirrel-startup')) {
+    // Handle creating/removing shortcuts on Windows when installing/uninstalling.
+    // eslint-disable-line global-require
+    app.quit();
+  }
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
