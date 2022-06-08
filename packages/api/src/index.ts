@@ -7,6 +7,7 @@ import * as Tracing from '@sentry/tracing';
 import express, { Application, NextFunction, Request, Response } from 'express';
 
 import InitializeWs from './services/SocketService';
+import NirvanaResponse from '@nirvana/core/responses/nirvanaResponse';
 import cors from 'cors';
 import morgan from 'morgan';
 
@@ -23,7 +24,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500);
-  res.render('error', { error: err });
+  res.json(new NirvanaResponse(undefined, err, err.message));
 });
 
 app.get('/', (req: Request, res: Response) => {

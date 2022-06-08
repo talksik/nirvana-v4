@@ -1,3 +1,5 @@
+import { JwtClaims } from '../middleware/auth';
+
 export default function InitializeWs(io: any) {
   console.log('initializing web sockets');
 
@@ -22,5 +24,6 @@ export default function InitializeWs(io: any) {
     })
     .on('connection', (socket: any) => {
       console.log(`connected`, socket.id);
+      const userInfo: JwtClaims = socket.userInfo;
     });
 }
