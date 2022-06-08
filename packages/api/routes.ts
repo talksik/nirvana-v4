@@ -4,4 +4,4 @@ const router = express.Router();
 
 router.use(express.json());
 
-router.post('/login', loginOrCreate);
+// router.post('/login', loginOrCreate);

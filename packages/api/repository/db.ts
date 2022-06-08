@@ -1,7 +1,7 @@
 // External Dependencies
 import * as mongoDB from 'mongodb';
 
-import environmentVariables from '../config';
+import environmentVariables from '../config/config';
 
 // Global Variables
 export const collections: {
@@ -11,9 +11,9 @@ export const collections: {
 } = {};
 
 // Initialize Connection
-export const client: mongoDB.MongoClient = new mongoDB.MongoClient(
-  environmentVariables.MONGO_CONNECTION_STRING,
-);
+const config = environmentVariables;
+
+export const client: mongoDB.MongoClient = new mongoDB.MongoClient(config.MONGO_CONNECTION_STRING);
 
 client.connect();
 
@@ -27,7 +27,4 @@ collections.users = usersCollection;
 collections.lines = lineCollection;
 collections.lineMembers = lineMembersCollection;
 
-console.log(
-  `Successfully connected to database: ${db.databaseName} and collections: `,
-  Object.keys(collections).forEach((coll) => console.log(coll)),
-);
+console.log(`Successfully connected to database: ${db.databaseName} and collections`);
