@@ -15,10 +15,7 @@ const app = express();
 app.use(morgan('combined'));
 app.use(cors());
 app.use(express.json());
-app.use((req: Request, res: Response, next: NextFunction) => {
-  console.log('Time: ', new Date());
-  next();
-});
+
 app.get('/', (req: Request, res: Response) => {
   res.send('hello world.');
 });
