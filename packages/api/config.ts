@@ -24,4 +24,5 @@ const getEnvironmentVariables = (): EnvironmentConfig => {
   };
 };
 
-export const environmentVariables: EnvironmentConfig = getEnvironmentVariables();
+const environmentVariables: EnvironmentConfig = getEnvironmentVariables();
+export default environmentVariables;
